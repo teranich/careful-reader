@@ -31,7 +31,7 @@ function Bookshelf({ books = [] }: IBookshelfProps) {
         <div className="book-shelf">
 
             <label className="add-book-lable" htmlFor="btn-add-book">
-                <img src="/add-book.png" alt="" />
+                <img src="add-book.png" alt="" />
                 <div className="add-book-text">add book</div>
                 <input type="file" name="" id="btn-add-book"
                     onChange={onChangeHandler} accept=".fb2" />
