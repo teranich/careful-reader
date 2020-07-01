@@ -1,0 +1,29 @@
+.book-shelf {
+  font-size: 4vw;
+  #btn-add-book {
+    display: none;
+  }
+  .add-book-lable {
+    cursor: pointer;
+    display: flex;
+    // align-items: center;
+    // height: 20px;
+    img {
+      // width: 100%;
+      height: 2rem;
+    }
+    .add-book-text {
+      // margin: auto;
+      padding: 0 0.8rem;
+    }
+  }
+  .collection {
+    padding-inline-start: 0;
+    li {
+      cursor: pointer;
+      display: flex;
+      line-height: 2;
+      justify-content: space-between;
+    }
+  }
+}

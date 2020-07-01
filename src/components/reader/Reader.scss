@@ -1,0 +1,107 @@
+.reader {
+  $column-gap-width: 2.8rem;
+  $page-switcher-width: $column-gap-width / 2;
+  $book-info-height: 1.2rem;
+  $reader-font-size: 4vw;
+
+  #book-container {
+    position: absolute;
+    overflow-y: hidden;
+    top: $book-info-height;
+
+    bottom: $book-info-height / 2;
+    right: 0;
+    font-size: $reader-font-size;
+    left: $page-switcher-width;
+  }
+
+  .book-info {
+    position: fixed;
+    top: 0;
+    border-bottom: 1px solid grey;
+    white-space: nowrap;
+    right: $page-switcher-width;
+    left: $page-switcher-width;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+
+    .home::after {
+      background-image: url(/home.svg);
+      background-repeat: no-repeat;
+      display: block;
+      text-align: center;
+      height: 0.8rem;
+      width: 2rem;
+      content: ' ';
+    }
+
+    .book-name {
+      overflow: hidden;
+      max-width: 75%;
+    }
+  }
+
+  .book {
+    column-count: 2;
+    width: 200%;
+    height: 100%;
+    column-gap: $column-gap-width;
+    text-align: justify;
+  }
+
+  .book::after {
+    content: ' THE END ';
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: block;
+    position: absolute;
+  }
+
+  img {
+    height: -webkit-fill-available;
+  }
+
+  .book__cover .image__wrapper {
+    overflow-x: hidden;
+  }
+
+  #reader {
+    width: 100%;
+    background-color: #ebe2c9;
+    color: #000;
+    font-family: Roboto, -apple-system, Helvetica Neue, Helvetica, Arial,
+      sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    text-align: justify;
+  }
+
+  .section {
+    padding: 10px;
+  }
+
+  p {
+    line-height: 1.5;
+  }
+  @for $i from 1 through 100 {
+    .w#{$i} {
+      color: black + $i * 2;
+    }
+  }
+
+  .page-controls {
+    position: fixed;
+    width: $page-switcher-width * 3;
+    height: 100%;
+  }
+  .next-page {
+    @extend .page-controls;
+    right: 0;
+  }
+  .prev-page {
+    @extend .page-controls;
+    left: 0;
+  }
+}

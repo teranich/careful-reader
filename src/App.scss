@@ -1,0 +1,28 @@
+.reader-app {
+  padding: 0.8rem;
+
+  #main-menu {
+    font-size: 1.1rem;
+    ul {
+      padding-inline-start: 0;
+    }
+    li {
+      display: inline;
+      padding-right: 2em;
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+
+  #container-view {
+    padding: 2rem;
+    position: relative;
+  }
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
