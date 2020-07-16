@@ -1,101 +1,98 @@
+$column-gap-width: 2.8rem;
+$page-switcher-width: $column-gap-width / 2;
+$text-info-height: 2.2vh;
+$text-info-width: 2.2vw;
+$reader-font-size: calc(16px + 1vw);
+$reader-line-height: calc(1.1em + 0.5vw);
+$available-height: 100vh - $text-info-height;
+$available-width: 100vw - $text-info-width;
 .reader {
-  $column-gap-width: 2.8rem;
-  $page-switcher-width: $column-gap-width / 2;
-  $book-info-height: 1.2rem;
-  $reader-font-size: 3vw;
-
-  #book-container {
-    position: absolute;
-    overflow-y: hidden;
-    top: $book-info-height;
-
-    bottom: $book-info-height / 2;
-    right: 0;
+  .text-container {
+    height: $available-height;
+    width: $available-width;
+    overflow-x: hidden;
+    margin: 0 auto;
+    padding-top: $text-info-height;
     font-size: $reader-font-size;
     left: $page-switcher-width;
+
+    .text {
+      font-family: 'Adobe Garamond';
+      text-align: justify;
+    }
   }
 
-  .book-info {
+  &.book-view {
+    .text {
+      column-count: 2;
+      width: 200%;
+      height: 100%;
+      column-gap: $column-gap-width;
+    }
+    .text-container {
+      overflow-y: hidden;
+    }
+  }
+
+  .text-info {
     position: fixed;
     top: 0;
+    width: 100%;
     border-bottom: 1px solid grey;
     white-space: nowrap;
-    right: $page-switcher-width;
-    left: $page-switcher-width;
     display: flex;
     justify-content: space-between;
     font-size: 0.8rem;
-
+    background-color: white;
     .home::after {
       background-image: url(/home.svg);
       background-repeat: no-repeat;
+      background-position: center;
       display: block;
       text-align: center;
-      height: 0.8rem;
+      height: 100%;
       width: 2rem;
       content: ' ';
     }
-
-    .book-name {
-      overflow: hidden;
+    :last-child {
+      padding-right: 1rem;
+    }
+    .text-name {
       max-width: 75%;
     }
   }
 
-  .book {
-    column-count: 2;
-    width: 200%;
-    height: 100%;
-    column-gap: $column-gap-width;
-    text-align: justify;
-  }
-
-  .book::after {
-    content: ' THE END ';
-    width: 100%;
-    height: 100%;
+  .image-wrapper {
     text-align: center;
-    display: block;
-    position: absolute;
-  }
-
-  img {
-    height: -webkit-fill-available;
-  }
-
-  .book__cover .image__wrapper {
-    overflow-x: hidden;
-  }
-
-  #reader {
-    width: 100%;
-    background-color: #ebe2c9;
-    color: #000;
-    font-family: Roboto, -apple-system, Helvetica Neue, Helvetica, Arial,
-      sans-serif;
-    font-size: 12pt;
-    line-height: 1.5;
-    text-align: justify;
+    img {
+      height: 90vmin;
+    }
   }
 
   .section {
     padding: 10px;
   }
-
   p {
-    line-height: 1.5;
+    line-height: $reader-line-height;
+    font-weight: 500;
   }
-  @for $i from 1 through 100 {
-    .w#{$i} {
-      color: black + $i * 2;
+  &.highlight {
+    @for $i from 1 through 100 {
+      .w#{$i} {
+        color: black + $i * 2;
+      }
     }
   }
 
   .page-controls {
     position: fixed;
-    width: $page-switcher-width * 3;
-    height: 100%;
+    width: $page-switcher-width * 4;
+    height: 75%;
+    left: 100%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
+
   .next-page {
     @extend .page-controls;
     right: 0;
@@ -103,5 +100,13 @@
   .prev-page {
     @extend .page-controls;
     left: 0;
+  }
+
+  svg {
+    height: 32px;
+    width: 32px;
+  }
+  .hidden {
+    display: none;
   }
 }

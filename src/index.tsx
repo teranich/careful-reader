@@ -1,32 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux'
-import './index.css';
-import App from './App';
-import thunk from 'redux-thunk'
-import * as serviceWorker from './serviceWorker';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import { ShelfReducer } from './store/reducers';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './App'
+import { initDB } from './uitls/database'
 
-const state = {
-  shelf: ShelfReducer,
-  app: (state = []) => state
-}
-const rootReducer = combineReducers(state)
+initDB()
 
-const store = createStore(rootReducer, composeWithDevTools(
-  applyMiddleware(
-    thunk
-  )))
-
-
-
-const app = (
-  <Provider store={store}>
-    <App />
-  </Provider>
-)
+const app = <App />
 
 ReactDOM.render(app, document.getElementById('root'))
-

@@ -1,7 +1,7 @@
 export interface Book {
   id: number
   name: string
-  page: number
+  positionElement: any
   author?: string
   meta?: string
 }
@@ -17,6 +17,7 @@ export const FETCH_BOOKS_LIST = 'FETCH_BOOKS_LIST'
 export const ADD_BOOK = 'ADD_BOOK'
 export const BOOK_TEXT = 'BOOK_TEXT'
 export const UPDATE_BOOK_POSITION = 'UPDATE_BOOK_POSITION'
+export const SET_CURRENT_BOOK = 'SET_CURRENT_BOOK'
 
 export interface BooksState {
   list: BookList
@@ -25,10 +26,7 @@ export interface BooksState {
 export interface ShelfState {
   books: BookList
   bookText: string
-  currentBook?: {
-    text: string
-    meta: string
-  }
+  currentBookId?: number
 }
 
 export interface AppState {}

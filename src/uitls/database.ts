@@ -12,7 +12,7 @@ const DB_NAME = 'library'
 const DB_INDEX_NAME = 'index'
 const DB_STORE_NAME = 'books'
 
-async function init() {
+async function initDB() {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
       db.createObjectStore(DB_INDEX_NAME, { keyPath: 'id' })
@@ -28,7 +28,7 @@ async function storeBook(text: string, fileMeta: File) {
   const record = {
     id: primaryKey,
     name: fileMeta.name,
-    page: 0,
+    positionElement: null,
   }
 
   tx.objectStore(DB_INDEX_NAME).add(record)
@@ -60,4 +60,4 @@ async function getBookText(id: number) {
   return db.get(DB_STORE_NAME, id)
 }
 
-export { init, storeBook, getBookList, getBookText, updateBook }
+export { initDB, storeBook, getBookList, getBookText, updateBook }

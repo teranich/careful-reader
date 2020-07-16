@@ -15,13 +15,13 @@
 
     <xsl:key name="note-link" match="fb:section" use="@id"/>
     <xsl:template match="/*">
-        <div class="book">
+        <div class="text">
             <xsl:for-each select="fb:description/fb:title-info/fb:coverpage/fb:image">
                 <xsl:call-template name="image"/>
             </xsl:for-each>
 
             <xsl:for-each select="fb:description/fb:title-info/fb:annotation">
-                <section class="book__annotation">
+                <section class="text-annotation">
                     <xsl:call-template name="annotation"/>
                 </section>
             </xsl:for-each>
@@ -42,7 +42,7 @@
                     <!--</h4>-->
                 <!--</xsl:if>-->
 
-                <div class="wrapper">
+                <div class="text-wrapper">
                     <xsl:apply-templates/>
                 </div>
 
@@ -213,7 +213,7 @@
     <!-- p -->
     <xsl:template match="fb:p">
         <!--<xsl:if test"preceding-sibling::*[1][name()] != 'fb:image'">-->
-            <p>
+            <p data-id="pos_{generate-id()}">
                 <xsl:if test="@id">
                     <xsl:element name="a">
                         <xsl:attribute name="name">
@@ -395,7 +395,7 @@
             <xsl:choose>
                 <xsl:when test="ancestor::fb:coverpage">
                     <xsl:attribute name="class">
-                        <xsl:value-of select="'book__cover'"/>
+                        <xsl:value-of select="'text-cover'"/>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
