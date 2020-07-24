@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/careful-reader/static/css/main.a7fae0d6.chunk.css",
-    "main.js": "/careful-reader/static/js/main.256d903d.chunk.js",
-    "main.js.map": "/careful-reader/static/js/main.256d903d.chunk.js.map",
+    "main.js": "/careful-reader/static/js/main.ac7ee0a7.chunk.js",
+    "main.js.map": "/careful-reader/static/js/main.ac7ee0a7.chunk.js.map",
     "runtime-main.js": "/careful-reader/static/js/runtime-main.f97e0d03.js",
     "runtime-main.js.map": "/careful-reader/static/js/runtime-main.f97e0d03.js.map",
     "static/js/2.1753f014.chunk.js": "/careful-reader/static/js/2.1753f014.chunk.js",
     "static/js/2.1753f014.chunk.js.map": "/careful-reader/static/js/2.1753f014.chunk.js.map",
     "index.html": "/careful-reader/index.html",
-    "precache-manifest.e6462c40a24e7be9f9f9020e2d61ec80.js": "/careful-reader/precache-manifest.e6462c40a24e7be9f9f9020e2d61ec80.js",
+    "precache-manifest.f3b9e2d4576627ad9d829219a68fcbec.js": "/careful-reader/precache-manifest.f3b9e2d4576627ad9d829219a68fcbec.js",
     "service-worker.js": "/careful-reader/service-worker.js",
     "static/css/main.a7fae0d6.chunk.css.map": "/careful-reader/static/css/main.a7fae0d6.chunk.css.map"
   },
@@ -16,6 +16,6 @@
     "static/js/runtime-main.f97e0d03.js",
     "static/js/2.1753f014.chunk.js",
     "static/css/main.a7fae0d6.chunk.css",
-    "static/js/main.256d903d.chunk.js"
+    "static/js/main.ac7ee0a7.chunk.js"
   ]
 }
