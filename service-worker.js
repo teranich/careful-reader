@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/careful-reader/precache-manifest.f3b9e2d4576627ad9d829219a68fcbec.js"
+  "/careful-reader/precache-manifest.ceb6de5da5ce8ecfd6955ac38e9e6e44.js"
 );
 
 self.addEventListener('message', (event) => {
@@ -35,5 +35,5 @@ workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
 workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL("/careful-reader/index.html"), {
   
-  blacklist: [/^\/_/,/\/[^/?]+\.[^/]+$/],
+  blacklist: [/^\/_/,/\/[^\/?]+\.[^\/]+$/],
 });
