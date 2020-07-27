@@ -1,20 +1,8 @@
-/*
-REST API
-
-*/
-import React from 'react'
-import { Book, BookList } from '../types'
+import { BookList } from '../types'
 
 export async function getBooksList(): Promise<BookList> {
   return fetch('db.json').then((resp) => resp.json())
 }
-
-/**
- * Register or update value for specified key.
- * @param key Key to identify value in container.
- * @param value Value to inject.
- * @returns Created or existing [DiRecord]{@link DiRecord}
- */
 
 export async function getBook(filePath: string): Promise<string> {
   return fetch(filePath).then((resp) => resp.text())

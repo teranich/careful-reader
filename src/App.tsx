@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, Dispatch } from 'react'
+import React, { useEffect } from 'react'
 import './App.scss'
 import Bookshelf from './components/bookshelf/Bookshelf'
 import Reader from './components/reader/Reader'
@@ -14,7 +14,7 @@ function App() {
   const [state, dispatch] = useBooksReducer()
   useEffect(() => {
     dispatch({ type: 'fetch_books_list' })
-  }, [])
+  }, [dispatch])
 
   return (
     <StateContext.Provider value={state}>

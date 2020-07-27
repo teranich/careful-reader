@@ -22,24 +22,10 @@ export default function Reader() {
   const [pagesCount, setPagesCount] = useState(0)
   const [wordsHighlight, setWordsHighlight] = useState(true)
   const textContainerRef = useRef<HTMLDivElement | null>(null)
-  let elementsForHightlight: any = []
+  const elementsForHightlightRef = useRef([])
+
   const queryParams = useParams<QueryParams>()
   const bookId = parseInt(queryParams.bookId)
-
-  useEffect(() => {
-    const { current } = textContainerRef
-    getBookText(bookId).then((text) => {
-      current!.innerHTML = text
-      restoreScrollPoition()
-      current!.addEventListener('scroll', handleScroll)
-      setPagesCount(getPagesCount())
-      elementsForHightlight = getElementsForHightlight()
-    })
-
-    return () => {
-      return current!.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
 
   function getElementsForHightlight() {
     const result: any = []
@@ -51,6 +37,7 @@ export default function Reader() {
 
   function handleScroll(e: Event) {
     const { current } = textContainerRef
+    const { current: elementsForHightlight } = elementsForHightlightRef
     if (current) {
       const percent = getPercentOfScroll()
       setCurrenPositionPercent(percent.toFixed(2))
@@ -65,7 +52,7 @@ export default function Reader() {
 
   function restoreScrollPoition() {
     const currentBook: Book | undefined = state.find(
-      (book: Book) => book.id == bookId
+      (book: Book) => book.id === bookId
     )
     if (currentBook) {
       const toElement = document.querySelector(
@@ -106,6 +93,23 @@ export default function Reader() {
     }
   }
 
+  /*eslint-disable */
+  useEffect(() => {
+    const { current } = textContainerRef
+    getBookText(bookId).then((text) => {
+      current!.innerHTML = text
+      setPagesCount(getPagesCount())
+      restoreScrollPoition()
+      elementsForHightlightRef.current = getElementsForHightlight()
+      current!.addEventListener('scroll', handleScroll)
+    })
+
+    return () => {
+      return current!.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+  /*eslint-enable */
+
   return (
     <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
       <div className="text-info">
@@ -117,7 +121,6 @@ export default function Reader() {
             onChange={() => setWordsHighlight(!wordsHighlight)}
           />
         </div>
-        {/* <div className="book-name">{currentBook?.name}</div> */}
         <div className="">{currenPositionPercent}%</div>
         <div className="pages">
           {numberOfcurrentPage} / {pagesCount}

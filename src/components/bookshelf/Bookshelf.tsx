@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { BookList, Book } from '../../types'
 import { Link } from 'react-router-dom'
 import { readFileContent } from '../../uitls/common'
