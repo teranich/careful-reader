@@ -7,7 +7,7 @@ import { Checkbox } from '../controls/Checkbox'
 import { DispatchContext, StateContext } from '../../App'
 import { getBookText } from '../../uitls/database'
 import { Book } from '../../types'
-
+import HomeIcon from './home.svg'
 interface QueryParams {
   bookId: string
 }
@@ -113,7 +113,10 @@ export default function Reader() {
   return (
     <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
       <div className="text-info">
-        <Link className="home" to="/"></Link>
+        <Link className="home" to="/">
+          <img src={HomeIcon} alt="" />
+        </Link>
+
         <div>
           <Checkbox
             label="highlight"

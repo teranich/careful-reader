@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { readFileContent } from '../../uitls/common'
 import './Bookshelf.scss'
 import { DispatchContext } from '../../App'
+import AddBookIcon from './add-book.png'
+
 interface IBookshelfProps {
   books?: BookList
 }
@@ -19,7 +21,7 @@ export default function Bookshelf({ books = [] }: IBookshelfProps) {
         ))}
       </div>
       <label className="add-book-lable" htmlFor="btn-add-book">
-        <img src="add-book.png" alt="" />
+        <img src={AddBookIcon} alt="" />
         <input
           type="file"
           name=""

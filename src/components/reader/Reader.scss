@@ -44,16 +44,7 @@ $available-width: 100vw - $text-info-width;
     justify-content: space-between;
     font-size: 0.8rem;
     background-color: white;
-    .home::after {
-      background-image: url(/home.svg);
-      background-repeat: no-repeat;
-      background-position: center;
-      display: block;
-      text-align: center;
-      height: 100%;
-      width: 2rem;
-      content: ' ';
-    }
+
     :last-child {
       padding-right: 1rem;
     }
