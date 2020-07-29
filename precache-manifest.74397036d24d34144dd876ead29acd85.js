@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "71394de7a2809108adae3d9cfa0cf327",
+    "revision": "350bb439402bcb7a7de4ad2472a0b243",
     "url": "/careful-reader/index.html"
   },
   {
-    "revision": "ee03f7a8dbffc965972c",
+    "revision": "9cd207cf689705f11b7b",
     "url": "/careful-reader/static/css/main.64f7c043.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/careful-reader/static/js/2.bdc42b7a.chunk.js"
   },
   {
-    "revision": "ee03f7a8dbffc965972c",
-    "url": "/careful-reader/static/js/main.0278a083.chunk.js"
+    "revision": "9cd207cf689705f11b7b",
+    "url": "/careful-reader/static/js/main.220ae926.chunk.js"
   },
   {
     "revision": "18c9985920a30c2097fc",
