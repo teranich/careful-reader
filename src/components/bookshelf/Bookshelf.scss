@@ -1,11 +1,16 @@
 .book-shelf {
-  font-size: 4vw;
   #btn-add-book {
     display: none;
   }
+
   .add-book-lable {
     cursor: pointer;
-    display: flex;
+    flex-direction: row-reverse;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    display: inline-flex;
+    margin: 10px;
     img {
       height: 2rem;
     }
@@ -13,13 +18,25 @@
       padding: 0 0.8rem;
     }
   }
+
   .collection {
-    padding-inline-start: 0;
-    li {
-      cursor: pointer;
-      display: flex;
-      line-height: 2;
-      justify-content: space-between;
-    }
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 1.6vmax;
+    flex-wrap: wrap;
+  }
+
+  .book-item {
+    width: 25vmin;
+    height: 35vmin;
+    position: relative;
+    border: 1px solid grey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-all;
+    margin-bottom: 10px;
+    padding: 10px;
   }
 }

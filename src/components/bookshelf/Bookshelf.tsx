@@ -13,9 +13,13 @@ export default function Bookshelf({ books = [] }: IBookshelfProps) {
 
   return (
     <div className="book-shelf">
+      <div className="collection">
+        {books.map((book: Book) => (
+          <BookItem book={book} key={book.id} />
+        ))}
+      </div>
       <label className="add-book-lable" htmlFor="btn-add-book">
         <img src="add-book.png" alt="" />
-        <div className="add-book-text">add book</div>
         <input
           type="file"
           name=""
@@ -24,14 +28,6 @@ export default function Bookshelf({ books = [] }: IBookshelfProps) {
           accept=".fb2"
         />
       </label>
-
-      <ul className="collection">
-        {books.map((book: Book) => (
-          <li className="list-item" key={book.id}>
-            <Link to={`/read/${book.id}`}>{book.name}</Link>
-          </li>
-        ))}
-      </ul>
     </div>
   )
 
@@ -48,3 +44,11 @@ export default function Bookshelf({ books = [] }: IBookshelfProps) {
     }
   }
 }
+interface BookItemProps {
+  book: Book
+}
+const BookItem = ({ book, ...rest }: BookItemProps) => (
+  <Link to={`/read/${book.id}`} className="book-item" {...rest}>
+    <div className="name">{book.name}</div>
+  </Link>
+)
