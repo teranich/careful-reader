@@ -25,6 +25,7 @@ export default function Reader({ books }: ReaderProps) {
   const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0')
   const [pagesCount, setPagesCount] = useState(0)
   const [wordsHighlight, setWordsHighlight] = useState(true)
+  const [showControls, setShowControls] = useState(false)
   const textContainerRef = useRef<HTMLDivElement | null>(null)
   const elementsForHightlightRef = useRef([])
 
@@ -59,12 +60,12 @@ export default function Reader({ books }: ReaderProps) {
 
   return (
     <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
-      <div className="text-info">
+      <div className={`text-info${showControls ? '' : ' hidden'}`}>
         <div>
           <Checkbox
             label="highlight"
             value={wordsHighlight}
-            onChange={() => setWordsHighlight(!wordsHighlight)}
+            onChange={toggleHightligting}
           />
         </div>
         <div className="">{currenPositionPercent}%</div>
@@ -75,7 +76,12 @@ export default function Reader({ books }: ReaderProps) {
           <img src={HomeIcon} alt="" />
         </Link>
       </div>
-      <div className="text-container" ref={textContainerRef}></div>
+
+      <div
+        className="text-container"
+        onClick={toggleMenuHandler}
+        ref={textContainerRef}
+      ></div>
       <div className="prev-page" onClick={handlePageChange('prev')}></div>
       <div className="next-page" onClick={handlePageChange('next')}></div>
     </div>
@@ -137,5 +143,13 @@ export default function Reader({ books }: ReaderProps) {
   function getNumberOfCurrentPage() {
     const { current } = textContainerRef
     return Math.round(current!.scrollTop / current!.clientHeight)
+  }
+
+  function toggleHightligting() {
+    setWordsHighlight(!wordsHighlight)
+  }
+
+  function toggleMenuHandler() {
+    setShowControls(!showControls)
   }
 }
