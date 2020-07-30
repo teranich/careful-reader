@@ -36,12 +36,15 @@ $available-width: 100vw - $text-info-width;
 
   .text-info {
     position: fixed;
-    top: 0;
+    bottom: 0;
     width: 100%;
+    opacity: 0.8;
     border-bottom: 1px solid grey;
     white-space: nowrap;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    min-height: 32px;
     font-size: 0.8rem;
     background-color: white;
 
