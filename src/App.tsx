@@ -22,7 +22,7 @@ function App() {
         <Router basename={process.env.PUBLIC_URL}>
           <Switch>
             <Route path="/read/:bookId">
-              <Reader />
+              <Reader books={state} />
             </Route>
             <Route path="/">
               <Bookshelf books={state} />

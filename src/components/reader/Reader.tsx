@@ -6,15 +6,19 @@ import { hightLightElementsOnScreen } from '../../uitls/styler'
 import { Checkbox } from '../controls/Checkbox'
 import { DispatchContext, StateContext } from '../../App'
 import { getBookText } from '../../uitls/database'
-import { Book } from '../../types'
+import { Book, BookList } from '../../types'
 import HomeIcon from './home.svg'
+
 interface QueryParams {
   bookId: string
+}
+interface ReaderProps {
+  books: BookList
 }
 
 const dfunc = debounce((fn) => fn && fn(), 100)
 
-export default function Reader() {
+export default function Reader({ books }: ReaderProps) {
   const dispatch = useContext(DispatchContext)
   const state = useContext(StateContext)
   const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(0)
@@ -26,6 +30,56 @@ export default function Reader() {
 
   const queryParams = useParams<QueryParams>()
   const bookId = parseInt(queryParams.bookId)
+
+  const handlePageChange = (direction: string) => () => {
+    const { current } = textContainerRef
+    if (current) {
+      const sign = direction === 'next' ? 1 : -1
+      current.scrollTop += sign * current.clientHeight
+    }
+  }
+
+  /*eslint-disable */
+  useEffect(() => {
+    const { current } = textContainerRef
+    if (!books.length) return
+    getBookText(bookId).then((text) => {
+      current!.innerHTML = text
+      setPagesCount(getPagesCount())
+      restoreScrollPoition()
+      elementsForHightlightRef.current = getElementsForHightlight()
+      current!.addEventListener('scroll', handleScroll)
+    })
+
+    return () => {
+      return current!.removeEventListener('scroll', handleScroll)
+    }
+  }, [books.length])
+  /*eslint-enable */
+
+  return (
+    <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
+      <div className="text-info">
+        <div>
+          <Checkbox
+            label="highlight"
+            value={wordsHighlight}
+            onChange={() => setWordsHighlight(!wordsHighlight)}
+          />
+        </div>
+        <div className="">{currenPositionPercent}%</div>
+        <div className="pages">
+          {numberOfcurrentPage} / {pagesCount}
+        </div>
+        <Link className="home" to="/">
+          <img src={HomeIcon} alt="" />
+        </Link>
+      </div>
+      <div className="text-container" ref={textContainerRef}></div>
+      <div className="prev-page" onClick={handlePageChange('prev')}></div>
+      <div className="next-page" onClick={handlePageChange('next')}></div>
+    </div>
+  )
 
   function getElementsForHightlight() {
     const result: any = []
@@ -84,54 +138,4 @@ export default function Reader() {
     const { current } = textContainerRef
     return Math.round(current!.scrollTop / current!.clientHeight)
   }
-
-  const handlePageChange = (direction: string) => () => {
-    const { current } = textContainerRef
-    if (current) {
-      const sign = direction === 'next' ? 1 : -1
-      current.scrollTop += sign * current.clientHeight
-    }
-  }
-
-  /*eslint-disable */
-  useEffect(() => {
-    const { current } = textContainerRef
-    getBookText(bookId).then((text) => {
-      current!.innerHTML = text
-      setPagesCount(getPagesCount())
-      restoreScrollPoition()
-      elementsForHightlightRef.current = getElementsForHightlight()
-      current!.addEventListener('scroll', handleScroll)
-    })
-
-    return () => {
-      return current!.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-  /*eslint-enable */
-
-  return (
-    <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
-      <div className="text-info">
-        <Link className="home" to="/">
-          <img src={HomeIcon} alt="" />
-        </Link>
-
-        <div>
-          <Checkbox
-            label="highlight"
-            value={wordsHighlight}
-            onChange={() => setWordsHighlight(!wordsHighlight)}
-          />
-        </div>
-        <div className="">{currenPositionPercent}%</div>
-        <div className="pages">
-          {numberOfcurrentPage} / {pagesCount}
-        </div>
-      </div>
-      <div className="text-container" ref={textContainerRef}></div>
-      <div className="prev-page" onClick={handlePageChange('prev')}></div>
-      <div className="next-page" onClick={handlePageChange('next')}></div>
-    </div>
-  )
 }
