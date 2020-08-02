@@ -1,7 +1,6 @@
-.book-shelf {
-  overflow: auto;
-  max-height: 100vh;
+@import '../../constants';
 
+.book-shelf {
   #btn-add-book {
     display: none;
   }
@@ -23,6 +22,8 @@
   }
 
   .collection {
+    overflow: auto;
+    max-height: $content-height;
     padding: 10px 0;
     display: flex;
     justify-content: space-evenly;
