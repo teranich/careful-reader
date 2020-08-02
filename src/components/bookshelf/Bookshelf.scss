@@ -1,4 +1,7 @@
 .book-shelf {
+  overflow: auto;
+  max-height: 100vh;
+
   #btn-add-book {
     display: none;
   }

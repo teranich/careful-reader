@@ -5,32 +5,36 @@ import { readFileContent } from '../../uitls/common'
 import './Bookshelf.scss'
 import { DispatchContext } from '../../App'
 import AddBookIcon from './add-book.png'
+import { Header } from '../common'
 
-interface IBookshelfProps {
+interface BookshelfProps {
   books?: BookList
 }
 
-export default function Bookshelf({ books = [] }: IBookshelfProps) {
+export default function Bookshelf({ books = [] }: BookshelfProps) {
   const dispatch = useContext(DispatchContext)
 
   return (
-    <div className="book-shelf">
-      <div className="collection">
-        {books.map((book: Book) => (
-          <BookItem book={book} key={book.id} />
-        ))}
+    <>
+      <Header></Header>
+      <div className="book-shelf">
+        <div className="collection">
+          {books.map((book: Book) => (
+            <BookItem book={book} key={book.id} />
+          ))}
+        </div>
+        <label className="add-book-lable" htmlFor="btn-add-book">
+          <img src={AddBookIcon} alt="" />
+          <input
+            type="file"
+            name=""
+            id="btn-add-book"
+            onChange={onChangeHandler}
+            accept=".fb2"
+          />
+        </label>
       </div>
-      <label className="add-book-lable" htmlFor="btn-add-book">
-        <img src={AddBookIcon} alt="" />
-        <input
-          type="file"
-          name=""
-          id="btn-add-book"
-          onChange={onChangeHandler}
-          accept=".fb2"
-        />
-      </label>
-    </div>
+    </>
   )
 
   function onChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
