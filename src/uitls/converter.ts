@@ -7,6 +7,12 @@ export async function convertFB2ToHtml(bookText: string) {
     .then((xsl: any) => {
       const xsltProcessor = new XSLTProcessor()
       xsltProcessor.importStylesheet(xsl)
-      return xsltProcessor.transformToDocument(el)
+      const html = xsltProcessor.transformToDocument(el) || document
+      const cover =
+        html.querySelector('.text-cover img')?.getAttribute('src') || ''
+      return {
+        html: html.body.innerHTML,
+        cover,
+      }
     })
 }

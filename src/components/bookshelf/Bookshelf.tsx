@@ -55,6 +55,10 @@ interface BookItemProps {
 }
 const BookItem = ({ book, ...rest }: BookItemProps) => (
   <Link to={`/read/${book.id}`} className="book-item" {...rest}>
-    <div className="name">{book.name}</div>
+    {book.cover ? (
+      <img src={book.cover} alt="" />
+    ) : (
+      <div className="name">{book.name}</div>
+    )}
   </Link>
 )

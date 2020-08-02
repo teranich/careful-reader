@@ -4,6 +4,7 @@ export interface Book {
   positionElement: any
   author?: string
   meta?: string
+  cover: string
 }
 
 export type BookList = Book[]

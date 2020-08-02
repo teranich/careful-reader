@@ -55,6 +55,7 @@ export default function useBooksReducer() {
 }
 
 async function addBookToDB(text: string, file: File) {
-  const html = await convertFB2ToHtml(text)
-  return await storeBook(html.body.innerHTML, file)
+  const { html, cover } = await convertFB2ToHtml(text)
+
+  return await storeBook(html, file, cover)
 }

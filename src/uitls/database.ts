@@ -21,7 +21,7 @@ async function initDB() {
   })
 }
 
-async function storeBook(text: string, fileMeta: File) {
+async function storeBook(text: string, fileMeta: File, cover: string) {
   const db = await openDB(DB_NAME, DB_VERSION)
   const tx = db.transaction([DB_INDEX_NAME, DB_STORE_NAME], 'readwrite')
   const primaryKey = await tx.objectStore(DB_STORE_NAME).add(text)
@@ -29,6 +29,7 @@ async function storeBook(text: string, fileMeta: File) {
     id: primaryKey,
     name: fileMeta.name,
     positionElement: null,
+    cover,
   }
 
   tx.objectStore(DB_INDEX_NAME).add(record)
