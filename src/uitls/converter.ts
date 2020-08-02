@@ -11,7 +11,7 @@ export async function convertFB2ToHtml(bookText: string) {
       const cover =
         html.querySelector('.text-cover img')?.getAttribute('src') || ''
       return {
-        html: html.body.innerHTML,
+        dicumentBody: html.body,
         cover,
       }
     })
