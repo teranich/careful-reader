@@ -1,17 +1,21 @@
 @import '../../constants';
 
 .book-shelf {
+  height: $content-height;
+
   #btn-add-book {
     display: none;
   }
 
-  .add-book-lable {
-    cursor: pointer;
-    flex-direction: row-reverse;
+  .add-button-fixed {
     position: fixed;
     bottom: 0;
     right: 0;
     display: inline-flex;
+  }
+
+  .add-book-lable {
+    cursor: pointer;
     margin: 10px;
     img {
       height: 2rem;
@@ -23,7 +27,7 @@
 
   .collection {
     overflow: auto;
-    max-height: $content-height;
+    height: 100%;
     padding: 10px 0;
     display: flex;
     justify-content: space-evenly;
@@ -48,5 +52,17 @@
       width: 100%;
       height: 100%;
     }
+  }
+
+  .book-list-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+  }
+  .add-btn-placeholder {
+    margin-top: 10px;
   }
 }

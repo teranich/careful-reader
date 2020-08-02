@@ -12,30 +12,27 @@ interface BookshelfProps {
 }
 
 export default function Bookshelf({ books = [] }: BookshelfProps) {
-  const dispatch = useContext(DispatchContext)
-
   return (
     <>
       <Header></Header>
       <div className="book-shelf">
-        <div className="collection">
-          {books.map((book: Book) => (
-            <BookItem book={book} key={book.id} />
-          ))}
-        </div>
-        <label className="add-book-lable" htmlFor="btn-add-book">
-          <img src={AddBookIcon} alt="" />
-          <input
-            type="file"
-            name=""
-            id="btn-add-book"
-            onChange={onChangeHandler}
-            accept=".fb2"
-          />
-        </label>
+        {books.length ? (
+          <div className="collection">
+            {books.map((book: Book) => (
+              <BookItem book={book} key={book.id} />
+            ))}
+          </div>
+        ) : (
+          <BooksListPlaceholder />
+        )}
+        <AddBookButton className="add-button-fixed" />
       </div>
     </>
   )
+}
+
+const AddBookButton = ({ ...rest }) => {
+  const dispatch = useContext(DispatchContext)
 
   function onChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files?.length) {
@@ -49,7 +46,23 @@ export default function Bookshelf({ books = [] }: BookshelfProps) {
       })
     }
   }
+
+  return (
+    <div {...rest}>
+      <label className="add-book-lable" htmlFor="btn-add-book">
+        <img src={AddBookIcon} alt="" />
+        <input
+          type="file"
+          name=""
+          id="btn-add-book"
+          onChange={onChangeHandler}
+          accept=".fb2"
+        />
+      </label>
+    </div>
+  )
 }
+
 interface BookItemProps {
   book: Book
 }
@@ -61,4 +74,17 @@ const BookItem = ({ book, ...rest }: BookItemProps) => (
       <div className="name">{book.name}</div>
     )}
   </Link>
+)
+
+const BooksListPlaceholder = () => (
+  <div className="book-list-placeholder">
+    <div className="centered">
+      <div>
+        Welcome! You don't have loaded books yet. Careful Reader supports
+        <strong>&nbsp;fb2&nbsp;</strong>
+        ones.
+      </div>
+      <AddBookButton className="add-btn-placeholder" />
+    </div>
+  </div>
 )
