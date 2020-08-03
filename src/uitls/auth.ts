@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
+const googleDriveAPIDocument =
+  'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+const scope = 'https://www.googleapis.com/auth/drive.appfolder'
 
 export default function useGoogleDrive() {
-  const googleDriveApiDocument =
-    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-  const scope = 'https://www.googleapis.com/auth/drive.appfolder'
-
   const [isClientLoaded, setIsClientLoaded] = useState<boolean>(false)
   const getLogedInState = () => {
     return window.gapi.auth2.getAuthInstance().isSignedIn.get()
@@ -18,7 +17,7 @@ export default function useGoogleDrive() {
         .init({
           apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
           clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-          discoveryDocs: [googleDriveApiDocument],
+          discoveryDocs: [googleDriveAPIDocument],
           scope,
         })
         .then((args) => {
