@@ -80,7 +80,7 @@ const BooksListPlaceholder = () => (
   <div className="book-list-placeholder">
     <div className="centered">
       <div>
-        Welcome! You don't have loaded books yet. Careful Reader supports
+        Welcome! You haven't loaded books yet. Careful Reader supports
         <strong>&nbsp;fb2&nbsp;</strong>
         ones.
       </div>
