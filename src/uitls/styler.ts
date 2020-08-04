@@ -42,17 +42,20 @@ export function getStyledElement(text: string) {
 function shuffle<T>(array: Array<T>) {
   return array.sort(() => Math.random() - 0.5)
 }
+
 function textNodesUnder(el: HTMLElement) {
-  var n,
-    a = [],
-    walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
-  while ((n = walk.nextNode())) a.push(n)
-  return a
+  let n
+  const result = []
+  let walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
+  while ((n = walk.nextNode())) result.push(n)
+  return result
 }
 
 export function stylize(element: HTMLElement) {
+  if (element.className.includes('hg')) return
+
   textNodesUnder(element).forEach((textElement: any) => {
-    if (textElement && !element.className.includes('hg')) {
+    if (textElement) {
       const styledTextElement = getStyledElement(textElement.textContent)
       textElement.replaceWith(styledTextElement)
       element.className += ' hg'
