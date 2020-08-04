@@ -5,7 +5,7 @@ import { debounce } from '../../uitls/common'
 import { hightLightElementsOnScreen } from '../../uitls/styler'
 import { Checkbox } from '../common'
 import { DispatchContext, StateContext } from '../../App'
-import { getBookText } from '../../uitls/database'
+import { getBookText } from '../../uitls/clientDB'
 import { Book, BookList } from '../../types'
 import HomeIcon from './home.svg'
 

@@ -1,18 +1,18 @@
 import React, { useCallback } from 'react'
-import { getBookList, storeBook, updateBook } from '../uitls/database'
+import { getBookList, storeBook, updateBook } from '../uitls/clientDB'
 import { convertFB2ToHtml } from '../uitls/converter'
 import { Book } from '../types'
 
 const initialBooksState: Book[] = []
 export type AppState = typeof initialBooksState
 
-export default function useBooksReducer() {
+export default function useLibraryReducer() {
   const memoizedReducer = useCallback(
-    (state, action) => appReducer(state, action),
+    (state, action) => libraryReducer(state, action),
     []
   )
   const [state, dispatch] = React.useReducer(memoizedReducer, initialBooksState)
-  function appReducer(state: AppState, action: any) {
+  function libraryReducer(state: AppState, action: any) {
     switch (action.type) {
       case 'set_books_list': {
         return action.payload
@@ -54,8 +54,8 @@ export default function useBooksReducer() {
   return [state, dispatch]
 }
 
-async function addBookToDB(text: string, file: File) {
-  const { dicumentBody, cover } = await convertFB2ToHtml(text)
+async function addBookToDB(rawBookText: string, file: File) {
+  const { dicumentBody, cover } = await convertFB2ToHtml(rawBookText)
 
   return await storeBook({
     name: file.name,

@@ -3,7 +3,7 @@ import './App.scss'
 import Bookshelf from './components/bookshelf'
 import Reader from './components/reader'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import useBooksReducer, { AppState } from './store/BooksReducer'
+import useLibraryReducer, { AppState } from './store/LibraryReducer'
 
 export const StateContext = React.createContext<AppState>([])
 export const DispatchContext = React.createContext<React.Dispatch<any>>(
@@ -11,7 +11,7 @@ export const DispatchContext = React.createContext<React.Dispatch<any>>(
 )
 
 function App() {
-  const [state, dispatch] = useBooksReducer()
+  const [state, dispatch] = useLibraryReducer()
 
   useEffect(() => {
     dispatch({ type: 'fetch_books_list' })
