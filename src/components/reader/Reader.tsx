@@ -4,23 +4,20 @@ import { useParams, Link } from 'react-router-dom'
 import { debounce } from '../../uitls/common'
 import { hightLightElementsOnScreen } from '../../uitls/styler'
 import { Checkbox } from '../common'
-import { DispatchContext, StateContext } from '../../App'
-import { getBookText } from '../../uitls/clientDB'
-import { Book, BookList } from '../../types'
 import HomeIcon from './home.svg'
-
+import LibraryStoreContext from '../../store/LibraryStore'
+import { observer } from 'mobx-react'
 interface QueryParams {
   bookId: string
-}
-interface ReaderProps {
-  books: BookList
 }
 
 const dfunc = debounce((fn) => fn && fn(), 100)
 
-export default function Reader({ books }: ReaderProps) {
-  const dispatch = useContext(DispatchContext)
-  const state = useContext(StateContext)
+export default observer(function Reader() {
+  // @ts-ignore
+  const { updateBookPositionAction, openBookAction, currentBook } = useContext(
+    LibraryStoreContext
+  )
   const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(0)
   const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0')
   const [pagesCount, setPagesCount] = useState(0)
@@ -40,23 +37,23 @@ export default function Reader({ books }: ReaderProps) {
     }
   }
 
-  /*eslint-disable */
+  useEffect(() => {
+    openBookAction(bookId)
+  }, [bookId, openBookAction])
+
   useEffect(() => {
     const { current } = textContainerRef
-    if (!books.length) return
-    getBookText(bookId).then((text) => {
-      current!.innerHTML = text
+    if (currentBook.meta && currentBook.meta.id === bookId) {
+      current!.innerHTML = currentBook.text
+      current!.addEventListener('scroll', handleScroll)
+      elementsForHightlightRef.current = getElementsForHightlight()
       setPagesCount(getPagesCount())
       restoreScrollPoition()
-      elementsForHightlightRef.current = getElementsForHightlight()
-      current!.addEventListener('scroll', handleScroll)
-    })
-
+    }
     return () => {
       return current!.removeEventListener('scroll', handleScroll)
     }
-  }, [books.length])
-  /*eslint-enable */
+  }, [currentBook.meta])
 
   return (
     <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
@@ -111,12 +108,9 @@ export default function Reader({ books }: ReaderProps) {
   }
 
   function restoreScrollPoition() {
-    const currentBook: Book | undefined = state.find(
-      (book: Book) => book.id === bookId
-    )
-    if (currentBook) {
+    if (currentBook.meta) {
       const toElement = document.querySelector(
-        `[data-id="${currentBook.positionElement}"]`
+        `[data-id="${currentBook.meta.positionElement}"]`
       )
       toElement?.scrollIntoView()
     }
@@ -130,8 +124,7 @@ export default function Reader({ books }: ReaderProps) {
   function updateBookPosition(posElement: HTMLElement) {
     if (posElement) {
       const positionElement = posElement.getAttribute('data-id')
-      const payload = { bookId, positionElement }
-      dispatch({ type: 'update_book_position', payload })
+      updateBookPositionAction(bookId, positionElement)
     }
   }
 
@@ -152,4 +145,4 @@ export default function Reader({ books }: ReaderProps) {
   function toggleMenuHandler() {
     setShowControls(!showControls)
   }
-}
+})

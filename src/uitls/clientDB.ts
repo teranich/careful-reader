@@ -1,11 +1,5 @@
-import { openDB, DBSchema } from 'idb'
-
-interface ILibrarySchema extends DBSchema {
-  index: {
-    key: string
-    value: {}
-  }
-}
+import { openDB } from 'idb'
+import { BookList } from '../types'
 
 const DB_VERSION = 1
 const DB_NAME = 'library'
@@ -59,7 +53,7 @@ async function updateBook(bookId: number, book: any) {
   })
 }
 
-async function getBookList() {
+async function getBookList(): Promise<BookList> {
   const db = await openDB(DB_NAME, DB_VERSION)
   return db.getAll(DB_INDEX_NAME)
 }

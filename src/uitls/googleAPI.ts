@@ -109,7 +109,7 @@ export default function useGoogleDrive() {
           updateLogedInState()
         })
       })
-  }, [window.gapi])
+  }, [])
 
   const signIn = () => {
     window.gapi.auth2.getAuthInstance().signIn()

@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import './Header.scss'
 import useGoogleDrive from '../../uitls/googleAPI'
 
 const Header: React.FC = ({ children }) => {
-  const {
-    isClientLoaded,
-    isLoggedIn,
-    signIn,
-    signOut,
-    googleDriveAPI,
-  } = useGoogleDrive()
+  const { isClientLoaded, isLoggedIn, signIn, signOut } = useGoogleDrive()
   return (
     <header className="header">
       {children}
