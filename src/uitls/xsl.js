@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+const FB2XSL = `<?xml version="1.0"?>
 <xsl:stylesheet
         version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -433,5 +433,5 @@
             </xsl:if>
         </div>
     </xsl:template>
-</xsl:stylesheet>
-
+</xsl:stylesheet>`
+export { FB2XSL }
