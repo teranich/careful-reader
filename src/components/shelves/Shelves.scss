@@ -24,10 +24,12 @@
       padding: 0 0.8rem;
     }
   }
-
+  .container {
+    height: inherit;
+    overflow-y: scroll;
+  }
   .collection {
     overflow: auto;
-    height: 100%;
     padding: 10px 0;
     display: flex;
     justify-content: space-evenly;
@@ -36,8 +38,8 @@
   }
 
   .book-item {
-    width: 25vmin;
-    height: 35vmin;
+    width: 15vmin;
+    height: 25vmin;
     position: relative;
     border: 1px solid grey;
     display: flex;

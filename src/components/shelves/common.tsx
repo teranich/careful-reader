@@ -1,43 +1,13 @@
-import React, { useContext, useEffect } from 'react'
-import { BookList, Book } from '../../types'
-import { Link } from 'react-router-dom'
-import { readFileContent } from '../../uitls/common'
-import './Bookshelf.scss'
-import AddBookIcon from './add-book.png'
-import { Header } from '../common'
-import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
-interface BookshelfProps {
-  books?: BookList
-}
-
-export default observer(function Bookshelf() {
-  // @ts-ignore
-  const { books, fetchBooksListAction } = useContext(LibraryStoreContext)
-  useEffect(() => {
-    fetchBooksListAction()
-  }, [fetchBooksListAction])
-  return (
-    <>
-      <Header></Header>
-      <div className="book-shelf">
-        {books.length ? (
-          <div className="collection">
-            {books.map((book: Book, index: number) => (
-              <BookItem book={book} key={index + book.id} />
-            ))}
-          </div>
-        ) : (
-          <BooksListPlaceholder />
-        )}
-        <AddBookButton className="add-button-fixed" />
-      </div>
-    </>
-  )
-})
+import { readFileContent } from '../../uitls/common'
+import React, { useContext } from 'react'
+import { Book } from '../../types'
+import { Link } from 'react-router-dom'
+import AddBookIcon from './add-book.png'
+import LibraryStoreContext from '../../store/LibraryStore'
+import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 
 const AddBookButton = observer(({ ...rest }: any) => {
-  // @ts-ignore
   const { addBookAction } = useContext(LibraryStoreContext)
   function onChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files?.length) {
@@ -66,15 +36,21 @@ const AddBookButton = observer(({ ...rest }: any) => {
 
 interface BookItemProps {
   book: Book
+  children?: any
 }
-const BookItem = observer(({ book, ...rest }: BookItemProps) => (
-  <Link to={`/read/${book.id}`} className="book-item" {...rest}>
-    {book.cover ? (
-      <img src={book.cover} alt="" />
-    ) : (
-      <div className="name">{book.name}</div>
-    )}
-  </Link>
+const BookItem = observer(({ book, children, ...rest }: BookItemProps) => (
+  <div>
+    {children}
+    <Link to={`/read/${book.id}`} className="book-item" {...rest}>
+      {book.cover ? (
+        <>
+          <img src={book.cover} alt="" />
+        </>
+      ) : (
+        <div className="name">{book.name}</div>
+      )}
+    </Link>
+  </div>
 ))
 
 const BooksListPlaceholder = observer(() => (
@@ -89,3 +65,5 @@ const BooksListPlaceholder = observer(() => (
     </div>
   </div>
 ))
+
+export { AddBookButton, BooksListPlaceholder, BookItem }

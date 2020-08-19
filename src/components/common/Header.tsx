@@ -1,21 +1,27 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './Header.scss'
-import useGoogleDrive from '../../uitls/googleAPI'
+import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
+import { observer } from 'mobx-react'
 
-const Header: React.FC = ({ children }) => {
-  const { isClientLoaded, isLoggedIn, signIn, signOut } = useGoogleDrive()
+export default observer(function Header({ children }: any) {
+  // const { isClientLoaded, isLoggedIn, signIn, signOut } = useGoogleDrive()
+  // @ts-ignore
+  const {
+    isClientLoaded,
+    isLoggedIn,
+    signInAction,
+    signOutAction,
+  } = useContext(RemoteLibraryStoreContext)
   return (
     <header className="header">
       {children}
       <div className={isClientLoaded ? '' : 'hidden'}>
         {isLoggedIn ? (
-          <button onClick={signOut}>Log Out</button>
+          <button onClick={signOutAction}>Log Out</button>
         ) : (
-          <button onClick={signIn}>Log In</button>
+          <button onClick={signInAction}>Log In</button>
         )}
       </div>
     </header>
   )
-}
-
-export default Header
+})
