@@ -6,7 +6,14 @@ export default class GAPI {
     'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
   private scope = 'https://www.googleapis.com/auth/drive.appfolder'
   private isGAPILoaded = false
-
+  constructor() {
+    if (
+      !process.env.REACT_APP_GOOGLE_API_KEY ||
+      !process.env.REACT_APP_GOOGLE_CLIENT_ID
+    ) {
+      console.error('Missing google API keys in .env file', process.env)
+    }
+  }
   public async load() {
     await this.loadGoogleAPI()
     this.isGAPILoaded = true
@@ -39,12 +46,14 @@ export default class GAPI {
   }
   public isLoggedIn() {
     return (
-      this.isGAPILoaded && window.gapi.auth2.getAuthInstance().isSignedIn.get()
+      this.isGAPILoaded &&
+      window.gapi.auth2.getAuthInstance() &&
+      window.gapi.auth2.getAuthInstance().isSignedIn.get()
     )
   }
   public async list(query: string = '') {
+    let ret: any = []
     try {
-      let ret: any = []
       let token
       do {
         const resp: any = await this.callGapi(
@@ -65,6 +74,7 @@ export default class GAPI {
       return ret
     } catch (e) {
       this.processError(e)
+      return ret
     }
   }
   public async listFolders() {
