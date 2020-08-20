@@ -7,9 +7,7 @@ export const RemoteLibraryStore = () => {
   const gapi = new GAPI()
 
   const fetchBooksListAction = action(async () => {
-    // store.books = await gapi.list('mimeType="application/json"')
     store.books = await gapi.list()
-    console.log('remote books', store.books)
   })
 
   const signInAction = action(async () => {
@@ -34,8 +32,7 @@ export const RemoteLibraryStore = () => {
       gapi.upload(metaFile.id, JSON.stringify(book)),
       gapi.upload(textFile.id, bookText),
     ])
-    // const resp = await gapi.download(textFile.id)
-    // console.log('uploadBookAction', folder.id, 'resp', resp)
+
     const newBook: RemoteBook = {
       id: metaFile.id,
       metaFileId: metaFile.id,

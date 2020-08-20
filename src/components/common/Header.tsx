@@ -4,8 +4,6 @@ import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 import { observer } from 'mobx-react'
 
 export default observer(function Header({ children }: any) {
-  // const { isClientLoaded, isLoggedIn, signIn, signOut } = useGoogleDrive()
-  // @ts-ignore
   const {
     isClientLoaded,
     isLoggedIn,
@@ -19,8 +17,8 @@ export default observer(function Header({ children }: any) {
         {isLoggedIn ? (
           <button onClick={signOutAction}>Log Out</button>
         ) : (
-          <button onClick={signInAction}>Log In</button>
-        )}
+            <button onClick={signInAction}>Log In</button>
+          )}
       </div>
     </header>
   )
