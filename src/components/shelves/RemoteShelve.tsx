@@ -9,6 +9,7 @@ const RemoteBooksList = observer(() => {
     books,
     fetchBooksListAction,
     isClientLoaded,
+    isLoggedIn,
     downloadBookAction,
     deleteBookAction,
   } = useContext(RemoteLibraryStoreContext)
@@ -17,8 +18,9 @@ const RemoteBooksList = observer(() => {
   )
 
   const reloadBtnHandler = () => {
-    isClientLoaded && fetchBooksListAction()
+    isLoggedIn && fetchBooksListAction()
   }
+
   const removeBtnHandler = async (book: RemoteBook) => {
     const isSuccess = await deleteBookAction(book)
     if (isSuccess) {
@@ -26,7 +28,6 @@ const RemoteBooksList = observer(() => {
         (localBook: Book) => localBook.metaFileId === book.metaFileId
       )
       if (localBook) {
-        console.log('updatiiing', localBook)
         delete localBook.metaFileId
         await updateBookAction(localBook)
       }
@@ -35,12 +36,11 @@ const RemoteBooksList = observer(() => {
 
   const collectBtnHandler = async (book: RemoteBook) => {
     const text = await downloadBookAction(book)
-    console.log(text)
     await syncBookAction(book, text)
   }
 
   useEffect(() => {
-    isClientLoaded && fetchBooksListAction()
+    isLoggedIn && fetchBooksListAction()
   }, [isClientLoaded])
 
   return (
