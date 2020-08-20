@@ -41,12 +41,12 @@ const RemoteBooksList = observer(() => {
 
   useEffect(() => {
     isLoggedIn && fetchBooksListAction()
-  }, [isClientLoaded])
+  }, [isLoggedIn])
 
   return (
     <>
-      <button onClick={reloadBtnHandler}>reload</button>
-      <div className="collection">
+      <div className={`collection ${!isLoggedIn ? 'hidden' : ''}`}>
+        <button onClick={reloadBtnHandler}>reload</button>
         {books.map((book: RemoteBook, index: number) => (
           <div key={index + book.name}>
             {book.name}
