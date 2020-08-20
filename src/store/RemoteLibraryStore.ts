@@ -18,6 +18,7 @@ export const RemoteLibraryStore = () => {
   const signOutAction = action(async () => {
     await gapi.signOut()
     store.isLoggedIn = gapi.isLoggedIn()
+    store.books = []
   })
 
   const uploadBookAction = action(async (book: Book, bookText: string) => {
