@@ -38,22 +38,20 @@ export default observer(function Reader() {
   }
 
   useEffect(() => {
-    openBookAction(bookId)
-  }, [bookId, openBookAction])
-
-  useEffect(() => {
     const { current } = textContainerRef
-    if (currentBook.meta && currentBook.meta.id === bookId) {
+    const openBook = async () => {
+      await openBookAction(bookId)
       current!.innerHTML = currentBook.text
-      current!.addEventListener('scroll', handleScroll)
       elementsForHightlightRef.current = getElementsForHightlight()
       setPagesCount(getPagesCount())
       restoreScrollPoition()
     }
+    openBook()
+    current!.addEventListener('scroll', handleScroll)
     return () => {
       return current!.removeEventListener('scroll', handleScroll)
     }
-  }, [currentBook.meta])
+  }, [])
 
   return (
     <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
@@ -79,8 +77,8 @@ export default observer(function Reader() {
         onClick={toggleMenuHandler}
         ref={textContainerRef}
       ></div>
-      <div className="prev-page" onClick={handlePageChange('prev')}></div>
-      <div className="next-page" onClick={handlePageChange('next')}></div>
+      {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
+      {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
     </div>
   )
 

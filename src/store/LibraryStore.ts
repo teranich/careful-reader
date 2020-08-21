@@ -51,8 +51,11 @@ export const LibraryStore = () => {
   })
 
   const openBookAction = action(async (bookId: number) => {
-    if (store.currentBook!.meta!.id === bookId) return Promise.resolve()
-    Promise.all([
+    if (store.currentBook!.meta!.id === bookId) {
+      store.currentBook.meta = await libraryDB.getBookMeta(bookId)
+      return Promise.resolve()
+    }
+    return Promise.all([
       libraryDB.getBookMeta(bookId),
       libraryDB.getBookText(bookId),
     ]).then((prom) => {
