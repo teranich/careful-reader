@@ -14,32 +14,48 @@ const LocalBooksList = observer(() => {
     fetchBookTextAction,
   } = useContext(LibraryStoreContext)
   // @ts-ignore
-  const { uploadBookAction } = useContext(RemoteLibraryStoreContext)
+  const { uploadBookAction, syncMetaAction } = useContext(
+    RemoteLibraryStoreContext
+  )
   useEffect(() => {
     fetchBooksListAction()
     console.count('local')
   }, [fetchBooksListAction])
 
-  const syncHandler = async (book: Book) => {
+  const uploadHandler = async (book: Book) => {
     const text = await fetchBookTextAction(book.id)
     const file = await uploadBookAction(book, text)
     console.log('after download', book)
     await updateBookAction(book.id, { ...book })
   }
+
   const deleteBookHandler = async (book: Book) => {
     await deleteBookAction(book)
   }
+
+  const syncHandler = async (book: Book) => {
+    if (book.metaFileId) {
+      await syncMetaAction(book)
+    } else {
+      const text = await fetchBookTextAction(book.id)
+      const file = await uploadBookAction(book, text)
+      // await updateBookAction(book.id, { ...book })
+      console.log('after download', book, file)
+    }
+
+    console.log('synced')
+  }
+
   return (
     <>
       {books.length ? (
         <div className="collection">
           {books.map((book: Book, index: number) => (
             <BookItem book={book} key={index + book.id}>
-              {book.metaFileId ? (
-                'synced'
-              ) : (
-                <button onClick={() => syncHandler(book)}>sync</button>
-              )}
+              <>
+                <button onClick={() => syncHandler(book)}>sync </button>
+                <button onClick={() => uploadHandler(book)}>upload</button>
+              </>
 
               <button
                 onClick={() => {

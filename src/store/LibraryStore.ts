@@ -20,15 +20,13 @@ export const LibraryStore = () => {
     const newBook = {
       name: file.name,
       cover,
-      body: documentBody,
     }
-    const book = await libraryDB.addBook(newBook)
+    const book = await libraryDB.addBook(newBook, documentBody)
     store.books.push(book)
   })
 
   const syncBookAction = action(async (meta: Book, body: string) => {
-    const newBook = { ...meta, body }
-    const book = await libraryDB.addBook(newBook)
+    const book = await libraryDB.addBook(meta, body)
     store.books.push(book)
   })
 

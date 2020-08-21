@@ -20,6 +20,7 @@ interface AddBookProps {
   body: string
   name: string
   cover: string
+  positionElement?: string | undefined
 }
 const dbPromise = openDB<LibraryDB>(DB_NAME, DB_VERSION, {
   upgrade(db) {
@@ -40,12 +41,11 @@ const libraryDB = {
   async getBookText(id: number) {
     return (await dbPromise).get(DB_STORE_NAME, id)
   },
-  async addBook({ body, name, cover }: AddBookProps): Promise<Book> {
-    console.log('addBook wtg', body, name, cover)
+  async addBook(meta: any, body: string = ''): Promise<Book> {
     const timestamp = Date.now()
     const tx = await txPromise()
-    const id = await tx.objectStore(DB_STORE_NAME).add(body || '')
-    const book: Book = { id, name, cover, timestamp, positionElement: null }
+    const id = await tx.objectStore(DB_STORE_NAME).add(body)
+    const book: Book = { ...meta, id, timestamp }
     await tx.objectStore(DB_INDEX_NAME).add(book)
     await tx.done
     return book

@@ -33,14 +33,14 @@ const RemoteBooksList = observer(() => {
       )
       if (localBook) {
         delete localBook.metaFileId
-        await updateBookAction(localBook)
+        await updateBookAction(localBook.id, { metaFileId: null })
       }
     }
   }
 
-  const collectBtnHandler = async (book: RemoteBook) => {
-    const text = await downloadBookAction(book)
-    await syncBookAction(book, text)
+  const collectBtnHandler = async (remoteBook: RemoteBook) => {
+    const { meta, text } = await downloadBookAction(remoteBook)
+    await syncBookAction(meta, text)
   }
 
   useEffect(() => {

@@ -7,7 +7,7 @@ export const RemoteLibraryStore = () => {
   const gapi = new GAPI()
 
   const fetchBooksListAction = action(async () => {
-    store.books = await gapi.list()
+    store.books = await gapi.list(`fileExtension="json"`)
   })
 
   const signInAction = action(async () => {
@@ -22,6 +22,9 @@ export const RemoteLibraryStore = () => {
   })
 
   const uploadBookAction = action(async (book: Book, bookText: string) => {
+    const list = await gapi.list(`name="${book.name}-text.html"`)
+    if (list.length) return
+
     const [metaFile, textFile] = await Promise.all([
       gapi.createFile(`${book.name}-meta.json`),
       gapi.createFile(`${book.name}-text.html`),
@@ -41,12 +44,19 @@ export const RemoteLibraryStore = () => {
       name: `${book.name}-meta.json`,
     }
     store.books.push(newBook)
-    return newBook
+  })
+
+  const syncMetaAction = action(async (book: Book) => {
+    if (book.metaFileId) {
+      await gapi.upload(book.metaFileId, JSON.stringify(book))
+    }
   })
 
   const downloadBookAction = action(async (book: RemoteBook) => {
     const meta: any = await gapi.download(book.id)
-    if (meta.textFileId) return await gapi.download(meta.textFileId)
+    let text: any = ''
+    if (meta.textFileId) text = await gapi.download(meta.textFileId)
+    return { meta, text }
   })
 
   const deleteBookAction = action(async (book: any) => {
@@ -64,6 +74,7 @@ export const RemoteLibraryStore = () => {
     signInAction,
     signOutAction,
     uploadBookAction,
+    syncMetaAction,
     downloadBookAction,
     deleteBookAction,
     fetchBooksListAction,
