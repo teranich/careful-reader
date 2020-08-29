@@ -1,7 +1,7 @@
 import { openDB, DBSchema } from 'idb'
 import { Book } from '../types'
 
-const DB_VERSION = 2
+const DB_VERSION = 1
 const DB_NAME = 'library'
 const DB_INDEX_NAME = 'index'
 const DB_STORE_NAME = 'books'
@@ -16,18 +16,14 @@ interface LibraryDB extends DBSchema {
     value: string
   }
 }
-interface AddBookProps {
-  body: string
-  name: string
-  cover: string
-  positionElement?: string | undefined
-}
+
 const dbPromise = openDB<LibraryDB>(DB_NAME, DB_VERSION, {
-  upgrade(db) {
+  upgrade(db, oldVersion) {
     db.createObjectStore(DB_INDEX_NAME, { keyPath: 'id' })
     db.createObjectStore(DB_STORE_NAME, { autoIncrement: true })
   },
 })
+
 const txPromise = async () =>
   (await dbPromise).transaction([DB_INDEX_NAME, DB_STORE_NAME], 'readwrite')
 
