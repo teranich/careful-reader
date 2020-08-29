@@ -19,8 +19,10 @@ interface LibraryDB extends DBSchema {
 
 const dbPromise = openDB<LibraryDB>(DB_NAME, DB_VERSION, {
   upgrade(db, oldVersion) {
-    db.createObjectStore(DB_INDEX_NAME, { keyPath: 'id' })
-    db.createObjectStore(DB_STORE_NAME, { autoIncrement: true })
+    if (oldVersion < 1) {
+      db.createObjectStore(DB_INDEX_NAME, { keyPath: 'id' })
+      db.createObjectStore(DB_STORE_NAME, { autoIncrement: true })
+    }
   },
 })
 
