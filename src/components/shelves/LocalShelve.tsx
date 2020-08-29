@@ -51,12 +51,12 @@ const LocalBooksList = observer(() => {
       {books.length ? (
         <div className="collection">
           {books.map((book: Book, index: number) => (
-            <BookItem book={book} key={index + book.id}>
+            <BookItem book={book} key={book.id}>
               <>
                 <button onClick={() => syncHandler(book)}>sync </button>
                 <button onClick={() => uploadHandler(book)}>upload</button>
               </>
-
+              <div>{book.metaFileId}</div>
               <button
                 onClick={() => {
                   deleteBookHandler(book)
@@ -69,8 +69,8 @@ const LocalBooksList = observer(() => {
           ))}
         </div>
       ) : (
-        <BooksListPlaceholder />
-      )}
+          <BooksListPlaceholder />
+        )}
     </>
   )
 })

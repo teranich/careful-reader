@@ -51,15 +51,20 @@ const RemoteBooksList = observer(() => {
     <>
       <div className={`collection ${!isLoggedIn ? 'hidden' : ''}`}>
         <button onClick={fetchBooks}>reload</button>
-        {isBooksLoading && <Loading />}
-        {!isBooksLoading &&
-          books.map((book: RemoteBook, index: number) => (
-            <div key={index + book.name}>
-              {book.name}
-              <button onClick={() => removeBtnHandler(book)}>del</button>
-              <button onClick={() => collectBtnHandler(book)}>collect</button>
-            </div>
-          ))}
+        <div>
+          {isBooksLoading && <Loading />}
+
+          {!isBooksLoading &&
+            books.map((book: RemoteBook, index: number) => (
+              <div key={book.id}>
+                <div>{book.id}: {book.name}</div>
+                <button onClick={() => removeBtnHandler(book)}>del</button>
+                <button onClick={() => collectBtnHandler(book)}>collect</button>
+              </div>
+            ))
+          }
+        </div>
+
       </div>
     </>
   )
