@@ -1,9 +1,10 @@
 import React, { useContext } from 'react'
 import { observer } from 'mobx-react'
 import { Book } from '../../types'
-import { BookItem, BooksListPlaceholder } from './common'
+import { BooksListPlaceholder } from './common'
 import LibraryStoreContext from '../../store/LibraryStore'
 import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
+import BookItem from '../common/BookItem'
 
 const LocalBooksList = observer(() => {
   const {
@@ -45,7 +46,10 @@ const LocalBooksList = observer(() => {
       {books.length ? (
         <div className="collection">
           {books.map((book: Book, index: number) => (
-            <BookItem book={book} key={book.id}>
+            <BookItem
+              book={book}
+              key={book.id}
+              to={`/details/${book.id}`}>
               <>
                 <button onClick={() => syncHandler(book)}>sync </button>
                 <button onClick={() => uploadHandler(book)}>upload</button>

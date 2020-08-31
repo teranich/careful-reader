@@ -1,8 +1,7 @@
 import { observer } from 'mobx-react'
 import { readFileContent } from '../../uitls/common'
 import React, { useContext } from 'react'
-import { Book } from '../../types'
-import { Link } from 'react-router-dom'
+
 import AddBookIcon from './add-book.png'
 import LibraryStoreContext from '../../store/LibraryStore'
 
@@ -33,24 +32,6 @@ const AddBookButton = observer(({ ...rest }: any) => {
   )
 })
 
-interface BookItemProps {
-  book: Book
-  children?: any
-}
-const BookItem = observer(({ book, children, ...rest }: BookItemProps) => (
-  <div>
-    {children}
-    <Link to={`/details/${book.id}`} className="book-item" {...rest}>
-      {book.cover ? (
-        <>
-          <img src={book.cover} alt="" />
-        </>
-      ) : (
-          <div className="name">{book.name}</div>
-        )}
-    </Link>
-  </div>
-))
 
 const BooksListPlaceholder = observer(() => (
   <div className="book-list-placeholder">
@@ -65,4 +46,4 @@ const BooksListPlaceholder = observer(() => (
   </div>
 ))
 
-export { AddBookButton, BooksListPlaceholder, BookItem }
+export { AddBookButton, BooksListPlaceholder }
