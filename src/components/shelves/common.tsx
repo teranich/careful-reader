@@ -5,7 +5,6 @@ import { Book } from '../../types'
 import { Link } from 'react-router-dom'
 import AddBookIcon from './add-book.png'
 import LibraryStoreContext from '../../store/LibraryStore'
-import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 
 const AddBookButton = observer(({ ...rest }: any) => {
   const { addBookAction } = useContext(LibraryStoreContext)
@@ -41,14 +40,14 @@ interface BookItemProps {
 const BookItem = observer(({ book, children, ...rest }: BookItemProps) => (
   <div>
     {children}
-    <Link to={`/read/${book.id}`} className="book-item" {...rest}>
+    <Link to={`/details/${book.id}`} className="book-item" {...rest}>
       {book.cover ? (
         <>
           <img src={book.cover} alt="" />
         </>
       ) : (
-        <div className="name">{book.name}</div>
-      )}
+          <div className="name">{book.name}</div>
+        )}
     </Link>
   </div>
 ))

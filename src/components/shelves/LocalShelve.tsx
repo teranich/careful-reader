@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { observer } from 'mobx-react'
 import { Book } from '../../types'
 import { BookItem, BooksListPlaceholder } from './common'
@@ -8,7 +8,6 @@ import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 const LocalBooksList = observer(() => {
   const {
     books,
-    fetchBooksListAction,
     updateBookAction,
     deleteBookAction,
     fetchBookTextAction,
@@ -17,10 +16,6 @@ const LocalBooksList = observer(() => {
   const { uploadBookAction, syncMetaAction } = useContext(
     RemoteLibraryStoreContext
   )
-  useEffect(() => {
-    fetchBooksListAction()
-    console.count('local')
-  }, [fetchBooksListAction])
 
   const uploadHandler = async (book: Book) => {
     const text = await fetchBookTextAction(book.id)
@@ -39,7 +34,6 @@ const LocalBooksList = observer(() => {
     } else {
       const text = await fetchBookTextAction(book.id)
       const file = await uploadBookAction(book, text)
-      // await updateBookAction(book.id, { ...book })
       console.log('after download', book, file)
     }
 

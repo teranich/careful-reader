@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { observer } from 'mobx-react'
 import { RemoteBook, Book } from '../../types'
 import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
@@ -8,8 +8,7 @@ import { Loading } from '../common'
 const RemoteBooksList = observer(() => {
   const {
     books,
-    fetchBooksListAction,
-    isClientLoaded,
+    isBooksLoading,
     isLoggedIn,
     downloadBookAction,
     deleteBookAction,
@@ -17,13 +16,6 @@ const RemoteBooksList = observer(() => {
   const { books: localBooks, updateBookAction, syncBookAction } = useContext(
     LibraryStoreContext
   )
-  const [isBooksLoading, setIsBooksLoading] = useState(false)
-
-  const fetchBooks = async () => {
-    setIsBooksLoading(true)
-    if (isLoggedIn) await fetchBooksListAction()
-    setIsBooksLoading(false)
-  }
 
   const removeBtnHandler = async (book: RemoteBook) => {
     const isSuccess = await deleteBookAction(book)
@@ -43,14 +35,9 @@ const RemoteBooksList = observer(() => {
     await syncBookAction(meta, text)
   }
 
-  useEffect(() => {
-    fetchBooks()
-  }, [isLoggedIn])
-
   return (
     <>
       <div className={`collection ${!isLoggedIn ? 'hidden' : ''}`}>
-        <button onClick={fetchBooks}>reload</button>
         <div>
           {isBooksLoading && <Loading />}
 
@@ -64,7 +51,6 @@ const RemoteBooksList = observer(() => {
             ))
           }
         </div>
-
       </div>
     </>
   )

@@ -1,13 +1,16 @@
 import React from 'react'
 import GAPI from '../uitls/googleAPI'
 import { observable, action } from 'mobx'
-import { BookList, Book, RemoteBook } from '../types'
+import { Book, RemoteBook } from '../types'
 
 export const RemoteLibraryStore = () => {
   const gapi = new GAPI()
 
   const fetchBooksListAction = action(async () => {
+    store.isBooksLoading = true
     store.books = await gapi.list(`fileExtension="json"`)
+    store.isBooksLoading = false
+    console.log('cloud books', store.books)
   })
 
   const signInAction = action(async () => {
@@ -71,6 +74,7 @@ export const RemoteLibraryStore = () => {
     books: [] as RemoteBook[],
     isClientLoaded: false,
     isLoggedIn: false,
+    isBooksLoading: false,
     signInAction,
     signOutAction,
     uploadBookAction,
