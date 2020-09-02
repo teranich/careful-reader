@@ -1,0 +1,29 @@
+.feed {
+  section {
+    padding: 10px 0;
+  }
+  .container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  .current-book {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .link-to-shelves {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      height: 24vh;
+    }
+
+    .title {
+      display: inline-block;
+      text-align: center;
+    }
+  }
+}
