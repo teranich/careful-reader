@@ -6,8 +6,11 @@ $reader-font-size: calc(16px + 1vw);
 $reader-line-height: calc(1.1em + 0.5vw);
 $available-height: 100vh - $text-info-height;
 $available-width: 100vw - $text-info-width;
+$page-color: #eee;
+
 .reader {
   .text-container {
+    background-color: $page-color;
     height: $available-height;
     width: $available-width;
     overflow-x: hidden;
