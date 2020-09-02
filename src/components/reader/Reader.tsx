@@ -55,32 +55,34 @@ export default observer(function Reader() {
   }, [])
 
   return (
-    <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
-      <div className={`text-info${showControls ? '' : ' hidden'}`}>
-        <div>
-          <Checkbox
-            label="highlight"
-            value={wordsHighlight}
-            onChange={toggleHightligting}
-          />
+    <>
+      <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
+        <div className={`text-info${showControls ? '' : ' hidden'}`}>
+          <div>
+            <Checkbox
+              label="highlight"
+              value={wordsHighlight}
+              onChange={toggleHightligting}
+            />
+          </div>
+          <div className="">{currenPositionPercent}%</div>
+          <div className="pages">
+            {numberOfcurrentPage} / {pagesCount}
+          </div>
+          <Link className="home" to="/">
+            <img src={HomeIcon} alt="" />
+          </Link>
         </div>
-        <div className="">{currenPositionPercent}%</div>
-        <div className="pages">
-          {numberOfcurrentPage} / {pagesCount}
-        </div>
-        <Link className="home" to="/">
-          <img src={HomeIcon} alt="" />
-        </Link>
-      </div>
 
-      <div
-        className="text-container"
-        onClick={toggleMenuHandler}
-        ref={textContainerRef}
-      ></div>
-      {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
-      {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
-    </div>
+        <div
+          className="text-container"
+          onClick={toggleMenuHandler}
+          ref={textContainerRef}
+        ></div>
+        {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
+        {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
+      </div>
+    </>
   )
 
   function getElementsForHightlight() {

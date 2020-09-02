@@ -6,11 +6,12 @@ $reader-font-size: calc(16px + 1vw);
 $reader-line-height: calc(1.1em + 0.5vw);
 $available-height: 100vh - $text-info-height;
 $available-width: 100vw - $text-info-width;
-$page-color: #eee;
+$page-color: #d8b67d;
 
 .reader {
+  background-color: $page-color;
+
   .text-container {
-    background-color: $page-color;
     height: $available-height;
     width: $available-width;
     overflow-x: hidden;
@@ -40,14 +41,14 @@ $page-color: #eee;
   .text-info {
     position: fixed;
     bottom: 0;
+    z-index: 1;
     width: 100%;
-    opacity: 0.8;
     border-bottom: 1px solid grey;
     white-space: nowrap;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 32px;
+    min-height: 10vh;
     font-size: 0.8rem;
     background-color: white;
 
@@ -73,10 +74,11 @@ $page-color: #eee;
     line-height: $reader-line-height;
     font-weight: 500;
   }
+
   &.highlight {
     @for $i from 1 through 100 {
       .w#{$i} {
-        color: black + $i * 2;
+        color: black + $i * 1.8;
       }
     }
   }
@@ -105,5 +107,12 @@ $page-color: #eee;
   }
   .hidden {
     display: none;
+  }
+
+  .text-wrapper {
+    background-image: url('./page2.jpg');
+    background-size: contain;
+    opacity: 0.9;
+    padding: 0 10vw;
   }
 }
