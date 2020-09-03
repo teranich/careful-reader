@@ -6,6 +6,7 @@ import LibraryStoreContext from '../../store/LibraryStore'
 import { Book } from '../../types'
 import BookItem from '../common/BookItem'
 import './Details.scss'
+import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 
 interface QueryParams {
   bookId: string
@@ -16,25 +17,68 @@ const Details = () => {
   const bookId = parseInt(queryParams.bookId)
   const {
     books,
+    updateBookAction,
+    deleteBookAction,
+    fetchBookTextAction,
   } = useContext(LibraryStoreContext)
-
-  const [currentBook, setCurrentBook] = useState<Book>()
+  const { uploadBookAction, syncMetaAction } = useContext(
+    RemoteLibraryStoreContext
+  )
+  const [book, setBook] = useState<Book>()
 
   useEffect(() => {
     const book: Book = books.find((b: Book) => b.id === bookId)
-    setCurrentBook(book)
+    setBook(book)
   }, [books, bookId])
 
+  const uploadHandler = async (book: Book) => {
+    const text = await fetchBookTextAction(book.id)
+    const file = await uploadBookAction(book, text)
+    console.log('after download', book)
+    await updateBookAction(book.id, { ...book })
+  }
+
+  const deleteBookHandler = async (book: Book) => {
+    await deleteBookAction(book)
+  }
+
+  const syncHandler = async (book: Book) => {
+    if (book.metaFileId) {
+      await syncMetaAction(book)
+    } else {
+      const text = await fetchBookTextAction(book.id)
+      const file = await uploadBookAction(book, text)
+      console.log('after download', book, file)
+    }
+
+    console.log('synced')
+  }
   return (
-    <>
+    <div className="details">
       <Header></Header>
-      {currentBook &&
-        <div>
-          <BookItem book={currentBook} to={`/read/${currentBook.id}`} />
-          {currentBook.name}
-        </div>
+      {book &&
+        <section className="content">
+          <div>{book.name}</div>
+          <BookItem book={book} to={`/read/${book.id}`} />
+          <div className="info">
+            <div className="controls">
+              <button onClick={() => syncHandler(book)}>sync </button>
+              <button onClick={() => uploadHandler(book)}>upload</button>
+              <button
+                onClick={() => {
+                  deleteBookHandler(book)
+                }}
+              >
+                del
+              </button>
+              <button>info</button>
+              <div />
+              <div>{book.metaFileId}</div>
+            </div>
+          </div>
+        </section>
       }
-    </>
+    </div>
   )
 }
 

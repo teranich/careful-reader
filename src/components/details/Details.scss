@@ -1,0 +1,18 @@
+.details {
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    flex-direction: column;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    padding: 10px;
+  }
+  .controls {
+    display: flex;
+  }
+}
