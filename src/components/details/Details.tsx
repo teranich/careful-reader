@@ -48,10 +48,8 @@ const Details = () => {
     } else {
       const text = await fetchBookTextAction(book.id)
       const file = await uploadBookAction(book, text)
-      console.log('after download', book, file)
     }
 
-    console.log('synced')
   }
   return (
     <div className="details">
