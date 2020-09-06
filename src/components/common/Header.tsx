@@ -1,24 +1,19 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import './Header.scss'
-import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 import { observer } from 'mobx-react'
+import { BackButton, HomeButton, AuthButtons } from '../controls'
 
-export default observer(function Header({ children }: any) {
-  const {
-    isClientLoaded,
-    isLoggedIn,
-    signInAction,
-    signOutAction,
-  } = useContext(RemoteLibraryStoreContext)
+export default observer(function Header({ children, className = '' }: any) {
+
   return (
-    <header className="header">
-      {children}
-      <div className={isClientLoaded ? '' : 'hidden'}>
-        {isLoggedIn ? (
-          <button onClick={signOutAction}>Log Out</button>
-        ) : (
-            <button onClick={signInAction}>Log In</button>
-          )}
+    <header className={`header ${className}`}>
+      <div className="left-content">
+        <BackButton />
+        <HomeButton />
+      </div>
+      <div className="children">{children} </div>
+      <div className="right-content">
+        <AuthButtons />
       </div>
     </header>
   )

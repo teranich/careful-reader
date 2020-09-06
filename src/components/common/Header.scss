@@ -1,6 +1,19 @@
 .header {
   background-color: rgba(219, 113, 13, 0.911);
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   height: 5vmax;
+  padding: 5px 0;
+  width: 100%;
+  .children {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+  }
+  .left-content {
+    display: flex;
+  }
+  .right-content {
+    display: flex;
+  }
 }

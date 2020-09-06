@@ -1,0 +1,22 @@
+.back-button,
+.home-button,
+.auth-buttons {
+  text-align: center;
+  img {
+    height: 32px;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    height: fill-available;
+  }
+}
+
+.auth-buttons {
+  .logout-button,
+  .login-button {
+    display: flex;
+  }
+  span {
+    padding-right: 1px;
+    font-size: 0.6rem;
+  }
+}
