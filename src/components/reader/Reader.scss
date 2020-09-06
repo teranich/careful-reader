@@ -4,19 +4,19 @@ $text-info-height: 2.2vh;
 $text-info-width: 2.2vw;
 $reader-font-size: calc(16px + 1vw);
 $reader-line-height: calc(1.1em + 0.5vw);
-$available-height: 100vh - $text-info-height;
-$available-width: 100vw - $text-info-width;
+$available-height: 100vh;
+$available-width: 100vw;
 $page-color: #d8b67d;
 
 .reader {
   background-color: $page-color;
 
   .text-container {
-    height: $available-height;
-    width: $available-width;
+    height: 100vh;
+    width: 100vw;
     overflow-x: hidden;
     margin: 0 auto;
-    padding-top: $text-info-height;
+    padding-top: 10vmax;
     font-size: $reader-font-size;
     left: $page-switcher-width;
 
@@ -26,7 +26,7 @@ $page-color: #d8b67d;
     }
   }
 
-  &.book-view {
+  .book-view {
     .text {
       column-count: 2;
       width: 200%;
@@ -75,7 +75,7 @@ $page-color: #d8b67d;
     font-weight: 500;
   }
 
-  &.highlight {
+  .highlight {
     @for $i from 1 through 100 {
       .w#{$i} {
         color: black + $i * 1.8;
@@ -101,18 +101,19 @@ $page-color: #d8b67d;
     left: 0;
   }
 
-  svg {
-    height: 32px;
-    width: 32px;
-  }
   .hidden {
     display: none;
   }
-
+  .p-fixed {
+    position: fixed;
+  }
+  .z-max {
+    z-index: 100;
+  }
   .text-wrapper {
     background-image: url('./page2.jpg');
     background-size: contain;
     opacity: 0.9;
-    padding: 0 10vw;
+    padding: 0 16px;
   }
 }

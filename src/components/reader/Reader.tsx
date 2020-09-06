@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import './Reader.scss'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { debounce } from '../../uitls/common'
 import { hightLightElementsOnScreen } from '../../uitls/styler'
-import { Checkbox } from '../common'
-import HomeIcon from './home.svg'
+import { Checkbox, Header } from '../common'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
 
@@ -15,7 +14,6 @@ interface QueryParams {
 const dfunc = debounce((fn) => fn && fn(), 100)
 
 export default observer(function Reader() {
-  // @ts-ignore
   const { updateBookPositionAction, openBookAction, currentBook } = useContext(
     LibraryStoreContext
   )
@@ -55,25 +53,21 @@ export default observer(function Reader() {
   }, [])
 
   return (
-    <>
-      <div className={`reader list-view ${wordsHighlight ? 'highlight' : ''}`}>
-        <div className={`text-info${showControls ? '' : ' hidden'}`}>
-          <div>
-            <Checkbox
-              label="highlight"
-              value={wordsHighlight}
-              onChange={toggleHightligting}
-            />
-          </div>
-          <div className="">{currenPositionPercent}%</div>
-          <div className="pages">
-            {numberOfcurrentPage} / {pagesCount}
-          </div>
-          <Link className="home" to="/">
-            <img src={HomeIcon} alt="" />
-          </Link>
+    <div className="reader">
+      <Header className={`${showControls ? '' : ' hidden'} p-fixed z-max`}>
+        <div>
+          <Checkbox
+            label="highlight"
+            value={wordsHighlight}
+            onChange={toggleHightligting}
+          />
         </div>
-
+        <div className="">{currenPositionPercent}%</div>
+        <div className="pages">
+          {numberOfcurrentPage} / {pagesCount}
+        </div>
+      </Header>
+      <div className={`list-view ${wordsHighlight ? 'highlight' : ''}`}>
         <div
           className="text-container"
           onClick={toggleMenuHandler}
@@ -82,7 +76,7 @@ export default observer(function Reader() {
         {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
         {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
       </div>
-    </>
+    </div>
   )
 
   function getElementsForHightlight() {
