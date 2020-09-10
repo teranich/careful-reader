@@ -1,27 +1,32 @@
 {
   "homepage": "https://teranich.github.io/careful-reader",
   "name": "careful-reader-app",
+  "lang": "lang",
+  "supportedLocales": [
+    "en",
+    "ru"
+  ],
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^10.4.9",
-    "@testing-library/user-event": "^12.1.3",
+    "@testing-library/react": "^11.0.2",
+    "@testing-library/user-event": "^12.1.4",
     "@types/gapi": "^0.0.39",
     "@types/gapi.auth2": "^0.0.52",
     "@types/gapi.client.drive": "^3.0.9",
-    "@types/jest": "26.0.10",
-    "@types/node": "14.6.2",
+    "@types/jest": "26.0.13",
+    "@types/node": "14.6.4",
     "@types/react": "16.9.49",
     "@types/react-dom": "16.9.8",
     "@types/react-router-dom": "^5.1.3",
     "fs-extra": "^9.0.1",
-    "idb": "^5.0.3",
+    "idb": "^5.0.5",
     "mobx": "^5.15.6",
     "mobx-react": "^6.3.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-intl": "^5.8.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.3",
     "typescript": "4.0.2"
@@ -31,6 +36,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "intl:extract": "formatjs extract './**/*.messages.ts' --out-file './src/translations/extracted/en.json' --format formatter.js",
+    "intl:manage": "node ./translationRunner.js",
     "deploy": "react-scripts build && gh-pages -d build"
   },
   "eslintConfig": {
@@ -49,13 +56,11 @@
     ]
   },
   "devDependencies": {
+    "@formatjs/cli": "^2.11.0",
     "@testing-library/jest-dom": "^5.1.1",
+    "babel-plugin-react-intl": "^8.2.1",
     "gh-pages": "^3.1.0",
+    "react-intl-translations-manager": "^5.0.3",
     "redux-devtools-extension": "^2.13.8"
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
   }
 }

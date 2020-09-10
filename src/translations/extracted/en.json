@@ -1,0 +1,14 @@
+[
+  {
+    "defaultMessage": "library",
+    "id": "feed.library"
+  },
+  {
+    "defaultMessage": "to read...",
+    "id": "feed.to-read"
+  },
+  {
+    "defaultMessage": "close...",
+    "id": "feed.close"
+  }
+]

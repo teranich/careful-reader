@@ -10,16 +10,20 @@ import RemoteLibraryStoreContext, {
 } from './store/RemoteLibraryStore'
 import { Feed } from './components/feed'
 import { Details } from './components/details'
+import { IntlProvider } from 'react-intl'
+import messages from './components/feed/feed.messages'
+import AppStoreContext, { AppStore } from './store/AppStore'
 
 const App = observer(function App() {
-  const store = useLocalStore(LibraryStore)
+  const libraryStore = useLocalStore(LibraryStore)
   const remoteStore = useLocalStore(RemoteLibraryStore)
+  const appStore = useLocalStore(AppStore)
   const basename =
     process.env.NODE_ENV === 'development' ? '/' : process.env.PUBLIC_URL
   const { isLoggedIn } = remoteStore
 
   useEffect(() => {
-    store.fetchBooksListAction()
+    libraryStore.fetchBooksListAction()
   }, [])
 
   const fetchBooks = async () => {
@@ -29,27 +33,32 @@ const App = observer(function App() {
     fetchBooks()
   }, [isLoggedIn])
 
+  console.log('messages', messages)
   return (
-    <LibraryStoreContext.Provider value={store}>
-      <RemoteLibraryStoreContext.Provider value={remoteStore}>
-        <Router basename={basename}>
-          <Switch>
-            <Route exact path="/">
-              <Feed />
-            </Route>
-            <Route exact path="/read/:bookId">
-              <Reader />
-            </Route>
-            <Route exact path="/details/:bookId">
-              <Details />
-            </Route>
-            <Route exact path="/shelves">
-              <Shelves />
-            </Route>
-          </Switch>
-        </Router>
-      </RemoteLibraryStoreContext.Provider>
-    </LibraryStoreContext.Provider>
+    <AppStoreContext.Provider value={appStore}>
+      <LibraryStoreContext.Provider value={libraryStore}>
+        <RemoteLibraryStoreContext.Provider value={remoteStore}>
+          <IntlProvider locale={appStore.locale} defaultLocale="en">
+            <Router basename={basename}>
+              <Switch>
+                <Route exact path="/">
+                  <Feed />
+                </Route>
+                <Route exact path="/read/:bookId">
+                  <Reader />
+                </Route>
+                <Route exact path="/details/:bookId">
+                  <Details />
+                </Route>
+                <Route exact path="/shelves">
+                  <Shelves />
+                </Route>
+              </Switch>
+            </Router>
+          </IntlProvider>
+        </RemoteLibraryStoreContext.Provider>
+      </LibraryStoreContext.Provider>
+    </AppStoreContext.Provider>
   )
 })
 

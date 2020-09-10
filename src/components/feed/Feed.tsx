@@ -7,8 +7,11 @@ import BookItem from '../common/BookItem'
 import BookShelfImage from './book-shelf.png'
 import './feed.scss'
 import { Header } from '../common'
+import { injectIntl, WrappedComponentProps } from 'react-intl'
 
-export default observer(function Feed() {
+type Feed = WrappedComponentProps
+
+function Feed({ intl }: Feed) {
   const { currentBook } = useContext(
     LibraryStoreContext
   )
@@ -20,11 +23,11 @@ export default observer(function Feed() {
       <div className="content">
         {meta.id &&
           <section className="current-book">
-            <span className="title">to read...</span>
+            <span className="title">{intl.formatMessage({ id: 'toRead' })}</span>
             <BookItem book={meta} to={`/read/${meta.id}`} />
           </section>}
         <section className="link-to-shelves">
-          <span className="title">Library</span>
+          <span className="title">{intl.formatMessage({ id: 'library' })}</span>
           <Link to="/shelves" >
             <img src={BookShelfImage} alt="shelve" />
           </Link>
@@ -32,4 +35,5 @@ export default observer(function Feed() {
       </div>
     </div>
   )
-})
+}
+export default observer(injectIntl(Feed))
