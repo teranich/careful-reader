@@ -1,23 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5af97c3108476645585bc441aa8d9c63",
+    "revision": "49dc67a96c531cbecd71d730b2331c67",
     "url": "/careful-reader/index.html"
   },
   {
-    "revision": "16ec9e680e7566a98995",
-    "url": "/careful-reader/static/css/main.85ca2ea1.chunk.css"
+    "revision": "402cdfd2c7e00a3eed93",
+    "url": "/careful-reader/static/css/2.764ccc25.chunk.css"
   },
   {
-    "revision": "7313f7ce14ea2f82e52c",
-    "url": "/careful-reader/static/js/2.f0fe0a2f.chunk.js"
+    "revision": "c4abb8c0a6a177916855",
+    "url": "/careful-reader/static/css/main.dd01d2ba.chunk.css"
+  },
+  {
+    "revision": "402cdfd2c7e00a3eed93",
+    "url": "/careful-reader/static/js/2.ed216998.chunk.js"
   },
   {
     "revision": "216e537bacc64f9dbaabd26649a9ab95",
-    "url": "/careful-reader/static/js/2.f0fe0a2f.chunk.js.LICENSE.txt"
+    "url": "/careful-reader/static/js/2.ed216998.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "16ec9e680e7566a98995",
-    "url": "/careful-reader/static/js/main.cdeed058.chunk.js"
+    "revision": "c4abb8c0a6a177916855",
+    "url": "/careful-reader/static/js/main.6d089b5b.chunk.js"
   },
   {
     "revision": "686cabb9b1f7cd6e4a7c",

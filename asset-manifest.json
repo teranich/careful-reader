@@ -1,17 +1,19 @@
 {
   "files": {
-    "main.css": "/careful-reader/static/css/main.85ca2ea1.chunk.css",
-    "main.js": "/careful-reader/static/js/main.cdeed058.chunk.js",
-    "main.js.map": "/careful-reader/static/js/main.cdeed058.chunk.js.map",
+    "main.css": "/careful-reader/static/css/main.dd01d2ba.chunk.css",
+    "main.js": "/careful-reader/static/js/main.6d089b5b.chunk.js",
+    "main.js.map": "/careful-reader/static/js/main.6d089b5b.chunk.js.map",
     "runtime-main.js": "/careful-reader/static/js/runtime-main.c16cb572.js",
     "runtime-main.js.map": "/careful-reader/static/js/runtime-main.c16cb572.js.map",
-    "static/js/2.f0fe0a2f.chunk.js": "/careful-reader/static/js/2.f0fe0a2f.chunk.js",
-    "static/js/2.f0fe0a2f.chunk.js.map": "/careful-reader/static/js/2.f0fe0a2f.chunk.js.map",
+    "static/css/2.764ccc25.chunk.css": "/careful-reader/static/css/2.764ccc25.chunk.css",
+    "static/js/2.ed216998.chunk.js": "/careful-reader/static/js/2.ed216998.chunk.js",
+    "static/js/2.ed216998.chunk.js.map": "/careful-reader/static/js/2.ed216998.chunk.js.map",
     "index.html": "/careful-reader/index.html",
-    "precache-manifest.074cd37c218244e7660b4f2d4167eced.js": "/careful-reader/precache-manifest.074cd37c218244e7660b4f2d4167eced.js",
+    "precache-manifest.4eb59a9f25f7dbf4f9e792a3deb27259.js": "/careful-reader/precache-manifest.4eb59a9f25f7dbf4f9e792a3deb27259.js",
     "service-worker.js": "/careful-reader/service-worker.js",
-    "static/css/main.85ca2ea1.chunk.css.map": "/careful-reader/static/css/main.85ca2ea1.chunk.css.map",
-    "static/js/2.f0fe0a2f.chunk.js.LICENSE.txt": "/careful-reader/static/js/2.f0fe0a2f.chunk.js.LICENSE.txt",
+    "static/css/2.764ccc25.chunk.css.map": "/careful-reader/static/css/2.764ccc25.chunk.css.map",
+    "static/css/main.dd01d2ba.chunk.css.map": "/careful-reader/static/css/main.dd01d2ba.chunk.css.map",
+    "static/js/2.ed216998.chunk.js.LICENSE.txt": "/careful-reader/static/js/2.ed216998.chunk.js.LICENSE.txt",
     "static/media/back.svg": "/careful-reader/static/media/back.c42ae1ad.svg",
     "static/media/book-shelf.png": "/careful-reader/static/media/book-shelf.60dcdcf8.png",
     "static/media/home.svg": "/careful-reader/static/media/home.3e06a93b.svg",
@@ -21,8 +23,9 @@
   },
   "entrypoints": [
     "static/js/runtime-main.c16cb572.js",
-    "static/js/2.f0fe0a2f.chunk.js",
-    "static/css/main.85ca2ea1.chunk.css",
-    "static/js/main.cdeed058.chunk.js"
+    "static/css/2.764ccc25.chunk.css",
+    "static/js/2.ed216998.chunk.js",
+    "static/css/main.dd01d2ba.chunk.css",
+    "static/js/main.6d089b5b.chunk.js"
   ]
 }
