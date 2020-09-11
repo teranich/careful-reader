@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import { RemoteBook, Book } from '../../types'
 import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 import LibraryStoreContext from '../../store/LibraryStore'
-import { Loading } from '../common'
+import { Loading } from '../loading'
 
 const RemoteBooksList = observer(() => {
   const {
@@ -38,19 +38,15 @@ const RemoteBooksList = observer(() => {
   return (
     <>
       <div className={`collection ${!isLoggedIn ? 'hidden' : ''}`}>
-        <div>
-          {isBooksLoading && <Loading />}
-
-          {!isBooksLoading &&
-            books.map((book: RemoteBook, index: number) => (
-              <div key={book.id}>
-                <div>{book.id}: {book.name}</div>
-                <button onClick={() => removeBtnHandler(book)}>del</button>
-                <button onClick={() => collectBtnHandler(book)}>collect</button>
-              </div>
-            ))
-          }
-        </div>
+        <Loading loading={isBooksLoading}>
+          {books.map((book: RemoteBook, index: number) => (
+            <div key={book.id}>
+              <div>{book.id}: {book.name}</div>
+              <button onClick={() => removeBtnHandler(book)}>del</button>
+              <button onClick={() => collectBtnHandler(book)}>collect</button>
+            </div>
+          ))}
+        </Loading>
       </div>
     </>
   )

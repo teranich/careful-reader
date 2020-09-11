@@ -7,6 +7,7 @@ import { Checkbox, Header } from '../common'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
 import useEventListener from '@use-it/event-listener'
+import { Loading } from '../loading'
 
 interface QueryParams {
   bookId: string
@@ -26,6 +27,7 @@ export default observer(function Reader() {
   const [showControls, setShowControls] = useState(false)
   const textContainerRef = useRef<HTMLDivElement | null>(null)
   const elementsForHightlightRef = useRef([])
+  const [loading, setLoading] = useState(false)
 
   const queryParams = useParams<QueryParams>()
   const bookId = parseInt(queryParams.bookId)
@@ -35,11 +37,13 @@ export default observer(function Reader() {
   useEffect(() => {
     const { current } = textContainerRef
     const openBook = async () => {
+      setLoading(true)
       await openBookAction(bookId)
       current!.innerHTML = currentBook.text
       elementsForHightlightRef.current = getElementsForHightlight()
       setPagesCount(getPagesCount())
       restoreScrollPoition()
+      setLoading(false)
     }
 
     openBook()
@@ -81,16 +85,18 @@ export default observer(function Reader() {
           {numberOfcurrentPage} / {pagesCount}
         </div>
       </Header>
-      <div className={`list-view ${wordsHighlight ? 'highlight' : ''}`}>
-        <div
-          className="text-container"
-          onClick={toggleMenuHandler}
-          style={motionStyle}
-          ref={textContainerRef}
-        ></div>
-        {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
-        {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
-      </div>
+      <Loading loading={loading}>
+        <div className={`list-view ${wordsHighlight ? 'highlight' : ''}`}>
+          <div
+            className="text-container"
+            onClick={toggleMenuHandler}
+            style={motionStyle}
+            ref={textContainerRef}
+          ></div>
+          {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
+          {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
+        </div>
+      </Loading>
     </div>
   )
 

@@ -29,6 +29,9 @@
     overflow-y: scroll;
   }
   .collection {
+    width: 100%;
+    min-height: 100px;
+    position: relative;
     overflow: auto;
     padding: 10px 0;
     display: flex;

@@ -4,23 +4,28 @@ import { Book } from '../../types'
 import { BooksListPlaceholder } from './common'
 import LibraryStoreContext from '../../store/LibraryStore'
 import BookItem from '../common/BookItem'
+import { Loading } from '../loading'
 
 const LocalBooksList = observer(() => {
   const {
-    books
+    books,
+    isAddingBookInProcess
   } = useContext(LibraryStoreContext)
 
   return (
     <>
       {books.length ? (
         <div className="collection">
-          {books.map((book: Book, index: number) => (
-            <BookItem
-              book={book}
-              key={book.id}
-              to={`/details/${book.id}`}>
-            </BookItem>
-          ))}
+          <Loading loading={isAddingBookInProcess}>
+            {books.map((book: Book, index: number) => (
+              <BookItem
+                book={book}
+                key={book.id}
+                to={`/details/${book.id}`}>
+              </BookItem>
+            ))}
+          </Loading>
+
         </div>
       ) : (
           <BooksListPlaceholder />

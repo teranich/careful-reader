@@ -21,8 +21,10 @@ export const LibraryStore = () => {
       name: file.name,
       cover,
     }
+    store.isAddingBookInProcess = true
     const book = await libraryDB.addBook(newBook, documentBody)
     store.books.push(book)
+    store.isAddingBookInProcess = false
   })
 
   const syncBookAction = action(async (meta: Book, body: string) => {
@@ -75,6 +77,7 @@ export const LibraryStore = () => {
       meta: {} as Book | undefined,
       text: '' as string | undefined,
     },
+    isAddingBookInProcess: false,
     fetchBooksListAction,
     fetchBookTextAction,
     addBookAction,
