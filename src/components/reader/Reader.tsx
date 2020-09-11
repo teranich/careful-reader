@@ -6,6 +6,7 @@ import { hightLightElementsOnScreen } from '../../uitls/styler'
 import { Checkbox, Header } from '../common'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
+import useEventListener from '@use-it/event-listener'
 
 interface QueryParams {
   bookId: string
@@ -21,6 +22,7 @@ export default observer(function Reader() {
   const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0')
   const [pagesCount, setPagesCount] = useState(0)
   const [wordsHighlight, setWordsHighlight] = useState(true)
+  const [dynamicTextOrientation, setDynamicTextOrientation] = useState(false)
   const [showControls, setShowControls] = useState(false)
   const textContainerRef = useRef<HTMLDivElement | null>(null)
   const elementsForHightlightRef = useRef([])
@@ -28,13 +30,7 @@ export default observer(function Reader() {
   const queryParams = useParams<QueryParams>()
   const bookId = parseInt(queryParams.bookId)
 
-  const handlePageChange = (direction: string) => () => {
-    const { current } = textContainerRef
-    if (current) {
-      const sign = direction === 'next' ? 1 : -1
-      current.scrollTop += sign * current.clientHeight
-    }
-  }
+  const [motionStyle, setMotionStyle] = useState({})
 
   useEffect(() => {
     const { current } = textContainerRef
@@ -45,6 +41,7 @@ export default observer(function Reader() {
       setPagesCount(getPagesCount())
       restoreScrollPoition()
     }
+
     openBook()
     current!.addEventListener('scroll', handleScroll)
     return () => {
@@ -52,6 +49,18 @@ export default observer(function Reader() {
     }
   }, [])
 
+  useEventListener('deviceorientation', ({ gamma }: DeviceOrientationEvent) => {
+    if (!dynamicTextOrientation) {
+      setMotionStyle({ transform: '' });
+      return;
+    }
+    if (gamma) {
+      const style = {
+        transform: `rotateZ(${- gamma}deg)`,
+      };
+      setMotionStyle(style);
+    }
+  })
   return (
     <div className="reader">
       <Header className={`${showControls ? '' : ' hidden'} p-fixed z-max`}>
@@ -60,6 +69,11 @@ export default observer(function Reader() {
             label="highlight"
             value={wordsHighlight}
             onChange={toggleHightligting}
+          />
+          <Checkbox
+            label="dto"
+            value={dynamicTextOrientation}
+            onChange={toggleDynamicTextOrientation}
           />
         </div>
         <div className="">{currenPositionPercent}%</div>
@@ -71,6 +85,7 @@ export default observer(function Reader() {
         <div
           className="text-container"
           onClick={toggleMenuHandler}
+          style={motionStyle}
           ref={textContainerRef}
         ></div>
         {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
@@ -140,4 +155,10 @@ export default observer(function Reader() {
   function toggleMenuHandler() {
     setShowControls(!showControls)
   }
+
+  function toggleDynamicTextOrientation() {
+    setDynamicTextOrientation(!dynamicTextOrientation)
+  }
+
+
 })
