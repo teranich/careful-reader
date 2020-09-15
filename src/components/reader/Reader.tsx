@@ -8,6 +8,7 @@ import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
 import useEventListener from '@use-it/event-listener'
 import { Loading } from '../loading'
+import { useDebounce } from 'use-debounce';
 
 interface QueryParams {
   bookId: string
@@ -52,8 +53,8 @@ export default observer(function Reader() {
       return current!.removeEventListener('scroll', handleScroll)
     }
   }, [])
-
-  useEventListener('deviceorientation', ({ gamma }: DeviceOrientationEvent) => {
+  const [dtoStyle] = useDebounce(motionStyle, 5);
+  const deviceOrientationHandler = ({ gamma }: DeviceOrientationEvent) => {
     if (!dynamicTextOrientation) {
       setMotionStyle({ transform: '' });
       return;
@@ -64,7 +65,8 @@ export default observer(function Reader() {
       };
       setMotionStyle(style);
     }
-  })
+  }
+  useEventListener('deviceorientation', deviceOrientationHandler)
   return (
     <div className="reader">
       <Header className={`${showControls ? '' : ' hidden'} p-fixed z-max`}>
@@ -90,7 +92,7 @@ export default observer(function Reader() {
           <div
             className="text-container"
             onClick={toggleMenuHandler}
-            style={motionStyle}
+            style={dtoStyle}
             ref={textContainerRef}
           ></div>
           {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
