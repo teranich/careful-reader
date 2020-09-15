@@ -12,7 +12,6 @@ type CurrentBook = {
 export const LibraryStore = () => {
   const fetchBooksListAction = action(async () => {
     store.books = await libraryDB.getAllMeta()
-    console.log('books', store.books)
   })
 
   const addBookAction = action(async (rawBookText: string, file: File) => {

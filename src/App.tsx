@@ -33,7 +33,6 @@ const App = observer(function App() {
     fetchBooks()
   }, [isLoggedIn])
 
-  console.log('messages', messages)
   return (
     <AppStoreContext.Provider value={appStore}>
       <LibraryStoreContext.Provider value={libraryStore}>

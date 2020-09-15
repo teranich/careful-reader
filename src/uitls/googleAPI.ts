@@ -150,7 +150,7 @@ export default class GAPI {
       return gapiFn(options).then(
         (resp: any) => {
           if (resp && (resp.status < 200 || resp.status > 299)) {
-            console.log('GAPI call returned bad status', resp)
+            console.error('GAPI call returned bad status', resp)
             reject(resp)
           } else {
             resolve(resp)

@@ -10,7 +10,6 @@ export const RemoteLibraryStore = () => {
     store.isBooksLoading = true
     store.books = await gapi.list(`fileExtension="json"`)
     store.isBooksLoading = false
-    console.log('cloud books', store.books)
   })
 
   const signInAction = action(async () => {

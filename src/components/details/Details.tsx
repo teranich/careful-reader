@@ -34,7 +34,6 @@ const Details = () => {
   const uploadHandler = async (book: Book) => {
     const text = await fetchBookTextAction(book.id)
     const file = await uploadBookAction(book, text)
-    console.log('after download', book)
     await updateBookAction(book.id, { ...book })
   }
 

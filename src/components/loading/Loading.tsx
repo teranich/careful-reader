@@ -6,7 +6,6 @@ interface Loading {
   children: ReactNode
 }
 export default function Loading({ loading, children }: Loading) {
-  console.log('chi', children)
   return (
     <>
       <div className={loading ? 'loading' : 'hidden'}>
