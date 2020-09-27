@@ -1,7 +1,7 @@
 import React from 'react'
 import './Header.scss'
 import { observer } from 'mobx-react'
-import { BackButton, HomeButton, AuthButtons } from '../controls'
+import { BackButton, HomeButton, AuthButtons, SettingsButton } from '../controls'
 
 export default observer(function Header({ children, className = '' }: any) {
 
@@ -10,6 +10,7 @@ export default observer(function Header({ children, className = '' }: any) {
       <div className="left-content">
         <BackButton />
         <HomeButton />
+        <SettingsButton />
       </div>
       <div className="children">{children} </div>
       <div className="right-content">
