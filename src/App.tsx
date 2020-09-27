@@ -13,6 +13,7 @@ import { Details } from './pages/details'
 import { IntlProvider } from 'react-intl'
 import messages from './pages/feed/feed.messages'
 import AppStoreContext, { AppStore } from './store/AppStore'
+import { Settings } from './pages/settings'
 
 const App = observer(function App() {
   const libraryStore = useLocalStore(LibraryStore)
@@ -21,6 +22,7 @@ const App = observer(function App() {
   const basename =
     process.env.NODE_ENV === 'development' ? '/' : process.env.PUBLIC_URL
   const { isLoggedIn } = remoteStore
+  const messages = appStore.getLocaleMessages()
 
   useEffect(() => {
     libraryStore.fetchBooksListAction()
@@ -37,7 +39,7 @@ const App = observer(function App() {
     <AppStoreContext.Provider value={appStore}>
       <LibraryStoreContext.Provider value={libraryStore}>
         <RemoteLibraryStoreContext.Provider value={remoteStore}>
-          <IntlProvider locale={appStore.locale} defaultLocale="en">
+          <IntlProvider locale={appStore.locale} defaultLocale={appStore.defaultLocale} messages={messages}>
             <Router basename={basename}>
               <Switch>
                 <Route exact path="/">
@@ -52,12 +54,15 @@ const App = observer(function App() {
                 <Route exact path="/shelves">
                   <Shelves />
                 </Route>
+                <Route exact path="/settings">
+                  <Settings />
+                </Route>
               </Switch>
             </Router>
           </IntlProvider>
         </RemoteLibraryStoreContext.Provider>
       </LibraryStoreContext.Provider>
-    </AppStoreContext.Provider>
+    </AppStoreContext.Provider >
   )
 })
 

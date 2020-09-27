@@ -1,5 +1,6 @@
 {
   "feed.close": "close...",
   "feed.library": "Библиотека",
-  "feed.to-read": "Продолжить чтение..."
+  "feed.to-read": "Продолжить чтение...",
+  "settings.language": "локаль"
 }
