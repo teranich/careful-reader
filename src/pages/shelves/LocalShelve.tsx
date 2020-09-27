@@ -3,8 +3,8 @@ import { observer } from 'mobx-react'
 import { Book } from '../../types'
 import { BooksListPlaceholder } from './common'
 import LibraryStoreContext from '../../store/LibraryStore'
-import BookItem from '../common/BookItem'
-import { Loading } from '../loading'
+import BookItem from '../../components/common/BookItem'
+import { Loading } from '../../components/loading'
 
 const LocalBooksList = observer(() => {
   const {

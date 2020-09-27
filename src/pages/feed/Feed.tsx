@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
 import { Book } from '../../types'
-import BookItem from '../common/BookItem'
+import BookItem from '../../components/common/BookItem'
 import BookShelfImage from './book-shelf.png'
 import './feed.scss'
-import { Header } from '../common'
+import { Header } from '../../components/common'
 import { injectIntl, WrappedComponentProps } from 'react-intl'
 
 type Feed = WrappedComponentProps

@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react'
 import './App.scss'
-import Shelves from './components/shelves'
-import Reader from './components/reader'
+import Shelves from './pages/shelves'
+import Reader from './pages/reader'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { observer, useLocalStore } from 'mobx-react'
 import LibraryStoreContext, { LibraryStore } from './store/LibraryStore'
 import RemoteLibraryStoreContext, {
   RemoteLibraryStore,
 } from './store/RemoteLibraryStore'
-import { Feed } from './components/feed'
-import { Details } from './components/details'
+import { Feed } from './pages/feed'
+import { Details } from './pages/details'
 import { IntlProvider } from 'react-intl'
-import messages from './components/feed/feed.messages'
+import messages from './pages/feed/feed.messages'
 import AppStoreContext, { AppStore } from './store/AppStore'
 
 const App = observer(function App() {
