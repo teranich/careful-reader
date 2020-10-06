@@ -3,7 +3,7 @@ import { useLocation, useHistory, Link } from "react-router-dom";
 import BackIcon from './back.svg'
 import HomeIcon from './home.svg'
 import SettingsIcon from './settings.svg'
-import './Buttons.scss'
+// import './Buttons.scss'
 
 export function BackButton() {
   const location = useLocation();

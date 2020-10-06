@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { Book } from '../../types'
 import BookItem from '../../components/common/BookItem'
 import BookShelfImage from './book-shelf.png'
-import './feed.scss'
+// import './feed.scss'
 import { Header } from '../../components/common'
 import { useIntl } from 'react-intl'
 

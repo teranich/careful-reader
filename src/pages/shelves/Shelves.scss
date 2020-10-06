@@ -1,54 +1,5 @@
-@import '../../constants';
-
-.book-shelf {
-  height: $content-height;
-
-  #btn-add-book {
-    display: none;
-  }
-
-  .add-button-fixed {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    display: inline-flex;
-  }
-
-  .add-book-lable {
-    cursor: pointer;
-    margin: 10px;
-    img {
-      height: 2rem;
-    }
-    .add-book-text {
-      padding: 0 0.8rem;
-    }
-  }
-  .container {
-    height: inherit;
-    overflow-y: scroll;
-  }
-  .collection {
-    width: 100%;
-    min-height: 100px;
-    position: relative;
-    overflow: auto;
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-evenly;
-    font-size: 1.6vmax;
-    flex-wrap: wrap;
-  }
-
-  .book-list-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    text-align: center;
-  }
-  .add-btn-placeholder {
-    margin-top: 10px;
-  }
+.swipeableViews {
+  position: absolute;
+  padding-top: 72px;
+  height: 100vh;
 }

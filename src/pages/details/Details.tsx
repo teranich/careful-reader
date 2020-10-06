@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { Book } from '../../types'
 import BookItem from '../../components/common/BookItem'
-import './Details.scss'
+// import './Details.scss'
 import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 
 interface QueryParams {
