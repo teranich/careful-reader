@@ -24,7 +24,7 @@ export default observer(function Feed() {
         {meta.id &&
           <section className="current-book">
             <span className="title">{intl.formatMessage({ id: 'feed.to-read' })}</span>
-            <BookItem book={meta} to={`/read/${meta.id}`} />
+            <BookItem book={meta} />
           </section>}
         <section className="link-to-shelves">
           <span className="title">{intl.formatMessage({ id: 'feed.library' })}</span>

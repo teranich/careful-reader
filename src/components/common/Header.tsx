@@ -75,7 +75,7 @@ export default observer(function Header({ children, className = '' }: any) {
   );
   return (
     <>
-      <AppBar>
+      <AppBar position="fixed">
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <React.Fragment>
@@ -92,6 +92,7 @@ export default observer(function Header({ children, className = '' }: any) {
           <AuthButtons />
         </Toolbar>
       </AppBar>
+
     </>
   )
 })

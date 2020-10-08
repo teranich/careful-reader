@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { observer } from 'mobx-react'
 import { Book } from '../../types'
 import { Link } from 'react-router-dom'
@@ -7,13 +7,13 @@ import Paper from '@material-ui/core/Paper';
 
 interface BookItemProps {
   book: Book
-  to: string
+  onClick?: (book: Book) => void
   children?: any
 }
-const BookItem = observer(({ book, children, to, ...rest }: BookItemProps) => (
-  <Paper className="book-item" elevation={3} >
-    { children}
-    < Link to={to} className="book-item" {...rest} >
+const BookItem = observer(({ book, children, onClick, ...rest }: BookItemProps) => {
+  return (
+    <Paper className="book-item" elevation={3} onClick={() => onClick && onClick(book)}>
+      { children}
       {
         book.cover ? (
           <>
@@ -23,8 +23,8 @@ const BookItem = observer(({ book, children, to, ...rest }: BookItemProps) => (
             <div className="name">{book.name}</div>
           )
       }
-    </Link >
-  </Paper >
-))
+    </Paper >
+  )
+})
 
 export default BookItem

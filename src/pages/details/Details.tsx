@@ -56,7 +56,7 @@ const Details = () => {
       {book &&
         <section className="content">
           <div>{book.name}</div>
-          <BookItem book={book} to={`/read/${book.id}`} />
+          <BookItem book={book} />
           <div className="info">
             <div className="controls">
               <button onClick={() => syncHandler(book)}>sync </button>

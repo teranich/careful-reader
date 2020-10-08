@@ -11,7 +11,6 @@ import RemoteLibraryStoreContext, {
 import { Feed } from './pages/feed'
 import { Details } from './pages/details'
 import { IntlProvider } from 'react-intl'
-import messages from './pages/feed/feed.messages'
 import AppStoreContext, { AppStore } from './store/AppStore'
 import { Settings } from './pages/settings'
 

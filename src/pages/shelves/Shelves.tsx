@@ -75,13 +75,8 @@ export default observer(function Shelves() {
 
       </Header>
       <SwipeableViews index={value} onChangeIndex={handleChangeIndex} className="swipeableViews">
-        <div>
-          <LocalBooksList />
-        </div>
-        <div  >
-          {/* <RemoteBooksList /> */}
-          remote
-        </div>
+        <LocalBooksList />
+        <RemoteBooksList />
         <div>
           favorite
         </div>
