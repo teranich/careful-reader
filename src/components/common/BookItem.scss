@@ -1,14 +1,12 @@
 .book-item {
-  width: 15vmin;
-  height: 25vmin;
+  width: 115px;
+  height: 185px;
   position: relative;
-  border: 1px solid grey;
   display: flex;
   align-items: center;
   justify-content: center;
   word-break: break-all;
-  margin-bottom: 10px;
-  padding: 10px;
+  padding: 2px;
 
   img {
     display: block;

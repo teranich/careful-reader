@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Header } from '../common'
+import { Header } from '../../components/common'
 import { observer } from 'mobx-react'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { Book } from '../../types'
-import BookItem from '../common/BookItem'
-import './Details.scss'
+import BookItem from '../../components/common/BookItem'
+// import './Details.scss'
 import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 
 interface QueryParams {
@@ -56,7 +56,7 @@ const Details = () => {
       {book &&
         <section className="content">
           <div>{book.name}</div>
-          <BookItem book={book} to={`/read/${book.id}`} />
+          <BookItem book={book} />
           <div className="info">
             <div className="controls">
               <button onClick={() => syncHandler(book)}>sync </button>

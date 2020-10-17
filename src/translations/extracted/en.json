@@ -10,5 +10,9 @@
   {
     "defaultMessage": "close...",
     "id": "feed.close"
+  },
+  {
+    "defaultMessage": "language",
+    "id": "settings.language"
   }
 ]

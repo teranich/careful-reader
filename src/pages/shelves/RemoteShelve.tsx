@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 import { RemoteBook, Book } from '../../types'
 import RemoteLibraryStoreContext from '../../store/RemoteLibraryStore'
 import LibraryStoreContext from '../../store/LibraryStore'
-import { Loading } from '../loading'
+import { Loading } from '../../components/loading'
 
 const RemoteBooksList = observer(() => {
   const {

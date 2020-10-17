@@ -3,11 +3,11 @@ import './Reader.scss'
 import { useParams } from 'react-router-dom'
 import { debounce } from '../../uitls/common'
 import { hightLightElementsOnScreen } from '../../uitls/styler'
-import { Checkbox, Header } from '../common'
+import { Checkbox, Header } from '../../components/common'
 import LibraryStoreContext from '../../store/LibraryStore'
 import { observer } from 'mobx-react'
 import useEventListener from '@use-it/event-listener'
-import { Loading } from '../loading'
+import { Loading } from '../../components/loading'
 import { useDebounce } from 'use-debounce';
 
 interface QueryParams {

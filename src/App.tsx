@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react'
 import './App.scss'
-import Shelves from './components/shelves'
-import Reader from './components/reader'
+import Shelves from './pages/shelves'
+import Reader from './pages/reader'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { observer, useLocalStore } from 'mobx-react'
 import LibraryStoreContext, { LibraryStore } from './store/LibraryStore'
 import RemoteLibraryStoreContext, {
   RemoteLibraryStore,
 } from './store/RemoteLibraryStore'
-import { Feed } from './components/feed'
-import { Details } from './components/details'
+import { Feed } from './pages/feed'
+import { Details } from './pages/details'
 import { IntlProvider } from 'react-intl'
-import messages from './components/feed/feed.messages'
 import AppStoreContext, { AppStore } from './store/AppStore'
+import { Settings } from './pages/settings'
 
 const App = observer(function App() {
   const libraryStore = useLocalStore(LibraryStore)
@@ -21,6 +21,7 @@ const App = observer(function App() {
   const basename =
     process.env.NODE_ENV === 'development' ? '/' : process.env.PUBLIC_URL
   const { isLoggedIn } = remoteStore
+  const messages = appStore.getLocaleMessages()
 
   useEffect(() => {
     libraryStore.fetchBooksListAction()
@@ -37,7 +38,7 @@ const App = observer(function App() {
     <AppStoreContext.Provider value={appStore}>
       <LibraryStoreContext.Provider value={libraryStore}>
         <RemoteLibraryStoreContext.Provider value={remoteStore}>
-          <IntlProvider locale={appStore.locale} defaultLocale="en">
+          <IntlProvider locale={appStore.locale} defaultLocale={appStore.defaultLocale} messages={messages}>
             <Router basename={basename}>
               <Switch>
                 <Route exact path="/">
@@ -52,12 +53,15 @@ const App = observer(function App() {
                 <Route exact path="/shelves">
                   <Shelves />
                 </Route>
+                <Route exact path="/settings">
+                  <Settings />
+                </Route>
               </Switch>
             </Router>
           </IntlProvider>
         </RemoteLibraryStoreContext.Provider>
       </LibraryStoreContext.Provider>
-    </AppStoreContext.Provider>
+    </AppStoreContext.Provider >
   )
 })
 

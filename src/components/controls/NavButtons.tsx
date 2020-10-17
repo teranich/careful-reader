@@ -2,7 +2,8 @@ import React from 'react';
 import { useLocation, useHistory, Link } from "react-router-dom";
 import BackIcon from './back.svg'
 import HomeIcon from './home.svg'
-import './Buttons.scss'
+import SettingsIcon from './settings.svg'
+// import './Buttons.scss'
 
 export function BackButton() {
   const location = useLocation();
@@ -32,6 +33,16 @@ export function HomeButton() {
           <img src={HomeIcon} alt="" />
         </Link>
       )}
+    </>
+  );
+}
+
+export function SettingsButton() {
+  return (
+    <>
+      <Link className="home-button" to="/settings">
+        <img src={SettingsIcon} alt="" />
+      </Link>
     </>
   );
 }
