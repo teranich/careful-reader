@@ -1,13 +1,8 @@
 import React from 'react'
 import { observable, action } from 'mobx'
-import libraryDB from '../uitls/clientDB' // getBookText, // updateBook, // storeBook, // getBookList,
+import libraryDB from '../uitls/clientDB'
 import { BookList, Book } from '../types'
-import { convertFB2ToHtml } from '../uitls/converter'
-
-type CurrentBook = {
-  meta: Book | null
-  text: string
-} | null
+import { convertFB2ToInnerBookFormat } from '../uitls/converter'
 
 export const LibraryStore = () => {
   const fetchBooksListAction = action(async () => {
@@ -15,7 +10,7 @@ export const LibraryStore = () => {
   })
 
   const addBookAction = action(async (rawBookText: string, file: File) => {
-    const { documentBody, cover } = convertFB2ToHtml(rawBookText)
+    const { documentBody, cover } = convertFB2ToInnerBookFormat(rawBookText)
     const newBook = {
       name: file.name,
       cover,
