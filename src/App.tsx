@@ -41,8 +41,11 @@ const App = observer(function App() {
           <IntlProvider locale={appStore.locale} defaultLocale={appStore.defaultLocale} messages={messages}>
             <Router basename={basename}>
               <Switch>
-                <Route exact path="/">
+                {/* <Route exact path="/">
                   <Feed />
+                </Route> */}
+                <Route exact path="/">
+                  <Shelves />
                 </Route>
                 <Route exact path="/read/:bookId">
                   <Reader />
@@ -50,9 +53,7 @@ const App = observer(function App() {
                 <Route exact path="/details/:bookId">
                   <Details />
                 </Route>
-                <Route exact path="/shelves">
-                  <Shelves />
-                </Route>
+
                 <Route exact path="/settings">
                   <Settings />
                 </Route>
@@ -61,7 +62,7 @@ const App = observer(function App() {
           </IntlProvider>
         </RemoteLibraryStoreContext.Provider>
       </LibraryStoreContext.Provider>
-    </AppStoreContext.Provider >
+    </AppStoreContext.Provider>
   )
 })
 
