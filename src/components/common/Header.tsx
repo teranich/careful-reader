@@ -59,7 +59,7 @@ export default observer(function Header({ children, className = '' }: any) {
       onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {currentBook && (
+        {currentBook?.meta?.meta && (
           <Link to={`/read/${currentBook.meta.id}`}>
             <ListItem button>
               <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
