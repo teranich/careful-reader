@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { observer } from 'mobx-react'
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,6 +17,7 @@ import { Link, useLocation } from 'react-router-dom';
 import TuneIcon from '@material-ui/icons/Tune';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import { AuthButtons } from '../controls';
+import LibraryStoreContext from '../../store/LibraryStore'
 
 const useStyles = makeStyles({
   list: {
@@ -40,6 +41,9 @@ export default observer(function Header({ children, className = '' }: any) {
   }
   const pathname: string = location.pathname || ''
   const title = pathTitleMap[pathname]
+  const { currentBook } = useContext(
+    LibraryStoreContext
+  )
 
   const toggleDrawer = (state: boolean) => (event: any) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -47,7 +51,6 @@ export default observer(function Header({ children, className = '' }: any) {
     }
     setIsOpen(state)
   };
-
   const list = () => (
     <div
       className={classes.list}
@@ -56,18 +59,21 @@ export default observer(function Header({ children, className = '' }: any) {
       onKeyDown={toggleDrawer(false)}
     >
       <List>
+        {currentBook && (
+          <Link to={`/read/${currentBook.meta.id}`}>
+            <ListItem button>
+              <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
+              <ListItemText primary={currentBook.meta.meta.title} />
+            </ListItem>
+          </Link>
+        )}
         <Link to="/">
           <ListItem button>
             <ListItemIcon><DashboardIcon /></ListItemIcon>
-            <ListItemText primary="Feed" />
+            <ListItemText primary="Home" />
           </ListItem>
         </Link>
-        <Link to="/shelves">
-          <ListItem button>
-            <ListItemIcon><LibraryBooksIcon /></ListItemIcon>
-            <ListItemText primary="Library" />
-          </ListItem>
-        </Link>
+
         <Link to="/settings">
           <ListItem button>
             <ListItemIcon><TuneIcon /></ListItemIcon>
@@ -76,7 +82,7 @@ export default observer(function Header({ children, className = '' }: any) {
         </Link>
       </List>
       <Divider />
-    </div>
+    </div >
   );
   return (
     <>

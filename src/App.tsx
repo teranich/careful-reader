@@ -53,7 +53,6 @@ const App = observer(function App() {
                 <Route exact path="/details/:bookId">
                   <Details />
                 </Route>
-
                 <Route exact path="/settings">
                   <Settings />
                 </Route>
