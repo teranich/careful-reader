@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     position: 'absolute',
     right: 0,
-    bottom: theme.spacing(2),
+    bottom: theme.spacing(8),
   },
   fab: {
     right: theme.spacing(2),
