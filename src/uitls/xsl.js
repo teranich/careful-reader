@@ -1,3 +1,32 @@
+const FB2_COVER_IMAGE_XSL = `<?xml version="1.0"?>
+<xsl:stylesheet
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:fb="http://www.gribuser.ru/xml/fictionbook/2.0">
+    <xsl:output method="text" omit-xml-declaration="yes" indent="no" encoding="UTF-8"/>
+    <xsl:template match="/*">
+    <xsl:for-each select="fb:description/fb:title-info/fb:coverpage/fb:image">
+        <xsl:call-template name="image"/>
+    </xsl:for-each>
+    </xsl:template>
+    <xsl:template match="fb:image" name="image">
+        <xsl:choose>
+            <xsl:when test="starts-with(@xlink:href,'#')">
+                <xsl:text>data:</xsl:text>
+                <xsl:variable name="href" select="substring-after(@xlink:href,'#')"/>
+                <xsl:value-of select="//fb:binary[@id=$href]/@content-type" disable-output-escaping="yes"/><xsl:text>;base64,</xsl:text>
+                <xsl:value-of select="//fb:binary[@id=$href]" disable-output-escaping="yes"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="src">
+                    <xsl:value-of select="@xlink:href"/>
+                </xsl:attribute>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>`
+
 const FB2XSL = `<?xml version="1.0"?>
 <xsl:stylesheet
         version="3.0"
@@ -455,4 +484,4 @@ const FB2META = `<?xml version="1.0"?>
 </xsl:for-each>}</xsl:template>
 </xsl:stylesheet>`
 
-export { FB2XSL, FB2META }
+export { FB2XSL, FB2META, FB2_COVER_IMAGE_XSL }
