@@ -2,7 +2,7 @@ import React from 'react'
 import { observable, action } from 'mobx'
 import libraryDB from '../uitls/clientDB'
 import { BookList, Book } from '../types'
-import { convertFB2ToInnerBookFormat } from '../uitls/converter'
+import * as converter from '../uitls/converter'
 
 export const LibraryStore = () => {
   const fetchBooksListAction = action(async () => {
@@ -10,13 +10,15 @@ export const LibraryStore = () => {
   })
 
   const addBookAction = action(async (rawBookText: string, file: File) => {
-    const { documentBody, cover } = convertFB2ToInnerBookFormat(rawBookText)
+    const { cover, meta } = converter.getBookPreviewInfo(rawBookText)
     const newBook = {
       name: file.name,
+      meta,
       cover,
     }
+
     store.isAddingBookInProcess = true
-    const book = await libraryDB.addBook(newBook, documentBody)
+    const book = await libraryDB.addBook(newBook, rawBookText)
     store.books.push(book)
     store.isAddingBookInProcess = false
   })
@@ -56,7 +58,8 @@ export const LibraryStore = () => {
       libraryDB.getBookText(bookId),
     ]).then((prom) => {
       store.currentBook.meta = prom[0]
-      store.currentBook.text = prom[1]
+      const text = prom[1] || ''
+      store.currentBook.text = converter.parseToInnerBook(text)
     })
   })
 

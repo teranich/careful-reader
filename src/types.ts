@@ -1,5 +1,6 @@
 export interface Book {
   id: number
+  meta?: any
   metaFileId?: string
   textFileId?: string
   name: string

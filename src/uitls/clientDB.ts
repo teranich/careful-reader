@@ -44,6 +44,7 @@ const libraryDB = {
     const tx = await txPromise()
     const id = await tx.objectStore(DB_STORE_NAME).add(body)
     const book: Book = { ...meta, id, timestamp }
+
     await tx.objectStore(DB_INDEX_NAME).add(book)
     await tx.done
     return book

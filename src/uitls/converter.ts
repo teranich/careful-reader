@@ -1,4 +1,4 @@
-import { FB2XSL, FB2META } from './xsl'
+import { FB2_XSL, FB2_META, FB2_COVER_IMAGE_XSL } from './xsl'
 
 function convertWithXSL(text: string, xsl: string) {
   const parser = new DOMParser()
@@ -8,17 +8,16 @@ function convertWithXSL(text: string, xsl: string) {
   xsltProcessor.importStylesheet(parsedXsl)
   return xsltProcessor.transformToFragment(xml, document)
 }
-export function convertFB2ToInnerBookFormat(fb2Book: string) {
-  const meta = convertWithXSL(fb2Book, FB2META)
-  const body = convertWithXSL(fb2Book, FB2XSL)
 
-  if (meta.textContent) {
-    console.log('parsed', JSON.parse(meta.textContent))
-  }
-  const cover = body.querySelector('.text-cover img')?.getAttribute('src') || ''
-  return {
-    documentBody: body.children[0].innerHTML || '',
-    cover,
-    bookMetaInfo: meta.textContent ? JSON.parse(meta.textContent) : {},
-  }
+export function getBookPreviewInfo(fb2Book: string) {
+  const rawMeta = convertWithXSL(fb2Book, FB2_META)
+  const meta = rawMeta.textContent ? JSON.parse(rawMeta.textContent) : {}
+  const rawCover = convertWithXSL(fb2Book, FB2_COVER_IMAGE_XSL)
+  const cover = rawCover.textContent
+  return { meta, cover }
+}
+
+export function parseToInnerBook(fb2Book: string) {
+  const body = convertWithXSL(fb2Book, FB2_XSL)
+  return body.children[0].innerHTML || ''
 }

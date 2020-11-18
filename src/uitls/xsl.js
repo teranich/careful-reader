@@ -27,7 +27,7 @@ const FB2_COVER_IMAGE_XSL = `<?xml version="1.0"?>
     </xsl:template>
 </xsl:stylesheet>`
 
-const FB2XSL = `<?xml version="1.0"?>
+const FB2_XSL = `<?xml version="1.0"?>
 <xsl:stylesheet
         version="3.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -464,7 +464,7 @@ const FB2XSL = `<?xml version="1.0"?>
     </xsl:template>
 </xsl:stylesheet>`
 
-const FB2META = `<?xml version="1.0"?>
+const FB2_META = `<?xml version="1.0"?>
 <xsl:stylesheet
     version="3.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -484,4 +484,4 @@ const FB2META = `<?xml version="1.0"?>
 </xsl:for-each>}</xsl:template>
 </xsl:stylesheet>`
 
-export { FB2XSL, FB2META, FB2_COVER_IMAGE_XSL }
+export { FB2_XSL, FB2_META, FB2_COVER_IMAGE_XSL }
