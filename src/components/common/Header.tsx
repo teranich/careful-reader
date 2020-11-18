@@ -34,7 +34,12 @@ export default observer(function Header({ children, className = '' }: any) {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const title = location.pathname === '/' ? 'Feed' : 'Library'
+  const pathTitleMap: any = {
+    '/': 'Library',
+    '/settings': 'Settings'
+  }
+  const pathname: string = location.pathname || ''
+  const title = pathTitleMap[pathname]
 
   const toggleDrawer = (state: boolean) => (event: any) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
