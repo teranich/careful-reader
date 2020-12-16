@@ -1,4 +1,9 @@
 import { BookList } from '../types'
+import {
+  defaultEncoding,
+  getTextEncoding,
+  isDefaultEncoding,
+} from './converter'
 
 export async function getBooksList(): Promise<BookList> {
   return fetch('db.json').then((resp) => resp.json())
@@ -8,16 +13,29 @@ export async function getBook(filePath: string): Promise<string> {
   return fetch(filePath).then((resp) => resp.text())
 }
 
-export function readFileContent(file: File): Promise<string> {
+export async function readFile(
+  file: File,
+  encoding: string = defaultEncoding
+): Promise<string> {
   const reader = new FileReader()
-
   return new Promise((resolve, reject) => {
     reader.onload = (event) => {
-      return resolve(event?.target?.result + '')
+      const result = event?.target?.result
+      if (result && typeof result === 'string') {
+        return resolve(result)
+      }
+      return reject('')
     }
     reader.onerror = (error) => reject('error reading file')
-    reader.readAsText(file)
+
+    reader.readAsText(file, encoding)
   })
+}
+export async function readFileContent(file: File): Promise<string> {
+  const text = await readFile(file)
+  const encoding = getTextEncoding(text)
+  if (isDefaultEncoding(encoding)) return text
+  return await readFile(file, encoding)
 }
 
 export const debounce = <F extends (...args: any[]) => any>(
