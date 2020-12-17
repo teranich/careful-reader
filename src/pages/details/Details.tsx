@@ -18,7 +18,7 @@ const Details = () => {
   const {
     books,
     updateBookAction,
-    deleteBookAction,
+    removeBookAction,
     fetchBookTextAction,
   } = useContext(LibraryStoreContext)
   const { uploadBookAction, syncMetaAction } = useContext(
@@ -38,7 +38,7 @@ const Details = () => {
   }
 
   const deleteBookHandler = async (book: Book) => {
-    await deleteBookAction(book)
+    await removeBookAction(book)
   }
 
   const syncHandler = async (book: Book) => {

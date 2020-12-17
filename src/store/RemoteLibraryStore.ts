@@ -61,7 +61,7 @@ export const RemoteLibraryStore = () => {
     return { meta, text }
   })
 
-  const deleteBookAction = action(async (book: any) => {
+  const removeBookAction = action(async (book: any) => {
     const isSuccess = await gapi.deleteFile(book.id)
     if (isSuccess) {
       store.books = store.books.filter((inner) => inner.id !== book.id)
@@ -79,7 +79,7 @@ export const RemoteLibraryStore = () => {
     uploadBookAction,
     syncMetaAction,
     downloadBookAction,
-    deleteBookAction,
+    removeBookAction,
     fetchBooksListAction,
   })
 

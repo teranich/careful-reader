@@ -26,7 +26,7 @@ export async function readFile(
       }
       return reject('')
     }
-    reader.onerror = (error) => reject('error reading file')
+    reader.onerror = (error) => reject('error reading file' + error)
 
     reader.readAsText(file, encoding)
   })

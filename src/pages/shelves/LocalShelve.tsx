@@ -9,11 +9,16 @@ const LocalBooksList = observer(() => {
   const history = useHistory();
   const {
     books,
+    removeBookAction
   } = useContext(LibraryStoreContext)
   const handleBookRead = (book: Book | null) => {
     book && history.push(`/read/${book.id}`)
   }
+
   const actions: TSheveAction[] = [{
+    text: 'remove',
+    handler: removeBookAction
+  }, {
     text: 'read',
     handler: handleBookRead
   }]

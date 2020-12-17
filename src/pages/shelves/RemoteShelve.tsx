@@ -11,14 +11,14 @@ const RemoteBooksList = observer(() => {
     isBooksLoading,
     isLoggedIn,
     downloadBookAction,
-    deleteBookAction,
+    removeBookAction,
   } = useContext(RemoteLibraryStoreContext)
   const { books: localBooks, updateBookAction, syncBookAction } = useContext(
     LibraryStoreContext
   )
 
   const removeBtnHandler = async (book: RemoteBook) => {
-    const isSuccess = await deleteBookAction(book)
+    const isSuccess = await removeBookAction(book)
     if (isSuccess) {
       const localBook: Book | null = localBooks.find(
         (localBook: Book) => localBook.metaFileId === book.metaFileId

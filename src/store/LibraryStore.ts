@@ -28,7 +28,7 @@ export const LibraryStore = () => {
     store.books.push(book)
   })
 
-  const deleteBookAction = action(async (book: Book) => {
+  const removeBookAction = action(async (book: Book) => {
     await libraryDB.delete(book.id)
     const bookIndex = store.books.indexOf(book)
     store.books.splice(bookIndex, 1)
@@ -80,7 +80,7 @@ export const LibraryStore = () => {
     addBookAction,
     openBookAction,
     syncBookAction,
-    deleteBookAction,
+    removeBookAction,
     updateBookAction,
     updateBookPositionAction,
   })
