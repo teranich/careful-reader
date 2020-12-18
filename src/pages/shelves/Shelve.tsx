@@ -11,12 +11,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Typography from '@material-ui/core/Typography';
 
 
-const gridStyle = {
-  display: 'flex',
-  justifyContent: 'space-evenly',
-  alignItems: 'center',
-  paddingBottom: '10px'
-}
+
 const Spacer = () => (
   <Grid item xs={12} ><div style={{ height: '120px' }}></div></Grid>
 )
@@ -51,14 +46,12 @@ const Shelve = observer(({ books, actions, dialogBookClickHandler }: TShelve) =>
 
   return (
     <>
-      <Grid container justify="space-around">
+      <Grid container justify="space-around" xs={12}>
         {books.map((book: Book, index: number) => (
-          <Grid item key={book.id} style={gridStyle}>
-            <BookItem
-              book={book}
-              onClick={bookClickHandler}
-            />
-          </Grid>
+          <BookItem
+            book={book}
+            onClick={bookClickHandler}
+          />
         ))}
         <Spacer />
       </Grid>

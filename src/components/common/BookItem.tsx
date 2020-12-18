@@ -1,10 +1,25 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react'
 import { Book } from '../../types'
-import { Link } from 'react-router-dom'
-import './BookItem.scss'
-import Paper from '@material-ui/core/Paper';
+import Paper from '@material-ui/core/Paper'
+import styled from 'styled-components'
 
+const Container = styled(Paper)`
+  width: 115px;
+  height: 185px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-all;
+  padding: 5px;
+  margin: 10px;
+`
+const Image = styled.img`
+  display: block;
+  width: 100%;
+  height: 100%;
+`
 interface BookItemProps {
   book: Book
   onClick?: (book: Book) => void
@@ -12,18 +27,18 @@ interface BookItemProps {
 }
 const BookItem = observer(({ book, children, onClick, ...rest }: BookItemProps) => {
   return (
-    <Paper className="book-item" elevation={3} onClick={() => onClick && onClick(book)}>
+    <Container elevation={3} onClick={() => onClick && onClick(book)}>
       { children}
       {
         book.cover ? (
           <>
-            <img src={book.cover} alt="" />
+            <Image src={book.cover} alt="" />
           </>
         ) : (
-            <div className="name">{book.name}</div>
+            <div>{book.name}</div>
           )
       }
-    </Paper >
+    </Container >
   )
 })
 
