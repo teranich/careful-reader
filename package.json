@@ -22,6 +22,7 @@
     "@types/react-dom": "16.9.9",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-swipeable-views": "^0.13.0",
+    "@types/styled-components": "^5.1.5",
     "@use-it/event-listener": "^0.1.5",
     "fs-extra": "^9.0.1",
     "idb": "^5.0.7",
@@ -35,6 +36,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "4.0.0",
     "react-swipeable-views": "^0.13.9",
+    "styled-components": "^5.2.1",
     "typescript": "4.0.5",
     "use-debounce": "^5.0.1"
   },
