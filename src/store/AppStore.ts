@@ -31,11 +31,23 @@ export const AppStore = () => {
     return messages[locale]
   })
 
+  const toggleHightligting = action((value: boolean) => {
+    store.wordsHighlight = value
+  })
+
+  const toggleDynamicTextOrientation = action((value: boolean) => {
+    store.dynamicTextOrientation = value
+  })
+
   const store = observable({
     defaultLocale,
     locale: defaultLocale,
-    setLocale,
+    wordsHighlight: true,
+    dynamicTextOrientation: false,
     messages,
+    toggleHightligting,
+    toggleDynamicTextOrientation,
+    setLocale,
     getLocaleMessages,
   })
 
