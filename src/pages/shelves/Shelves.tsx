@@ -10,7 +10,6 @@ import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
 import Zoom from '@material-ui/core/Zoom'
 import AddIcon from '@material-ui/icons/Add'
-import './Shelves.scss'
 import styled from 'styled-components'
 
 const Content = styled.div`
