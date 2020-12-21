@@ -20,9 +20,7 @@ import { AuthButtons } from '../controls'
 import LibraryStoreContext from '../../store/LibraryStore'
 import styled from 'styled-components'
 
-const TopHeight = styled.div`
-  min-height: 56px;
-`
+const TopHeightWorkaround = styled.div``
 const useStyles = makeStyles({
   list: {
     width: 250,
@@ -97,8 +95,10 @@ export default observer(function Header({ children, className = '' }: any) {
   )
   return (
     <>
-      <TopHeight />
-
+      <TopHeightWorkaround>
+        <AppBar />
+        <Toolbar />
+      </TopHeightWorkaround>
       <AppBar position="fixed">
         <Toolbar>
           <IconButton
