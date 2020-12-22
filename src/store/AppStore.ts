@@ -39,15 +39,27 @@ export const AppStore = () => {
     store.dynamicTextOrientation = value
   })
 
+  const setPageColor = action((value: string) => {
+    store.pageColor = value
+  })
+
+  const setPageBackgroundImage = action((value: string) => {
+    store.pageBackgroundImage = value
+  })
+
   const store = observable({
     defaultLocale,
     locale: defaultLocale,
     wordsHighlight: true,
     dynamicTextOrientation: false,
+    pageColor: 'white',
+    pageBackgroundImage: 'none',
     messages,
     toggleHightligting,
     toggleDynamicTextOrientation,
     setLocale,
+    setPageColor,
+    setPageBackgroundImage,
     getLocaleMessages,
   })
 
