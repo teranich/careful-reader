@@ -13,7 +13,7 @@ const Container = styled(Paper)`
   justify-content: center;
   word-break: break-all;
   padding: 5px;
-  margin: 10px;
+  margin: 10px auto;
 `
 const Image = styled.img`
   display: block;
@@ -25,21 +25,21 @@ interface BookItemProps {
   onClick?: (book: Book) => void
   children?: any
 }
-const BookItem = observer(({ book, children, onClick, ...rest }: BookItemProps) => {
-  return (
-    <Container elevation={3} onClick={() => onClick && onClick(book)}>
-      { children}
-      {
-        book.cover ? (
+const BookItem = observer(
+  ({ book, children, onClick, ...rest }: BookItemProps) => {
+    return (
+      <Container elevation={3} onClick={() => onClick && onClick(book)}>
+        {children}
+        {book.cover ? (
           <>
             <Image src={book.cover} alt="" />
           </>
         ) : (
-            <div>{book.name}</div>
-          )
-      }
-    </Container >
-  )
-})
+          <div>{book.name}</div>
+        )}
+      </Container>
+    )
+  }
+)
 
 export default BookItem

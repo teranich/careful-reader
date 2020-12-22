@@ -82,8 +82,6 @@ export default observer(function Reader() {
             style={dtoStyle}
             ref={textContainerRef}
           ></div>
-          {/* <div className="prev-page" onClick={handlePageChange('prev')}></div> */}
-          {/* <div className="next-page" onClick={handlePageChange('next')}></div> */}
         </div>
       </Loading>
     </div>
