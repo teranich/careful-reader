@@ -13,7 +13,6 @@ import AddIcon from '@material-ui/icons/Add'
 import styled from 'styled-components'
 
 const Content = styled.div`
-  height: 100vh;
   overflow: auto;
 `
 const useStyles = makeStyles((theme) => ({
