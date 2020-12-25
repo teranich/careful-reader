@@ -12,22 +12,25 @@ import Zoom from '@material-ui/core/Zoom'
 import AddIcon from '@material-ui/icons/Add'
 import styled from 'styled-components'
 
+const Contaier = styled.div`
+  position: relative;
+`
 const Content = styled.div`
   overflow: auto;
 `
-const useStyles = makeStyles((theme) => ({
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(10),
-    right: theme.spacing(2),
-  },
-  bottomMenu: {
-    position: 'fixed',
-    bottom: 0,
-    right: 0,
-    left: 0,
-  },
-}))
+const FabsContainer  = styled.div`
+  position: fixed;
+  right: 0;
+  bottom: 0;
+`
+const BottomMenu = styled.div`
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+`
+const BottomMenuHeight = styled.div`
+`
 
 export default observer(function Shelves() {
   const theme = useTheme()
@@ -38,7 +41,6 @@ export default observer(function Shelves() {
   }
   const handleChangeIndex = (index: number) => setValue(index)
   const handleChange = (event: any, index: number) => handleChangeIndex(index)
-  const classes = useStyles()
 
   const fabs = [
     {
@@ -52,7 +54,7 @@ export default observer(function Shelves() {
   ]
 
   return (
-    <>
+    <Contaier>
       <Header></Header>
       <Content>
         <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
@@ -60,30 +62,33 @@ export default observer(function Shelves() {
           <RemoteBooksList />
           <div>favorite</div>
         </SwipeableViews>
-        {fabs.map((fab, index) => (
-          <Zoom
-            key={fab.color}
-            in={value === index}
-            timeout={transitionDuration}
-            style={{
-              transitionDelay: `${
-                value === index ? transitionDuration.exit : 0
-              }ms`,
-            }}
-            unmountOnExit
-          >
-            <AddBookButton />
-          </Zoom>
-        ))}
       </Content>
+      <FabsContainer>
+          {fabs.map((fab, index) => (
+            <Zoom
+              key={fab.color}
+              in={value === index}
+              timeout={transitionDuration}
+              style={{
+                transitionDelay: `${
+                  value === index ? transitionDuration.exit : 0
+                }ms`,
+              }}
+              unmountOnExit
+            >
+              <AddBookButton />
+            </Zoom>
+          ))}
+      </FabsContainer>
+      <BottomMenu>
+      <BottomMenuHeight />
 
-      <div className={classes.bottomMenu}>
         <BottomNavigation value={value} onChange={handleChange} showLabels>
           <BottomNavigationAction label="local" />
           <BottomNavigationAction label="remote" />
           <BottomNavigationAction label="fav" />
         </BottomNavigation>
-      </div>
-    </>
+      </BottomMenu>
+    </Contaier>
   )
 })

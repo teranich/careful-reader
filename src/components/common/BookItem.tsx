@@ -13,7 +13,7 @@ const Container = styled(Paper)`
   justify-content: center;
   word-break: break-all;
   padding: 5px;
-  margin: 10px auto;
+  margin: 5px;
 `
 const Image = styled.img`
   display: block;

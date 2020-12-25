@@ -9,14 +9,15 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import Typography from '@material-ui/core/Typography'
-
-const Spacer = () => (
-  <Grid item xs={12}>
-    <div style={{ height: '120px' }}></div>
-  </Grid>
-)
+import Box from '@material-ui/core/Box'
+import styled from 'styled-components'
 
 type TShelveActionHandler = (book: Book | null) => void
+
+const Spacer = styled.div`
+  height: 56px;
+  width: 100%;
+`
 
 export type TSheveAction = {
   text: string
@@ -47,14 +48,12 @@ const Shelve = observer(
 
     return (
       <>
-        <Grid container justify="center">
+        <Box display="flex" justifyContent="center" flexWrap="wrap">
           {books.map((book: Book, index: number) => (
-            <Grid item key={index} xl={1} md={2} sm={3} xs={6}>
-              <BookItem book={book} onClick={bookClickHandler} />
-            </Grid>
+              <BookItem key={index} book={book} onClick={bookClickHandler} />
           ))}
           <Spacer />
-        </Grid>
+        </Box>
         <Dialog
           onClose={handleDialogClose}
           open={isBookDialogOpenned}
