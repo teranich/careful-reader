@@ -65,7 +65,7 @@ export default observer(function Reader() {
       setMotionStyle(style)
     }
   }
-  const bookTitle = () => currentBook?.meta?.meta?.title || currentBook?.meta?.name
+  const bookTitle = () => currentBook?.info?.meta?.title || currentBook?.info?.name
   useEventListener('deviceorientation', deviceOrientationHandler)
   return (
     <div className="reader">

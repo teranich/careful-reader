@@ -49,15 +49,15 @@ export const LibraryStore = () => {
   })
 
   const openBookAction = action(async (bookId: number) => {
-    if (store.currentBook!.meta!.id === bookId) {
-      store.currentBook.meta = await libraryDB.getBookMeta(bookId)
+    if (store.currentBook!.info!.id === bookId) {
+      store.currentBook.info = await libraryDB.getBookMeta(bookId)
       return Promise.resolve()
     }
     return Promise.all([
       libraryDB.getBookMeta(bookId),
       libraryDB.getBookText(bookId),
     ]).then((prom) => {
-      store.currentBook.meta = prom[0]
+      store.currentBook.info = prom[0]
       const text = prom[1] || ''
       store.currentBook.text = converter.parseToInnerBook(text)
     })
@@ -71,7 +71,7 @@ export const LibraryStore = () => {
     books: [] as BookList,
     remoteBooks: [] as BookList,
     currentBook: {
-      meta: {} as Book | undefined,
+      info: {} as Book | undefined,
       text: '' as string | undefined,
     },
     isAddingBookInProcess: false,
