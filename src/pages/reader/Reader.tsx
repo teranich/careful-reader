@@ -10,6 +10,12 @@ import { observer } from 'mobx-react'
 import useEventListener from '@use-it/event-listener'
 import { Loading } from '../../components/loading'
 import { useDebounce } from 'use-debounce'
+import styled from 'styled-components'
+
+const PageCount = styled.span`
+  white-space: nowrap;
+  padding: 6px 8px;
+`
 interface QueryParams {
   bookId: string
 }
@@ -71,9 +77,9 @@ export default observer(function Reader() {
     <div className="reader">
       <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
         <div className="">{currenPositionPercent}%</div>
-        <div className="pages">
-          {numberOfcurrentPage} / {pagesCount}
-        </div>
+        <PageCount>
+          {`${numberOfcurrentPage}/${pagesCount}`}
+        </PageCount>
       </Header>
       <Loading loading={loading}>
         <div className={`list-view ${wordsHighlight ? 'highlight' : ''}`}>

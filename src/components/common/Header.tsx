@@ -21,6 +21,12 @@ import LibraryStoreContext from '../../store/LibraryStore'
 import styled from 'styled-components'
 
 const TopHeightWorkaround = styled.div``
+const Title = styled(Typography)`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+`
 const useStyles = makeStyles({
   list: {
     width: 250,
@@ -114,9 +120,9 @@ export default observer(function Header({ children, className = '', title }: any
               </Drawer>
             </React.Fragment>
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Title variant="h6" >
             {headTitle}
-          </Typography>
+          </Title>
           {children}
           <AuthButtons />
         </Toolbar>
