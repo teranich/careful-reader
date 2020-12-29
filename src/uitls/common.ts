@@ -54,3 +54,14 @@ export const debounce = <F extends (...args: any[]) => any>(
 
   return debounced as (...args: Parameters<F>) => ReturnType<F>
 }
+
+export function importScript(src: string) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    document.body.appendChild(script)
+    script.onload = resolve
+    script.onerror = reject
+    script.async = true
+    script.src = src
+  })
+}
