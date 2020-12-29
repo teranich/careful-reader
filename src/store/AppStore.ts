@@ -4,6 +4,7 @@ import { createIntl, createIntlCache } from 'react-intl'
 
 import en_messages from '../translations/locales/en.json'
 import ru_messages from '../translations/locales/ru.json'
+import * as cloud from '../uitls/cloud'
 
 export const AppStore = () => {
   const globalIntlCache = createIntlCache()
@@ -18,6 +19,7 @@ export const AppStore = () => {
   } as {
     [key: string]: any
   }
+
   const setLocale = action((locale: string) => {
     if (Object.keys(messages).includes(locale)) {
       store.locale = locale
@@ -47,6 +49,24 @@ export const AppStore = () => {
     store.pageBackgroundImage = value
   })
 
+  cloud.load().then((x) => {
+    console.log('appStore cloud', cloud.x)
+    cloud.inc()
+    store.isClientLoaded = true
+    cloud.isLoggedIn().then((isLoggedIn) => (store.isLoggedIn = isLoggedIn))
+  })
+
+  const signInAction = action(async () => {
+    await cloud.signIn()
+    store.isLoggedIn = await cloud.isLoggedIn()
+  })
+
+  const signOutAction = action(async () => {
+    await cloud.signOut()
+    store.isLoggedIn = await cloud.isLoggedIn()
+    // store.books = []
+  })
+
   const store = observable({
     defaultLocale,
     locale: defaultLocale,
@@ -55,6 +75,10 @@ export const AppStore = () => {
     pageColor: 'white',
     pageBackgroundImage: 'none',
     messages,
+    isLoggedIn: false,
+    isClientLoaded: false,
+    signInAction,
+    signOutAction,
     toggleHightligting,
     toggleDynamicTextOrientation,
     setLocale,
