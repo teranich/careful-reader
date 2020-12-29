@@ -65,10 +65,11 @@ export default observer(function Reader() {
       setMotionStyle(style)
     }
   }
+  const bookTitle = () => currentBook?.meta?.meta?.title || currentBook?.meta?.name
   useEventListener('deviceorientation', deviceOrientationHandler)
   return (
     <div className="reader">
-      <Header className={`${showControls ? '' : ' hidden'} p-fixed z-max`}>
+      <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
         <div className="">{currenPositionPercent}%</div>
         <div className="pages">
           {numberOfcurrentPage} / {pagesCount}
@@ -86,7 +87,7 @@ export default observer(function Reader() {
       </Loading>
     </div>
   )
-
+  
   function getElementsForHightlight() {
     const result: any = []
     document.querySelectorAll('p').forEach((el: any) => {

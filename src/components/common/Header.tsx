@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   },
 })
 
-export default observer(function Header({ children, className = '' }: any) {
+export default observer(function Header({ children, className = '', title }: any) {
   const classes = useStyles()
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation()
@@ -42,7 +42,7 @@ export default observer(function Header({ children, className = '' }: any) {
     '/settings': 'Settings',
   }
   const pathname: string = location.pathname || ''
-  const title = pathTitleMap[pathname]
+  const headTitle = title || pathTitleMap[pathname]
   const { currentBook } = useContext(LibraryStoreContext)
 
   const toggleDrawer = (state: boolean) => (event: any) => {
@@ -115,7 +115,7 @@ export default observer(function Header({ children, className = '' }: any) {
             </React.Fragment>
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            {title}
+            {headTitle}
           </Typography>
           {children}
           <AuthButtons />
