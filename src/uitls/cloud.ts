@@ -76,26 +76,32 @@ export async function isLoggedIn() {
 const folderMIME = 'application/vnd.google-apps.folder'
 const fileMIME = 'text/plain'
 
-const create = (parents: string[]) => (type: string) => async (
-  name: string
+const create = (type: string) => async (
+  name: string,
+  parents: string[] = ['appDataFolder']
 ) => {
   const mimeType = type === 'folder' ? folderMIME : fileMIME
   console.log('create', parents, type, name)
   const resp = await promisify(gapi.client.drive.files.create, {
     resource: {
-      name: name,
+      name,
       mimeType,
-      parents: ['appDataFolder'],
+      parents,
     },
     fields: 'id',
   })
   return resp.result
 }
 
+const find = (type: string) => async (name: string) => {}
+
 export const drive = {
   create: {
-    folder: create(['drive'])('folder'),
-    file: create(['drive'])('file'),
+    folder: create('folder'),
+    file: create('file'),
+  },
+  find: {
+    folder: find('folder'),
   },
 }
 

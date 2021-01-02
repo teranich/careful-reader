@@ -4,6 +4,7 @@ import { Book, RemoteBook } from '../types'
 import * as cloud from '../uitls/cloud'
 
 export const RemoteLibraryStore = () => {
+  const remoteFolderName = 'careful-reader'
   const initLibrary = action(async () => {
     cloud.drive.create.folder('books-folder')
   })
@@ -19,6 +20,8 @@ export const RemoteLibraryStore = () => {
   })
 
   const uploadBookAction = action(async (book: Book, bookText: string) => {
+    const res = await cloud.drive.create.folder(remoteFolderName, [])
+    console.log('res', res, book, bookText)
     // const list = await gapi.list(`name="${book.name}-text.html"`)
     // if (list.length) return
     // const [metaFile, textFile] = await Promise.all([
