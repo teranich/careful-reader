@@ -20,7 +20,9 @@ export const RemoteLibraryStore = () => {
   })
 
   const uploadBookAction = action(async (book: Book, bookText: string) => {
-    const res = await cloud.drive.create.folder(remoteFolderName, [])
+    // const res = await cloud.drive.create.folder(remoteFolderName)
+    // const res = await cloud.drive.create.file('2')
+    const res = await cloud.drive.find.file(`fileExtension = 'fb2'`)
     console.log('res', res, book, bookText)
     // const list = await gapi.list(`name="${book.name}-text.html"`)
     // if (list.length) return

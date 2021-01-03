@@ -25,7 +25,7 @@ let isGAPILoaded = false
 const googleDriveAPIDocument =
   'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
 const scope =
-  'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive.file'
+  'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file'
 export async function load() {
   if (isGAPILoaded) return
   await loadGapi()
@@ -76,9 +76,8 @@ export async function isLoggedIn() {
 const folderMIME = 'application/vnd.google-apps.folder'
 const fileMIME = 'text/plain'
 
-const create = (type: string) => async (
-  name: string,
-  parents: string[] = ['appDataFolder']
+const create = (parents: string[]) => (type: string) => async (
+  name: string
 ) => {
   const mimeType = type === 'folder' ? folderMIME : fileMIME
   console.log('create', parents, type, name)
@@ -93,12 +92,76 @@ const create = (type: string) => async (
   return resp.result
 }
 
-const find = (type: string) => async (name: string) => {}
+const list = async (query: string = '') => {
+  let ret: any = []
+  try {
+    let token
+    do {
+      const resp: any = await promisify(window.gapi.client.drive.files.list, {
+        spaces: 'drive',
+        fields: '*',
+        pageSize: 100,
+        pageToken: token,
+        orderBy: 'createdTime',
+        q: query,
+      })
+      ret = ret.concat(resp.result.files)
+      token = resp.result.nextPageToken
+    } while (token)
 
+    return ret
+  } catch (e) {
+    console.error('can`t list items in drive with query: ', query, e)
+  }
+}
+
+const find = (spaces: string) => (type: string) => async (query: string) => {
+  const mimeType =
+    type === 'folder'
+      ? `and mimeType = '${folderMIME}'`
+      : `and not mimeType = '${folderMIME}'`
+  const q = `${query} ${mimeType}`
+  console.log(q)
+  let ret: any = []
+  try {
+    let token
+    do {
+      const resp: any = await promisify(window.gapi.client.drive.files.list, {
+        spaces,
+        fields: '*',
+        pageSize: 100,
+        pageToken: token,
+        orderBy: 'createdTime',
+        q,
+      })
+      ret = ret.concat(resp.result.files)
+      token = resp.result.nextPageToken
+    } while (token)
+
+    return ret
+  } catch (e) {
+    console.error('can`t list items in drive with query: ', query, e)
+  }
+}
+
+const createInDrive = create([])
+const findInDrive = find('drive')
 export const drive = {
   create: {
-    folder: create('folder'),
-    file: create('file'),
+    folder: createInDrive('folder'),
+    file: createInDrive('file'),
+  },
+  find: {
+    folder: findInDrive('folder'),
+    file: findInDrive('file'),
+  },
+}
+
+const createInAppFolder = create(['appDataFolder'])
+export const appFolder = {
+  create: {
+    folder: createInAppFolder('folder'),
+    file: createInAppFolder('file'),
   },
   find: {
     folder: find('folder'),
