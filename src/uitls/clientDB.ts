@@ -36,8 +36,13 @@ const libraryDB = {
   async getAllMeta() {
     return (await dbPromise).getAll(DB_INDEX_NAME)
   },
-  async getBookText(id: number) {
-    return (await dbPromise).get(DB_STORE_NAME, id)
+  async getBookText(id: number): Promise<string> {
+    const result = await (await dbPromise).get(DB_STORE_NAME, id)
+    if (!result) {
+      throw Error(`can not find book ${id} in the locale db`)
+    } else {
+      return result
+    }
   },
   async addBook(meta: any, body: string = ''): Promise<Book> {
     const timestamp = Date.now()

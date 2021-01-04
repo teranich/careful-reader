@@ -2,6 +2,7 @@ import React from 'react'
 import { observable, action } from 'mobx'
 import { Book, RemoteBook } from '../types'
 import * as cloud from '../uitls/cloud'
+import libraryDB from '../uitls/clientDB'
 
 export const RemoteLibraryStore = () => {
   const remoteFolderName = 'careful-reader'
@@ -12,6 +13,7 @@ export const RemoteLibraryStore = () => {
     store.isClientLoaded = true
     cloud.isLoggedIn().then((isLoggedIn) => (store.isLoggedIn = isLoggedIn))
   })
+  const cloudDrive = cloud.drive
 
   const fetchBooksListAction = action(async () => {
     store.isBooksLoading = true
@@ -19,30 +21,23 @@ export const RemoteLibraryStore = () => {
     store.isBooksLoading = false
   })
 
-  const uploadBookAction = action(async (book: Book, bookText: string) => {
-    // const res = await cloud.drive.create.folder(remoteFolderName)
-    // const res = await cloud.drive.create.file('2')
-    const res = await cloud.drive.find.file(`fileExtension = 'fb2'`)
-    console.log('res', res, book, bookText)
-    // const list = await gapi.list(`name="${book.name}-text.html"`)
-    // if (list.length) return
-    // const [metaFile, textFile] = await Promise.all([
-    //   gapi.createFile(`${book.name}-meta.json`),
-    //   gapi.createFile(`${book.name}-text.html`),
-    // ])
-    // book.metaFileId = metaFile.id
-    // book.textFileId = textFile.id
-    // await Promise.all([
-    //   gapi.upload(metaFile.id, JSON.stringify(book)),
-    //   gapi.upload(textFile.id, bookText),
-    // ])
-    // const newBook: RemoteBook = {
-    //   id: metaFile.id,
-    //   metaFileId: metaFile.id,
-    //   textFileId: textFile.id,
-    //   name: `${book.name}-meta.json`,
-    // }
-    // store.books.push(newBook)
+  const uploadBookAction = action(async (book: Book) => {
+    store.isUploading = true
+    const folders = await cloudDrive.find.folder(`name = '${remoteFolderName}'`)
+    const availableFolder = folders.find((f: any) => !f.trashed)
+    const currentFolder =
+      availableFolder || (await cloudDrive.create.folder(remoteFolderName))
+    const existFiles = await cloudDrive.find.file(
+      `name = '${book.name}' and '${currentFolder.id}' in parents`
+    )
+    const files = existFiles.length
+      ? existFiles
+      : await cloudDrive.create.file(book.name, currentFolder.id)
+    const currentFile = files[0]
+    const bookText = await libraryDB.getBookText(book.id)
+    const result = await cloudDrive.upload(currentFile.id, bookText)
+    store.isUploading = false
+    return result
   })
 
   const syncMetaAction = action(async (book: Book) => {
@@ -71,6 +66,7 @@ export const RemoteLibraryStore = () => {
     isClientLoaded: false,
     isLoggedIn: false,
     isBooksLoading: false,
+    isUploading: false,
     initLibrary,
     uploadBookAction,
     syncMetaAction,

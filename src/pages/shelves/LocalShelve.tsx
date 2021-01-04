@@ -25,10 +25,7 @@ const LocalBooksList = observer(() => {
     },
     {
       text: 'upload',
-      handler: (book) => {
-        console.log('book', book)
-        uploadBookAction(book)
-      },
+      handler: uploadBookAction,
     },
   ]
 

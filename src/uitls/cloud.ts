@@ -25,7 +25,7 @@ let isGAPILoaded = false
 const googleDriveAPIDocument =
   'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
 const scope =
-  'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file'
+  'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive'
 export async function load() {
   if (isGAPILoaded) return
   await loadGapi()
@@ -76,12 +76,13 @@ export async function isLoggedIn() {
 const folderMIME = 'application/vnd.google-apps.folder'
 const fileMIME = 'text/plain'
 
-const create = (parents: string[]) => (type: string) => async (
-  name: string
+const create = (spaces: string[]) => (type: string) => async (
+  name: string,
+  folderId?: string
 ) => {
   const mimeType = type === 'folder' ? folderMIME : fileMIME
-  console.log('create', parents, type, name)
-  const resp = await promisify(gapi.client.drive.files.create, {
+  const parents = folderId ? [folderId] : spaces
+  const response = await promisify(gapi.client.drive.files.create, {
     resource: {
       name,
       mimeType,
@@ -89,30 +90,7 @@ const create = (parents: string[]) => (type: string) => async (
     },
     fields: 'id',
   })
-  return resp.result
-}
-
-const list = async (query: string = '') => {
-  let ret: any = []
-  try {
-    let token
-    do {
-      const resp: any = await promisify(window.gapi.client.drive.files.list, {
-        spaces: 'drive',
-        fields: '*',
-        pageSize: 100,
-        pageToken: token,
-        orderBy: 'createdTime',
-        q: query,
-      })
-      ret = ret.concat(resp.result.files)
-      token = resp.result.nextPageToken
-    } while (token)
-
-    return ret
-  } catch (e) {
-    console.error('can`t list items in drive with query: ', query, e)
-  }
+  return response.result
 }
 
 const find = (spaces: string) => (type: string) => async (query: string) => {
@@ -121,26 +99,41 @@ const find = (spaces: string) => (type: string) => async (query: string) => {
       ? `and mimeType = '${folderMIME}'`
       : `and not mimeType = '${folderMIME}'`
   const q = `${query} ${mimeType}`
-  console.log(q)
   let ret: any = []
   try {
     let token
     do {
-      const resp: any = await promisify(window.gapi.client.drive.files.list, {
-        spaces,
-        fields: '*',
-        pageSize: 100,
-        pageToken: token,
-        orderBy: 'createdTime',
-        q,
-      })
-      ret = ret.concat(resp.result.files)
-      token = resp.result.nextPageToken
+      const response: any = await promisify(
+        window.gapi.client.drive.files.list,
+        {
+          spaces,
+          fields: '*',
+          pageSize: 100,
+          pageToken: token,
+          orderBy: 'createdTime',
+          q,
+        }
+      )
+      ret = ret.concat(response.result.files)
+      token = response.result.nextPageToken
     } while (token)
 
     return ret
   } catch (e) {
     console.error('can`t list items in drive with query: ', query, e)
+  }
+}
+const upload = async (fileId: string, content: string) => {
+  try {
+    const response: any = await promisify(gapi.client.request, {
+      path: `/upload/drive/v3/files/${fileId}`,
+      method: 'PATCH',
+      params: { uploadType: 'media' },
+      body: typeof content === 'string' ? content : JSON.stringify(content),
+    })
+    return response.result
+  } catch (e) {
+    console.error('can`t upload file with: ', fileId, content, e)
   }
 }
 
@@ -155,6 +148,7 @@ export const drive = {
     folder: findInDrive('folder'),
     file: findInDrive('file'),
   },
+  upload,
 }
 
 const createInAppFolder = create(['appDataFolder'])
@@ -166,6 +160,7 @@ export const appFolder = {
   find: {
     folder: find('folder'),
   },
+  upload,
 }
 
 function promisify(
