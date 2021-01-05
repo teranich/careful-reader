@@ -76,19 +76,19 @@ export async function isLoggedIn() {
 const folderMIME = 'application/vnd.google-apps.folder'
 const fileMIME = 'text/plain'
 
-const create = (spaces: string[]) => (type: string) => async (
+const create = (spaces: string) => (type: string) => async (
   name: string,
   folderId?: string
 ) => {
   const mimeType = type === 'folder' ? folderMIME : fileMIME
-  const parents = folderId ? [folderId] : spaces
+  const parents = folderId ? [folderId] : spaces === 'drive' ? [] : spaces
   const response = await promisify(gapi.client.drive.files.create, {
     resource: {
       name,
       mimeType,
       parents,
     },
-    fields: 'id',
+    fields: '*',
   })
   return response.result
 }
@@ -123,6 +123,16 @@ const find = (spaces: string) => (type: string) => async (query: string) => {
     console.error('can`t list items in drive with query: ', query, e)
   }
 }
+
+const getOrCreate = (spaces: string) => (type: string) => async (
+  q: string,
+  name: string,
+  folderId?: string
+) => {
+  const exist = await find(spaces)(type)(q)
+  return exist.length ? exist : [await create(spaces)(type)(name, folderId)]
+}
+
 const upload = async (fileId: string, content: string) => {
   try {
     const response: any = await promisify(gapi.client.request, {
@@ -135,32 +145,6 @@ const upload = async (fileId: string, content: string) => {
   } catch (e) {
     console.error('can`t upload file with: ', fileId, content, e)
   }
-}
-
-const createInDrive = create([])
-const findInDrive = find('drive')
-export const drive = {
-  create: {
-    folder: createInDrive('folder'),
-    file: createInDrive('file'),
-  },
-  find: {
-    folder: findInDrive('folder'),
-    file: findInDrive('file'),
-  },
-  upload,
-}
-
-const createInAppFolder = create(['appDataFolder'])
-export const appFolder = {
-  create: {
-    folder: createInAppFolder('folder'),
-    file: createInAppFolder('file'),
-  },
-  find: {
-    folder: find('folder'),
-  },
-  upload,
 }
 
 function promisify(
@@ -184,8 +168,41 @@ function promisify(
   })
 }
 
-export let x = 0
+const createInDrive = create('drive')
+const findInDrive = find('drive')
+const getOrCreateInDrive = getOrCreate('drive')
+export const drive = {
+  getOrCreateInDrive: {
+    folder: getOrCreateInDrive('folder'),
+    file: getOrCreateInDrive('file'),
+  },
+  create: {
+    folder: createInDrive('folder'),
+    file: createInDrive('file'),
+  },
+  find: {
+    folder: findInDrive('folder'),
+    file: findInDrive('file'),
+  },
+  upload,
+}
 
-export const inc = () => {
-  return x++
+const createInAppFolder = create('appDataFolder')
+const findInAppFolder = find('appDataFolder')
+const getOrCreateInAppFolder = getOrCreate('appFolder')
+
+export const appFolder = {
+  getOrCreate: {
+    foder: getOrCreateInAppFolder('folder'),
+    file: getOrCreateInAppFolder('file'),
+  },
+  create: {
+    folder: createInAppFolder('folder'),
+    file: createInAppFolder('file'),
+  },
+  find: {
+    folder: find('folder'),
+    file: findInAppFolder('file'),
+  },
+  upload,
 }

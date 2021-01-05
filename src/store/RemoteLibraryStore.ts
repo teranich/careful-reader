@@ -13,6 +13,7 @@ export const RemoteLibraryStore = () => {
     store.isClientLoaded = true
     cloud.isLoggedIn().then((isLoggedIn) => (store.isLoggedIn = isLoggedIn))
   })
+  const cloudAppFolder = cloud.appFolder
   const cloudDrive = cloud.drive
 
   const fetchBooksListAction = action(async () => {
@@ -23,17 +24,15 @@ export const RemoteLibraryStore = () => {
 
   const uploadBookAction = action(async (book: Book) => {
     store.isUploading = true
-    const folders = await cloudDrive.find.folder(`name = '${remoteFolderName}'`)
-    const availableFolder = folders.find((f: any) => !f.trashed)
-    const currentFolder =
-      availableFolder || (await cloudDrive.create.folder(remoteFolderName))
-    const existFiles = await cloudDrive.find.file(
-      `name = '${book.name}' and '${currentFolder.id}' in parents`
+    const [currentFolder] = await cloudDrive.getOrCreateInDrive.folder(
+      `name = '${remoteFolderName}'`,
+      remoteFolderName
     )
-    const files = existFiles.length
-      ? existFiles
-      : await cloudDrive.create.file(book.name, currentFolder.id)
-    const currentFile = files[0]
+    const [currentFile] = await cloudDrive.getOrCreateInDrive.file(
+      `name = '${book.name}' and '${currentFolder.id}' in parents`,
+      book.name,
+      currentFolder.id
+    )
     const bookText = await libraryDB.getBookText(book.id)
     const result = await cloudDrive.upload(currentFile.id, bookText)
     store.isUploading = false

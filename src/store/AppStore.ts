@@ -50,8 +50,6 @@ export const AppStore = () => {
   })
 
   cloud.load().then((x) => {
-    console.log('appStore cloud', cloud.x)
-    cloud.inc()
     store.isClientLoaded = true
     cloud.isLoggedIn().then((isLoggedIn) => (store.isLoggedIn = isLoggedIn))
   })
