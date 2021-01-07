@@ -80,8 +80,9 @@ const create = (spaces: string) => (type: string) => async (
   name: string,
   folderId?: string
 ) => {
+  console.log(spaces, type, name, folderId)
   const mimeType = type === 'folder' ? folderMIME : fileMIME
-  const parents = folderId ? [folderId] : spaces === 'drive' ? [] : spaces
+  const parents = folderId ? [folderId] : spaces === 'drive' ? [] : [spaces]
   const response = await promisify(gapi.client.drive.files.create, {
     resource: {
       name,
@@ -106,7 +107,7 @@ const find = (spaces: string) => (type: string) => async (query: string) => {
       const response: any = await promisify(
         window.gapi.client.drive.files.list,
         {
-          spaces,
+          spaces: spaces,
           fields: '*',
           pageSize: 100,
           pageToken: token,
@@ -130,6 +131,7 @@ const getOrCreate = (spaces: string) => (type: string) => async (
   folderId?: string
 ) => {
   const exist = await find(spaces)(type)(q)
+  console.log(spaces, type, q, name, folderId, exist)
   return exist.length ? exist : [await create(spaces)(type)(name, folderId)]
 }
 
@@ -172,7 +174,7 @@ const createInDrive = create('drive')
 const findInDrive = find('drive')
 const getOrCreateInDrive = getOrCreate('drive')
 export const drive = {
-  getOrCreateInDrive: {
+  getOrCreate: {
     folder: getOrCreateInDrive('folder'),
     file: getOrCreateInDrive('file'),
   },
@@ -189,7 +191,7 @@ export const drive = {
 
 const createInAppFolder = create('appDataFolder')
 const findInAppFolder = find('appDataFolder')
-const getOrCreateInAppFolder = getOrCreate('appFolder')
+const getOrCreateInAppFolder = getOrCreate('appDataFolder')
 
 export const appFolder = {
   getOrCreate: {

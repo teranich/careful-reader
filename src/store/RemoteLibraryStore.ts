@@ -24,11 +24,11 @@ export const RemoteLibraryStore = () => {
 
   const uploadBookAction = action(async (book: Book) => {
     store.isUploading = true
-    const [currentFolder] = await cloudDrive.getOrCreateInDrive.folder(
+    const [currentFolder] = await cloudDrive.getOrCreate.folder(
       `name = '${remoteFolderName}'`,
       remoteFolderName
     )
-    const [currentFile] = await cloudDrive.getOrCreateInDrive.file(
+    const [currentFile] = await cloudDrive.getOrCreate.file(
       `name = '${book.name}' and '${currentFolder.id}' in parents`,
       book.name,
       currentFolder.id
@@ -40,9 +40,21 @@ export const RemoteLibraryStore = () => {
   })
 
   const syncMetaAction = action(async (book: Book) => {
+    const metaFileName = book.name + '.json'
+    const [currentFile] = await cloudAppFolder.getOrCreate.file(
+      `name = '${metaFileName}'`,
+      metaFileName
+    )
+    const result = await cloudAppFolder.upload(
+      currentFile.id,
+      JSON.stringify(book)
+    )
     // if (book.metaFileId) {
     //   await gapi.upload(book.metaFileId, JSON.stringify(book))
     // }
+
+    // const [find] = await cloudAppFolder.find.file(`fileExtension="json"`)
+    // console.log('find', find)
   })
 
   const downloadBookAction = action(async (book: RemoteBook) => {

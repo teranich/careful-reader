@@ -9,7 +9,7 @@ import RemoteLibraryStore from '../../store/RemoteLibraryStore'
 const LocalBooksList = observer(() => {
   const history = useHistory()
   const { books, removeBookAction } = useContext(LibraryStoreContext)
-  const { uploadBookAction } = useContext(RemoteLibraryStore)
+  const { uploadBookAction, syncMetaAction } = useContext(RemoteLibraryStore)
   const handleBookRead = (book: Book | null) => {
     book && history.push(`/read/${book.id}`)
   }
@@ -27,6 +27,10 @@ const LocalBooksList = observer(() => {
       text: 'upload',
       handler: uploadBookAction,
     },
+    {
+      text: 'sync',
+      handler: syncMetaAction
+    }
   ]
 
   return (
