@@ -63,5 +63,6 @@ export function importScript(src: string) {
     script.onerror = reject
     script.async = true
     script.src = src
+    return src;
   })
 }

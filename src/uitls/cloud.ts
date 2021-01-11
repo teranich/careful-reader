@@ -5,7 +5,7 @@ interface Files {
 }
 
 let loaded = false
-async function loadGapi() {
+export async function loadGapi() {
   if (loaded) return true
   return importScript('https://apis.google.com/js/client:platform.js')
     .then(() => {
@@ -15,6 +15,7 @@ async function loadGapi() {
     })
     .then(() => {
       loaded = true
+      return loaded;
     })
     .catch(() => {
       console.error('google api is not loaded')
