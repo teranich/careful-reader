@@ -28,12 +28,15 @@ export const AppStore = () => {
     }
   })
 
+  const setImageCoverAction = action((image: string) => store.imageCover = image)
+
   const getLocaleMessages = action(() => {
     const locale = store.locale
     return messages[locale]
   })
 
   const toggleHightligting = action((value: boolean) => {
+    console.log('wtf', value)
     store.wordsHighlight = value
   })
 
@@ -45,8 +48,12 @@ export const AppStore = () => {
     store.pageColor = value
   })
 
-  const setPageBackgroundImage = action((value: string) => {
-    store.pageBackgroundImage = value
+  const toggleUseImageCover = action((value: boolean) => {
+    store.isUseImageCover = value
+  })
+
+  const setPageBackgroundColorAction = action((value: string) => {
+    store.pageBackgroundColor = value
   })
 
   cloud.load().then((x) => {
@@ -65,23 +72,28 @@ export const AppStore = () => {
     // store.books = []
   })
 
+  
   const store = observable({
     defaultLocale,
     locale: defaultLocale,
     wordsHighlight: true,
     dynamicTextOrientation: false,
     pageColor: 'white',
-    pageBackgroundImage: 'none',
+    pageBackgroundColor: '#0000',
     messages,
     isLoggedIn: false,
     isClientLoaded: false,
+    isUseImageCover: true,
+    imageCover: '1',
+    setImageCoverAction, 
+    toggleUseImageCover,
     signInAction,
     signOutAction,
     toggleHightligting,
     toggleDynamicTextOrientation,
     setLocale,
     setPageColor,
-    setPageBackgroundImage,
+    setPageBackgroundColorAction,
     getLocaleMessages,
   })
 
