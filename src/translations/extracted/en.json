@@ -14,5 +14,13 @@
   {
     "defaultMessage": "language",
     "id": "settings.language"
+  },
+  {
+    "defaultMessage": "cover image",
+    "id": "settings.coverImage"
+  },
+  {
+    "defaultMessage": "cover background color",
+    "id": "settings.coverBgColor"
   }
 ]

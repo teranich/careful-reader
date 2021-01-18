@@ -2,5 +2,7 @@
   "feed.close": "close...",
   "feed.library": "library",
   "feed.to-read": "to read...",
+  "settings.coverBgColor": "cover background color",
+  "settings.coverImage": "cover image",
   "settings.language": "language"
 }
