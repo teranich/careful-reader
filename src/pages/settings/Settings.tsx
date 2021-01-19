@@ -24,9 +24,7 @@ const FormControlStyled = styled(FormControl)`
 const CoverImage = styled.img`
   height: 56px;
 `
-type THandlerMap = {
-  [key: string]: Function
-}
+
 export default observer(function Settings() {
   const {
     locale,

@@ -36,7 +36,6 @@ export const AppStore = () => {
   })
 
   const toggleHightligting = action((value: boolean) => {
-    console.log('wtf', value)
     store.wordsHighlight = value
   })
 
