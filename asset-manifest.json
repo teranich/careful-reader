@@ -1,31 +1,29 @@
 {
   "files": {
-    "main.css": "/careful-reader/static/css/main.dd01d2ba.chunk.css",
-    "main.js": "/careful-reader/static/js/main.6d089b5b.chunk.js",
-    "main.js.map": "/careful-reader/static/js/main.6d089b5b.chunk.js.map",
-    "runtime-main.js": "/careful-reader/static/js/runtime-main.c16cb572.js",
-    "runtime-main.js.map": "/careful-reader/static/js/runtime-main.c16cb572.js.map",
-    "static/css/2.764ccc25.chunk.css": "/careful-reader/static/css/2.764ccc25.chunk.css",
-    "static/js/2.ed216998.chunk.js": "/careful-reader/static/js/2.ed216998.chunk.js",
-    "static/js/2.ed216998.chunk.js.map": "/careful-reader/static/js/2.ed216998.chunk.js.map",
+    "main.css": "/careful-reader/static/css/main.e8d0d57a.chunk.css",
+    "main.js": "/careful-reader/static/js/main.583c7c29.chunk.js",
+    "main.js.map": "/careful-reader/static/js/main.583c7c29.chunk.js.map",
+    "runtime-main.js": "/careful-reader/static/js/runtime-main.f271cedd.js",
+    "runtime-main.js.map": "/careful-reader/static/js/runtime-main.f271cedd.js.map",
+    "static/css/2.679831fc.chunk.css": "/careful-reader/static/css/2.679831fc.chunk.css",
+    "static/js/2.54bc95c0.chunk.js": "/careful-reader/static/js/2.54bc95c0.chunk.js",
+    "static/js/2.54bc95c0.chunk.js.map": "/careful-reader/static/js/2.54bc95c0.chunk.js.map",
     "index.html": "/careful-reader/index.html",
-    "precache-manifest.4eb59a9f25f7dbf4f9e792a3deb27259.js": "/careful-reader/precache-manifest.4eb59a9f25f7dbf4f9e792a3deb27259.js",
-    "service-worker.js": "/careful-reader/service-worker.js",
-    "static/css/2.764ccc25.chunk.css.map": "/careful-reader/static/css/2.764ccc25.chunk.css.map",
-    "static/css/main.dd01d2ba.chunk.css.map": "/careful-reader/static/css/main.dd01d2ba.chunk.css.map",
-    "static/js/2.ed216998.chunk.js.LICENSE.txt": "/careful-reader/static/js/2.ed216998.chunk.js.LICENSE.txt",
-    "static/media/back.svg": "/careful-reader/static/media/back.c42ae1ad.svg",
-    "static/media/book-shelf.png": "/careful-reader/static/media/book-shelf.60dcdcf8.png",
-    "static/media/home.svg": "/careful-reader/static/media/home.3e06a93b.svg",
-    "static/media/login.svg": "/careful-reader/static/media/login.e51f7b8a.svg",
-    "static/media/logout.svg": "/careful-reader/static/media/logout.92415547.svg",
-    "static/media/Reader.scss": "/careful-reader/static/media/page2.6a85ca81.jpg"
+    "static/css/2.679831fc.chunk.css.map": "/careful-reader/static/css/2.679831fc.chunk.css.map",
+    "static/css/main.e8d0d57a.chunk.css.map": "/careful-reader/static/css/main.e8d0d57a.chunk.css.map",
+    "static/js/2.54bc95c0.chunk.js.LICENSE.txt": "/careful-reader/static/js/2.54bc95c0.chunk.js.LICENSE.txt",
+    "static/media/back.adb63b87.svg": "/careful-reader/static/media/back.adb63b87.svg",
+    "static/media/home.b0dac3bc.svg": "/careful-reader/static/media/home.b0dac3bc.svg",
+    "static/media/page1.7720a4ef.jpg": "/careful-reader/static/media/page1.7720a4ef.jpg",
+    "static/media/Reader.scss": "/careful-reader/static/media/page2.c690ddc0.jpg",
+    "static/media/page3.ce566b3c.jpg": "/careful-reader/static/media/page3.ce566b3c.jpg",
+    "static/media/settings.a753d163.svg": "/careful-reader/static/media/settings.a753d163.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.c16cb572.js",
-    "static/css/2.764ccc25.chunk.css",
-    "static/js/2.ed216998.chunk.js",
-    "static/css/main.dd01d2ba.chunk.css",
-    "static/js/main.6d089b5b.chunk.js"
+    "static/js/runtime-main.f271cedd.js",
+    "static/css/2.679831fc.chunk.css",
+    "static/js/2.54bc95c0.chunk.js",
+    "static/css/main.e8d0d57a.chunk.css",
+    "static/js/main.583c7c29.chunk.js"
   ]
 }
