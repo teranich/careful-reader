@@ -5,7 +5,7 @@ import RemoteBooksList from './RemoteShelve'
 import { AddBookButton } from './common'
 import LocalBooksList from './LocalShelve'
 import SwipeableViews from 'react-swipeable-views'
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles'
 import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
 import Zoom from '@material-ui/core/Zoom'
@@ -18,19 +18,18 @@ const Contaier = styled.div`
 const Content = styled.div`
   overflow: auto;
 `
-const FabsContainer  = styled.div`
+const FabsContainer = styled.div`
   position: fixed;
   right: 0;
   bottom: 0;
 `
 const BottomMenu = styled.div`
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    left: 0;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `
-const BottomMenuHeight = styled.div`
-`
+const BottomMenuHeight = styled.div``
 
 export default observer(function Shelves() {
   const theme = useTheme()
@@ -64,24 +63,24 @@ export default observer(function Shelves() {
         </SwipeableViews>
       </Content>
       <FabsContainer>
-          {fabs.map((fab, index) => (
-            <Zoom
-              key={fab.color}
-              in={value === index}
-              timeout={transitionDuration}
-              style={{
-                transitionDelay: `${
-                  value === index ? transitionDuration.exit : 0
-                }ms`,
-              }}
-              unmountOnExit
-            >
-              <AddBookButton />
-            </Zoom>
-          ))}
+        {fabs.map((fab, index) => (
+          <Zoom
+            key={fab.color}
+            in={value === index}
+            timeout={transitionDuration}
+            style={{
+              transitionDelay: `${
+                value === index ? transitionDuration.exit : 0
+              }ms`,
+            }}
+            unmountOnExit
+          >
+            <AddBookButton />
+          </Zoom>
+        ))}
       </FabsContainer>
       <BottomMenu>
-      <BottomMenuHeight />
+        <BottomMenuHeight />
 
         <BottomNavigation value={value} onChange={handleChange} showLabels>
           <BottomNavigationAction label="local" />

@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react'
 import './loading.scss'
 
-interface Loading {
+interface TLoading {
   loading: boolean
   children: ReactNode
 }
-export default function Loading({ loading, children }: Loading) {
+export default function Loading({ loading, children }: TLoading) {
   return (
     <>
       <div className={loading ? 'loading' : 'hidden'}>

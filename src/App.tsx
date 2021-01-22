@@ -8,8 +8,6 @@ import LibraryStoreContext, { LibraryStore } from './store/LibraryStore'
 import RemoteLibraryStoreContext, {
   RemoteLibraryStore,
 } from './store/RemoteLibraryStore'
-import { Feed } from './pages/feed'
-import { Details } from './pages/details'
 import { IntlProvider } from 'react-intl'
 import AppStoreContext, { AppStore } from './store/AppStore'
 import { Settings } from './pages/settings'
@@ -38,7 +36,11 @@ const App = observer(function App() {
     <AppStoreContext.Provider value={appStore}>
       <LibraryStoreContext.Provider value={libraryStore}>
         <RemoteLibraryStoreContext.Provider value={remoteStore}>
-          <IntlProvider locale={appStore.locale} defaultLocale={appStore.defaultLocale} messages={messages}>
+          <IntlProvider
+            locale={appStore.locale}
+            defaultLocale={appStore.defaultLocale}
+            messages={messages}
+          >
             <Router basename={basename}>
               <Switch>
                 {/* <Route exact path="/">
@@ -49,9 +51,6 @@ const App = observer(function App() {
                 </Route>
                 <Route exact path="/read/:bookId">
                   <Reader />
-                </Route>
-                <Route exact path="/details/:bookId">
-                  <Details />
                 </Route>
                 <Route exact path="/settings">
                   <Settings />
