@@ -18,7 +18,7 @@ export default class GAPI {
     await this.loadGoogleAPI()
     this.isGAPILoaded = true
     return new Promise((resolve, reject) => {
-      if (window.gapi.client.drive) return resolve()
+      if (window.gapi.client.drive) return resolve(null)
       return window.gapi.client
         .init({
           apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
