@@ -242,7 +242,7 @@ const FB2_XSL = `<?xml version="1.0"?>
     <!-- p -->
     <xsl:template match="fb:p">
         <!--<xsl:if test"preceding-sibling::*[1][name()] != 'fb:image'">-->
-            <p data-id="pos_{generate-id()}">
+            <p data-id="{position()}-{last()}}">
                 <xsl:if test="@id">
                     <xsl:element name="a">
                         <xsl:attribute name="name">

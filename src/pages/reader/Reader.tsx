@@ -34,10 +34,8 @@ export default observer(function Reader() {
   const textContainerRef = useRef<HTMLDivElement | null>(null)
   const elementsForHightlightRef = useRef([])
   const [loading, setLoading] = useState(false)
-
   const queryParams = useParams<QueryParams>()
   const bookId = parseInt(queryParams.bookId)
-
   const [motionStyle, setMotionStyle] = useState({})
 
   useEffect(() => {
@@ -48,7 +46,12 @@ export default observer(function Reader() {
       current!.innerHTML = currentBook.text
       elementsForHightlightRef.current = getElementsForHightlight()
       setPagesCount(getPagesCount())
-      restoreScrollPoition()
+      const positions: any[] = []
+
+      current
+        ?.querySelectorAll('p')
+        .forEach((o: HTMLElement) => positions.push(o.getAttribute('data-id')))
+      restoreScrollPoition(currentBook.info.positionElement)
       setLoading(false)
     }
 
@@ -58,6 +61,7 @@ export default observer(function Reader() {
       return current!.removeEventListener('scroll', handleScroll)
     }
   }, [])
+
   const [dtoStyle] = useDebounce(motionStyle, 5)
   const deviceOrientationHandler = ({ gamma }: DeviceOrientationEvent) => {
     if (!dynamicTextOrientation) {
@@ -71,15 +75,17 @@ export default observer(function Reader() {
       setMotionStyle(style)
     }
   }
-  const bookTitle = () => currentBook?.info?.meta?.title || currentBook?.info?.name
+  const bookTitle = () =>
+    currentBook?.info?.meta?.title || currentBook?.info?.name
   useEventListener('deviceorientation', deviceOrientationHandler)
   return (
     <div className="reader">
-      <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
+      <Header
+        className={`${showControls ? '' : ' hidden'} `}
+        title={bookTitle()}
+      >
         <div className="">{currenPositionPercent}%</div>
-        <PageCount>
-          {`${numberOfcurrentPage}/${pagesCount}`}
-        </PageCount>
+        <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
       </Header>
       <Loading loading={loading}>
         <div className={`list-view ${wordsHighlight ? 'highlight' : ''}`}>
@@ -93,7 +99,7 @@ export default observer(function Reader() {
       </Loading>
     </div>
   )
-  
+
   function getElementsForHightlight() {
     const result: any = []
     document.querySelectorAll('p').forEach((el: any) => {
@@ -117,15 +123,6 @@ export default observer(function Reader() {
     }
   }
 
-  function restoreScrollPoition() {
-    if (currentBook.meta) {
-      const toElement = document.querySelector(
-        `[data-id="${currentBook.meta.positionElement}"]`
-      )
-      toElement?.scrollIntoView()
-    }
-  }
-
   function getPercentOfScroll() {
     const { current } = textContainerRef
     return current ? (current.scrollTop * 100) / current.scrollHeight : 0.0
@@ -133,8 +130,15 @@ export default observer(function Reader() {
 
   function updateBookPosition(posElement: HTMLElement) {
     if (posElement) {
-      const positionElement = posElement.getAttribute('data-id')
-      updateBookPositionAction(bookId, positionElement)
+      const positionElementId = posElement.getAttribute('data-id')
+      updateBookPositionAction(bookId, positionElementId)
+    }
+  }
+
+  function restoreScrollPoition(positionId: string) {
+    if (positionId) {
+      const toElement = document.querySelector(`[data-id="${positionId}"]`)
+      toElement?.scrollIntoView()
     }
   }
 
