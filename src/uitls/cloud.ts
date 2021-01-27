@@ -15,7 +15,7 @@ export async function loadGapi() {
     })
     .then(() => {
       loaded = true
-      return loaded;
+      return loaded
     })
     .catch(() => {
       console.error('google api is not loaded')
@@ -108,7 +108,7 @@ const find = (spaces: string) => (type: string) => async (query: string) => {
       const response: any = await promisify(
         window.gapi.client.drive.files.list,
         {
-          spaces: spaces,
+          spaces,
           fields: '*',
           pageSize: 100,
           pageToken: token,
@@ -126,19 +126,28 @@ const find = (spaces: string) => (type: string) => async (query: string) => {
   }
 }
 
+const download = async (fileId: string) => {
+  const resp = await promisify(gapi.client.drive.files.get, {
+    fileId: fileId,
+    alt: 'media',
+  })
+
+  return resp.result || resp.body
+}
+
 const getOrCreate = (spaces: string) => (type: string) => async (
   q: string,
   name: string,
   folderId?: string
 ) => {
   const exist = await find(spaces)(type)(q)
-  console.log(spaces, type, q, name, folderId, exist)
   return exist.length ? exist : [await create(spaces)(type)(name, folderId)]
 }
 
-const upload = async (fileId: string, content: string) => {
+const upload = (spaces: string) => async (fileId: string, content: string) => {
   try {
     const response: any = await promisify(gapi.client.request, {
+      spaces: spaces === 'drive' ? [] : [spaces],
       path: `/upload/drive/v3/files/${fileId}`,
       method: 'PATCH',
       params: { uploadType: 'media' },
@@ -174,6 +183,7 @@ function promisify(
 const createInDrive = create('drive')
 const findInDrive = find('drive')
 const getOrCreateInDrive = getOrCreate('drive')
+const uploadInDrive = upload('drive')
 export const drive = {
   getOrCreate: {
     folder: getOrCreateInDrive('folder'),
@@ -187,13 +197,14 @@ export const drive = {
     folder: findInDrive('folder'),
     file: findInDrive('file'),
   },
-  upload,
+  upload: uploadInDrive,
+  download,
 }
 
 const createInAppFolder = create('appDataFolder')
 const findInAppFolder = find('appDataFolder')
 const getOrCreateInAppFolder = getOrCreate('appDataFolder')
-
+const uploadOnAppFolder = upload('appDataFolder')
 export const appFolder = {
   getOrCreate: {
     foder: getOrCreateInAppFolder('folder'),
@@ -207,5 +218,6 @@ export const appFolder = {
     folder: find('folder'),
     file: findInAppFolder('file'),
   },
-  upload,
+  upload: uploadOnAppFolder,
+  download,
 }

@@ -19,6 +19,9 @@ export const RemoteLibraryStore = () => {
   const fetchBooksListAction = action(async () => {
     store.isBooksLoading = true
     // store.books = await gapi.list(`fileExtension="json"`)
+    const find = await cloudAppFolder.find.file(`fileExtension="json"`)
+
+    console.log('fetchBooksListAction', find)
     store.isBooksLoading = false
   })
 
@@ -49,6 +52,8 @@ export const RemoteLibraryStore = () => {
       currentFile.id,
       JSON.stringify(book)
     )
+
+    console.log('result', result)
     // if (book.metaFileId) {
     //   await gapi.upload(book.metaFileId, JSON.stringify(book))
     // }
