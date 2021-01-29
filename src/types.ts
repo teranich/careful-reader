@@ -9,11 +9,4 @@ export interface Book {
   timestamp?: number
 }
 
-export interface RemoteBook {
-  id: string
-  metaFileId?: string
-  textFileId?: string
-  name: string
-}
-
 export type BookList = Book[]
