@@ -134,6 +134,19 @@ const download = async (fileId: string) => {
 
   return resp.result || resp.body
 }
+const remove = async (fileId: string) => {
+  try {
+    await promisify(gapi.client.drive.files.delete, {
+      fileId: fileId,
+    })
+    return true
+  } catch (err) {
+    if (err.status === 404) {
+      return false
+    }
+    throw err
+  }
+}
 
 const getOrCreate = (spaces: string) => (type: string) => async (
   q: string,
@@ -199,6 +212,7 @@ export const drive = {
   },
   upload: uploadInDrive,
   download,
+  remove,
 }
 
 const createInAppFolder = create('appDataFolder')
@@ -220,4 +234,5 @@ export const appFolder = {
   },
   upload: uploadOnAppFolder,
   download,
+  remove,
 }
