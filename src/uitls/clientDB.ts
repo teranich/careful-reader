@@ -54,12 +54,14 @@ const libraryDB = {
     await tx.done
     return book
   },
-  async setBookMeta(bookId: number, newBook: any) {
+  async updateBookMeta(bookId: number, updatedProps: any) {
     const tx = await txPromise()
     const store = tx.objectStore(DB_INDEX_NAME)
     const oldBook = await store.get(bookId)
-    await store.put({ ...oldBook, ...newBook })
+    const updatedBook = { ...oldBook, ...updatedProps }
+    await store.put(updatedBook)
     await tx.done
+    return updatedBook
   },
   async delete(bookId: number) {
     const tx = await txPromise()

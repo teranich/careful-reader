@@ -7,6 +7,7 @@ import * as converter from '../uitls/converter'
 export const LibraryStore = () => {
   const fetchBooksListAction = action(async () => {
     store.books = await libraryDB.getAllMeta()
+    console.info('book store', store.books)
   })
 
   const addBookAction = action(async (rawBookText: string, file: File) => {
@@ -36,7 +37,7 @@ export const LibraryStore = () => {
 
   const updateBookPositionAction = action(
     async (bookId: number, positionElement: string) => {
-      await libraryDB.setBookMeta(bookId, { positionElement })
+      await libraryDB.updateBookMeta(bookId, { positionElement })
     }
   )
 
@@ -45,7 +46,7 @@ export const LibraryStore = () => {
     if (bookInStore) {
       Object.assign(bookInStore, bookProps)
     }
-    await libraryDB.setBookMeta(bookId, bookProps)
+    await libraryDB.updateBookMeta(bookId, bookProps)
   })
 
   const openBookAction = action(async (bookId: number) => {

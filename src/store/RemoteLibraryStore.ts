@@ -1,6 +1,6 @@
 import React from 'react'
 import { observable, action } from 'mobx'
-import { Book, RemoteBook } from '../types'
+import { Book } from '../types'
 import * as cloud from '../uitls/cloud'
 import libraryDB from '../uitls/clientDB'
 
@@ -15,13 +15,20 @@ export const RemoteLibraryStore = () => {
   })
   const cloudAppFolder = cloud.appFolder
   const cloudDrive = cloud.drive
-
   const fetchBooksListAction = action(async () => {
     store.isBooksLoading = true
-    // store.books = await gapi.list(`fileExtension="json"`)
-    const find = await cloudAppFolder.find.file(`fileExtension="json"`)
-
-    console.log('fetchBooksListAction', find)
+    const cloudFiles = await cloudAppFolder.find.file(
+      `name contains '-meta.json'`
+    )
+    const contentPromises = cloudFiles.map((fileMeta: { id: string }) =>
+      cloudAppFolder.download(fileMeta.id).then((content) => {
+        //@ts-ignore
+        const book: Book = content
+        store.books.push(book)
+      })
+    )
+    store.books = []
+    await Promise.all(contentPromises)
     store.isBooksLoading = false
   })
 
@@ -37,39 +44,51 @@ export const RemoteLibraryStore = () => {
       currentFolder.id
     )
     const bookText = await libraryDB.getBookText(book.id)
-    const result = await cloudDrive.upload(currentFile.id, bookText)
+    const { id: textFileId } = await cloudDrive.upload(currentFile.id, bookText)
+    const updatedBookMeta = await libraryDB.updateBookMeta(book.id, {
+      textFileId,
+    })
+    const result = await syncMetaAction(updatedBookMeta)
+
     store.isUploading = false
     return result
   })
 
   const syncMetaAction = action(async (book: Book) => {
-    const metaFileName = book.name + '.json'
+    store.isUploading = true
+    const metaFileName = book.name + '-meta.json'
     const [currentFile] = await cloudAppFolder.getOrCreate.file(
       `name = '${metaFileName}'`,
       metaFileName
     )
-    const result = await cloudAppFolder.upload(
+    const { id: metaFileId } = await cloudAppFolder.upload(
       currentFile.id,
       JSON.stringify(book)
     )
-
-    console.log('result', result)
-    // if (book.metaFileId) {
-    //   await gapi.upload(book.metaFileId, JSON.stringify(book))
-    // }
-
-    // const [find] = await cloudAppFolder.find.file(`fileExtension="json"`)
-    // console.log('find', find)
+    const result = await libraryDB.updateBookMeta(book.id, { metaFileId })
+    store.isUploading = false
+    return result
   })
 
-  const downloadBookAction = action(async (book: RemoteBook) => {
+  const downloadBookAction = action(async (book: Book) => {
+    console.log('wtf', book)
+    if (book.textFileId) {
+      const result = await cloudDrive.download(book.textFileId)
+      console.log('result', result)
+    }
+
     // const meta: any = await gapi.download(book.id)
     // let text: any = ''
     // if (meta.textFileId) text = await gapi.download(meta.textFileId)
     // return { meta, text }
   })
 
-  const removeBookAction = action(async (book: any) => {
+  const removeBookAction = action(async (book: Book) => {
+    const promises = []
+    book.textFileId && promises.push(cloudDrive.remove(book.textFileId))
+    book.metaFileId && promises.push(cloudAppFolder.remove(book.metaFileId))
+    const result = await Promise.all(promises)
+    console.log('remove', result)
     // const isSuccess = await gapi.deleteFile(book.id)
     // if (isSuccess) {
     //   store.books = store.books.filter((inner) => inner.id !== book.id)
@@ -78,7 +97,7 @@ export const RemoteLibraryStore = () => {
   })
 
   const store = observable({
-    books: [] as RemoteBook[],
+    books: [] as Book[],
     isClientLoaded: false,
     isLoggedIn: false,
     isBooksLoading: false,
