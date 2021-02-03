@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { observable, action } from 'mobx'
 import { Book } from '../types'
 import * as cloud from '../uitls/cloud'
@@ -15,6 +15,7 @@ export const RemoteLibraryStore = () => {
   })
   const cloudAppFolder = cloud.appFolder
   const cloudDrive = cloud.drive
+
   const fetchBooksListAction = action(async () => {
     store.isBooksLoading = true
     const cloudFiles = await cloudAppFolder.find.file(
@@ -49,7 +50,8 @@ export const RemoteLibraryStore = () => {
       textFileId,
     })
     const result = await syncMetaAction(updatedBookMeta)
-
+    console.log('book', book)
+    store.books.push(book)
     store.isUploading = false
     return result
   })
@@ -71,29 +73,37 @@ export const RemoteLibraryStore = () => {
   })
 
   const downloadBookAction = action(async (book: Book) => {
-    console.log('wtf', book)
     if (book.textFileId) {
       const result = await cloudDrive.download(book.textFileId)
-      console.log('result', result)
     }
-
-    // const meta: any = await gapi.download(book.id)
-    // let text: any = ''
-    // if (meta.textFileId) text = await gapi.download(meta.textFileId)
-    // return { meta, text }
   })
+  
+  const forceBookRemove = async (book: Book) => {
+    const cloudMetaFile = await cloudAppFolder.find
+      .file(`name = '${book.name}-meta.json'`)
+      .then(([ file ]) => file?.id && cloudAppFolder.remove(file.id))
+
+    const cloudFile = await cloudDrive.find
+      .file(`name = '${book.name}'`)
+      .then(({ file }) => file?.id && cloudDrive.remove(file.id))
+
+    return Promise.allSettled([cloudFile, cloudMetaFile])
+  }
 
   const removeBookAction = action(async (book: Book) => {
-    const promises = []
-    book.textFileId && promises.push(cloudDrive.remove(book.textFileId))
-    book.metaFileId && promises.push(cloudAppFolder.remove(book.metaFileId))
-    const result = await Promise.all(promises)
-    console.log('remove', result)
-    // const isSuccess = await gapi.deleteFile(book.id)
-    // if (isSuccess) {
-    //   store.books = store.books.filter((inner) => inner.id !== book.id)
-    // }
-    // return isSuccess
+    const index = store.books.indexOf(book)
+    if (index > -1) {
+      store.books.splice(index, 1)
+    }
+    if (!book.metaFileId || !book.textFileId) {
+      await forceBookRemove(book)
+    } else {
+      const promises = []
+
+      book.textFileId && promises.push(cloudDrive.remove(book.textFileId))
+      book.metaFileId && promises.push(cloudAppFolder.remove(book.metaFileId))
+      await Promise.allSettled(promises)
+    }
   })
 
   const store = observable({
