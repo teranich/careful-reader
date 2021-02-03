@@ -10,10 +10,10 @@ export const LibraryStore = () => {
     console.info('book store', store.books)
   })
 
-  const addBookAction = action(async (rawBookText: string, file: File) => {
+  const addBookAction = action(async (rawBookText: string, name: string) => {
     const { cover, meta } = converter.getBookPreviewInfo(rawBookText)
     const newBook = {
-      name: file.name,
+      name,
       meta,
       cover,
     }

@@ -29,7 +29,7 @@ const AddBookButton = observer(({ ...rest }: any) => {
     if (event.target.files?.length) {
       const file = event.target.files[0]
       readFileContent(file).then((text: string) => {
-        addBookAction(text, file)
+        addBookAction(text, file.name)
       })
     }
   }
