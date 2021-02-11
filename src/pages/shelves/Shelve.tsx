@@ -45,12 +45,16 @@ const Shelve = observer(
       action.handler(selectedBook)
       handleDialogClose()
     }
+    const handleDefaultAction = (book: Book) => dialogBookClickHandler && dialogBookClickHandler(book)
 
     return (
       <>
         <Box display="flex" justifyContent="center" flexWrap="wrap">
           {books.map((book: Book, index: number) => (
-              <BookItem key={index} book={book} onClick={bookClickHandler} />
+            <BookItem key={index} book={book}
+              onSingleClick={() => bookClickHandler(book)}
+              onDoubleClick={() => handleDefaultAction(book)}
+            />
           ))}
           <Spacer />
         </Box>
@@ -66,9 +70,8 @@ const Shelve = observer(
                 {selectedBook && (
                   <BookItem
                     book={selectedBook}
-                    onClick={() =>
-                      dialogBookClickHandler &&
-                      dialogBookClickHandler(selectedBook)
+                    onSingleClick={() =>
+                      handleDefaultAction(selectedBook)
                     }
                   />
                 )}

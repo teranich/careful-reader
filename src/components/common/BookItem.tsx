@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { observer } from 'mobx-react'
 import { Book } from '../../types'
 import Paper from '@material-ui/core/Paper'
 import styled from 'styled-components'
+import useDoubleClick from '../../hooks/UseDoubleClick'
 
 const Container = styled(Paper)`
   width: 115px;
@@ -22,21 +23,31 @@ const Image = styled.img`
 `
 interface BookItemProps {
   book: Book
-  onClick?: (book: Book) => void
+  onSingleClick?: () => void
+  onDoubleClick?: () => void
   children?: any
 }
 const BookItem = observer(
-  ({ book, children, onClick, ...rest }: BookItemProps) => {
+  ({ book, children, onSingleClick, onDoubleClick, ...rest }: BookItemProps) => {
+    const buttonRef = useRef();
+
+    useDoubleClick({
+      onSingleClick,
+      onDoubleClick,
+      ref: buttonRef,
+      latency: 200
+    });
+
     return (
-      <Container elevation={3} onClick={() => onClick && onClick(book)}>
+      <Container elevation={3} ref={buttonRef}>
         {children}
         {book.cover ? (
           <>
             <Image src={book.cover} alt="" />
           </>
         ) : (
-          <div>{book.name}</div>
-        )}
+            <div>{book.name}</div>
+          )}
       </Container>
     )
   }
