@@ -14,14 +14,18 @@ const RemoteBooksList = observer(() => {
     downloadBookAction,
     removeBookAction,
   } = useContext(RemoteLibraryStoreContext)
-  const { books: localBooks, updateBookAction, syncBookAction } = useContext(
-    LibraryStoreContext
-  )
+
+  const { addBookAction, isBookExist } = useContext(LibraryStoreContext)
 
   const collectBook = async (book: Book | null) => {
+    if (isBookExist(book?.name)) {
+      console.log('Book exist', book?.name)
+      return
+    }
     const text = await downloadBookAction(book)
-    // await syncBookAction(meta, text)
-    console.log('collect book', book, text)
+    if (text) {
+      addBookAction(text, book?.name)
+    }
   }
   const actions: TSheveAction[] = [
     {

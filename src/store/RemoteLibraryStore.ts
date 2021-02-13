@@ -50,7 +50,6 @@ export const RemoteLibraryStore = () => {
       textFileId,
     })
     const result = await syncMetaAction(updatedBookMeta)
-    console.log('book', book)
     store.books.push(book)
     store.isUploading = false
     return result
@@ -75,13 +74,14 @@ export const RemoteLibraryStore = () => {
   const downloadBookAction = action(async (book: Book) => {
     if (book.textFileId) {
       const result = await cloudDrive.download(book.textFileId)
+      return result
     }
   })
-  
+
   const forceBookRemove = async (book: Book) => {
     const cloudMetaFile = await cloudAppFolder.find
       .file(`name = '${book.name}-meta.json'`)
-      .then(([ file ]) => file?.id && cloudAppFolder.remove(file.id))
+      .then(([file]) => file?.id && cloudAppFolder.remove(file.id))
 
     const cloudFile = await cloudDrive.find
       .file(`name = '${book.name}'`)

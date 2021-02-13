@@ -10,6 +10,9 @@ export const LibraryStore = () => {
     console.info('book store', store.books)
   })
 
+  const isBookExist = (name: string) =>
+    store.books.find((book: Book) => book.name === name)
+
   const addBookAction = action(async (rawBookText: string, name: string) => {
     const { cover, meta } = converter.getBookPreviewInfo(rawBookText)
     const newBook = {
@@ -84,6 +87,7 @@ export const LibraryStore = () => {
     removeBookAction,
     updateBookAction,
     updateBookPositionAction,
+    isBookExist,
   })
 
   return store
