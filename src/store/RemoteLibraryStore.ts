@@ -73,8 +73,7 @@ export const RemoteLibraryStore = () => {
 
   const downloadBookAction = action(async (book: Book) => {
     if (book.textFileId) {
-      const result = await cloudDrive.download(book.textFileId)
-      return result
+      return await cloudDrive.download(book.textFileId)
     }
   })
 
