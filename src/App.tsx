@@ -11,6 +11,7 @@ import RemoteLibraryStoreContext, {
 import { IntlProvider } from 'react-intl'
 import AppStoreContext, { AppStore } from './store/AppStore'
 import { Settings } from './pages/settings'
+import Notifications from './components/Notifications'
 
 const App = observer(function App() {
   const libraryStore = useLocalStore(LibraryStore)
@@ -57,6 +58,7 @@ const App = observer(function App() {
                 </Route>
               </Switch>
             </Router>
+            <Notifications />
           </IntlProvider>
         </RemoteLibraryStoreContext.Provider>
       </LibraryStoreContext.Provider>
