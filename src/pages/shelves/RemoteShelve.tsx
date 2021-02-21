@@ -37,7 +37,6 @@ const RemoteBooksList = observer(() => {
     },
   ]
 
-  console.log('cloud books', books)
   return (
     <>
       <div className={`collection ${!isLoggedIn ? 'hidden' : ''}`}>

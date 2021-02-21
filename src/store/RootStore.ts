@@ -20,10 +20,15 @@ export class RootStore {
     this.libraryStore = new LibraryStore(this)
     this.remoteLibraryStore = new RemoteLibraryStore(this)
   }
-  pushMessage = action((message: string) => {
+
+  notification = action((message: string) => {
     this.messages.push(message)
-    console.log(this.messages)
   })
+  removeNotification(index: number) {
+    console.log('notif', index, this.messages)
+    this.messages.splice(index, 1)
+  }
+  
 }
 
 export const RootStoreContext = createContext<RootStore>({} as RootStore)

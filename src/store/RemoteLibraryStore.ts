@@ -74,6 +74,7 @@ export default class RemoteLibraryStore {
     const result = await this.syncMetaAction(updatedBookMeta)
     this.books.push(book)
     this.isUploading = false
+    this.rootStore.notification('Upload success')
     return result
   })
 
@@ -97,6 +98,7 @@ export default class RemoteLibraryStore {
   downloadBookAction = action(async (book: Book | null) => {
     if (!book) return
     if (book.textFileId) {
+      this.rootStore.notification('download sucess')
       return await this.cloudDrive.download(book.textFileId)
     }
     return ''
@@ -111,7 +113,7 @@ export default class RemoteLibraryStore {
       .file(`name = '${book.name}'`)
       .then(({ file }) => file?.id && this.cloudDrive.remove(file.id))
 
-    return Promise.allSettled([cloudFile, cloudMetaFile])
+    return Promise.allSettled([cloudFile, cloudMetaFile])    
   }
 
   removeBookAction = action(async (book: Book | null) => {
@@ -130,5 +132,6 @@ export default class RemoteLibraryStore {
         promises.push(this.cloudAppFolder.remove(book.metaFileId))
       await Promise.allSettled(promises)
     }
+    this.rootStore.notification('book remove sucess')
   })
 }

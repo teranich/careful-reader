@@ -25,7 +25,6 @@ export class LibraryStore {
   }
   fetchBooksListAction = action(async () => {
     this.books = await libraryDB.getAllMeta()
-    console.info('book store', this.books)
   })
 
   isBookExist = (name: string | undefined) =>
@@ -43,8 +42,7 @@ export class LibraryStore {
     const book = await libraryDB.addBook(newBook, rawBookText)
     this.books.push(book)
     this.isAddingBookInProcess = false
-
-    this.rootStore.pushMessage('The book has been added')
+    this.rootStore.notification('book has been added')
   })
 
   syncBookAction = action(async (meta: Book, body: string) => {
@@ -57,6 +55,7 @@ export class LibraryStore {
     await libraryDB.delete(book.id)
     const bookIndex = this.books.indexOf(book)
     this.books.splice(bookIndex, 1)
+    this.rootStore.notification('book has been removed')
   })
 
    updateBookPositionAction = action(
