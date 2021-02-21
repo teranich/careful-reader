@@ -17,8 +17,8 @@ import { Link, useLocation } from 'react-router-dom'
 import TuneIcon from '@material-ui/icons/Tune'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import { AuthButtons } from '../controls'
-import LibraryStoreContext from '../../store/LibraryStore'
 import styled from 'styled-components'
+import { RootStoreContext } from '../../store/RootStore'
 
 const TopHeightWorkaround = styled.div``
 const Title = styled(Typography)`
@@ -49,7 +49,7 @@ export default observer(function Header({ children, className = '', title }: any
   }
   const pathname: string = location.pathname || ''
   const headTitle = title || pathTitleMap[pathname]
-  const { currentBook } = useContext(LibraryStoreContext)
+  const { libraryStore: {currentBook} } = useContext(RootStoreContext)
 
   const toggleDrawer = (state: boolean) => (event: any) => {
     if (

@@ -1,15 +1,18 @@
 import React, { useContext } from 'react'
-import AppStoreContext from '../../store/AppStore'
+
 import { observer } from 'mobx-react'
 import Button from '@material-ui/core/Button'
+import { RootStoreContext } from '../../store/RootStore'
 
 export default observer(function SignInButton() {
+  const { appStore } = useContext(RootStoreContext)
   const {
     isClientLoaded,
     isLoggedIn,
     signInAction,
     signOutAction,
-  } = useContext(AppStoreContext)
+  } = appStore
+  
   return (
     <>
       {isClientLoaded && (
@@ -19,10 +22,10 @@ export default observer(function SignInButton() {
               LogOut
             </Button>
           ) : (
-            <Button onClick={signInAction} color="inherit">
-              Login
-            </Button>
-          )}
+              <Button onClick={signInAction} color="inherit">
+                Login
+              </Button>
+            )}
         </>
       )}
     </>

@@ -16,6 +16,7 @@ import styled from 'styled-components'
 import PageCoverImage1 from '../../static/page1.jpg'
 import PageCoverImage2 from '../../static/page2.jpg'
 import PageCoverImage3 from '../../static/page3.jpg'
+import { RootStoreContext } from '../..//store/RootStore'
 
 const FormControlStyled = styled(FormControl)`
   margin: 10px;
@@ -26,6 +27,7 @@ const CoverImage = styled.img`
 `
 
 export default observer(function Settings() {
+  const { appStore } = useContext(RootStoreContext)
   const {
     locale,
     imageCover,
@@ -33,15 +35,15 @@ export default observer(function Settings() {
     isUseImageCover,
     pageBackgroundColor,
     dynamicTextOrientation,
-  } = useContext(AppContext)
-  const appContext = useContext(AppContext)
+  } = appStore
   const intl = useIntl()
   const handleInputChange = (
     event: React.ChangeEvent<any>
   ) => {
-    const handlerName = event.target.name
+    const handlerName: string = event.target.name
     const handlerParams = event.target.type === 'checkbox' ? event.target.checked : event.target.value
-    const handler = appContext[handlerName]
+    //@ts-ignore
+    const handler = appStore[handlerName]
     if (typeof handler === 'function') {
       handler(handlerParams)
     }

@@ -3,13 +3,13 @@ import { observer } from 'mobx-react'
 import { Book } from '../../types'
 import { useHistory } from 'react-router-dom'
 import Shelve, { TSheveAction } from './Shelve'
-import LibraryStoreContext from '../../store/LibraryStore'
-import RemoteLibraryStore from '../../store/RemoteLibraryStore'
+import { RootStoreContext } from '../..//store/RootStore'
 
 const LocalBooksList = observer(() => {
   const history = useHistory()
-  const { books, removeBookAction } = useContext(LibraryStoreContext)
-  const { uploadBookAction, syncMetaAction } = useContext(RemoteLibraryStore)
+  const { libraryStore, remoteLibraryStore } = useContext(RootStoreContext)
+  const { books, removeBookAction } = libraryStore
+  const { uploadBookAction, syncMetaAction } = remoteLibraryStore
   const handleBookRead = (book: Book | null) => {
     book && history.push(`/read/${book.id}`)
   }
@@ -34,13 +34,11 @@ const LocalBooksList = observer(() => {
   ]
 
   return (
-    <>
       <Shelve
         books={books}
         dialogBookClickHandler={handleBookRead}
         actions={actions}
       />
-    </>
   )
 })
 

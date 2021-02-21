@@ -132,7 +132,7 @@ const download = async (fileId: string) => {
     alt: 'media',
   })
 
-  return resp.result || resp.body
+  return resp.body
 }
 const remove = async (fileId: string) => {
   try {

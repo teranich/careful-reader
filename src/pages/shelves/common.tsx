@@ -2,9 +2,9 @@ import { observer } from 'mobx-react'
 import { readFileContent } from '../../uitls/common'
 import React, { useContext } from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import LibraryStoreContext from '../../store/LibraryStore'
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import { RootStoreContext } from '../../store/RootStore';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddBookButton = observer(({ ...rest }: any) => {
-  const { addBookAction } = useContext(LibraryStoreContext)
+  const { libraryStore: { addBookAction } } = useContext(RootStoreContext)
   const theme = useTheme();
   const classes = useStyles(theme)
 

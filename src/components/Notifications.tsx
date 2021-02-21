@@ -2,20 +2,25 @@ import React, { useContext, useEffect } from 'react'
 import Snackbar from '@material-ui/core/Snackbar'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
-import RemoteLibraryStoreContext from '../store/RemoteLibraryStore'
-import LibraryStoreContext from '../store/LibraryStore'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
+import { RootStoreContext } from '../store/RootStore'
 
-const Notifications = observer(() => {
-  const { isBooksLoading, isLoggedIn } = useContext(RemoteLibraryStoreContext)
-  const { addBookAction, isBookExist, messages, books } = useContext(
-    LibraryStoreContext
+const Notifications = observer(({ rootStore }: any) => {
+  const { messages } = useContext(
+    RootStoreContext
   )
-  const [open, setOpen] = React.useState(true)
 
-  const handleClick = () => {
-    setOpen(true)
-  }
+  return (
+    <>
+      {messages.map((message: string, i: number) => (
+        <Notification message={message} key={`notification-${i}`} />
+      ))}
+    </>
+  )
+})
+
+const Notification = ({ message }: { message: string }) => {
+  const [open, setOpen] = React.useState(true)
 
   const handleClose = (event: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -24,32 +29,30 @@ const Notifications = observer(() => {
 
     setOpen(false)
   }
-
   return (
-    <>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={isBooksLoading}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message="Note archived"
-        action={
-          <React.Fragment>
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleClose}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </React.Fragment>
-        }
-      />
-    </>
+    <Snackbar
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      open={open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      message={message}
+      action={
+        <React.Fragment>
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </React.Fragment>
+      }
+    />
   )
-})
+}
+
 export default Notifications

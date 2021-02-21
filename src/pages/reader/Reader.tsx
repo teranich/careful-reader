@@ -4,13 +4,12 @@ import { useParams } from 'react-router-dom'
 import { debounce } from '../../uitls/common'
 import { hightLightElementsOnScreen } from '../../uitls/styler'
 import { Header } from '../../components/common'
-import LibraryStoreContext from '../../store/LibraryStore'
-import AppContext from '../../store/AppStore'
 import { observer } from 'mobx-react'
 import useEventListener from '@use-it/event-listener'
 import { Loading } from '../../components/loading'
 import { useDebounce } from 'use-debounce'
 import styled from 'styled-components'
+import { RootStoreContext } from '../../store/RootStore'
 
 const PageCount = styled.span`
   white-space: nowrap;
@@ -23,10 +22,9 @@ interface QueryParams {
 const dfunc = debounce((fn) => fn && fn(), 100)
 
 export default observer(function Reader() {
-  const { wordsHighlight, dynamicTextOrientation } = useContext(AppContext)
-  const { updateBookPositionAction, openBookAction, currentBook } = useContext(
-    LibraryStoreContext
-  )
+  const { appStore, libraryStore } = useContext(RootStoreContext)
+  const { wordsHighlight, dynamicTextOrientation } = appStore
+  const { updateBookPositionAction, openBookAction, currentBook } = libraryStore
   const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(0)
   const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0')
   const [pagesCount, setPagesCount] = useState(0)
@@ -43,7 +41,7 @@ export default observer(function Reader() {
     const openBook = async () => {
       setLoading(true)
       await openBookAction(bookId)
-      current!.innerHTML = currentBook.text
+      current!.innerHTML = currentBook?.text || ''
       elementsForHightlightRef.current = getElementsForHightlight()
       setPagesCount(getPagesCount())
       const positions: any[] = []
@@ -51,7 +49,7 @@ export default observer(function Reader() {
       current
         ?.querySelectorAll('p')
         .forEach((o: HTMLElement) => positions.push(o.getAttribute('data-id')))
-      restoreScrollPoition(currentBook.info.positionElement)
+      restoreScrollPoition(currentBook?.info.positionElement)
       setLoading(false)
     }
 
@@ -131,7 +129,7 @@ export default observer(function Reader() {
   function updateBookPosition(posElement: HTMLElement) {
     if (posElement) {
       const positionElementId = posElement.getAttribute('data-id')
-      updateBookPositionAction(bookId, positionElementId)
+      positionElementId && updateBookPositionAction(bookId, positionElementId)
     }
   }
 

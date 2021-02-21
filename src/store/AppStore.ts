@@ -1,101 +1,93 @@
-import React from 'react'
-import { observable, action } from 'mobx'
+import { action } from 'mobx'
 import { createIntl, createIntlCache } from 'react-intl'
 
 import en_messages from '../translations/locales/en.json'
 import ru_messages from '../translations/locales/ru.json'
 import * as cloud from '../uitls/cloud'
+import { RootStore } from './RootStore'
 
-export const AppStore = () => {
-  const globalIntlCache = createIntlCache()
-
-  createIntl({ locale: 'ru', messages: ru_messages }, globalIntlCache)
-  createIntl({ locale: 'en', messages: en_messages }, globalIntlCache)
-
-  const defaultLocale = 'en'
-  const messages = {
-    en: en_messages,
-    ru: ru_messages,
-  } as {
+const DEFAULT_LOCALE = 'en'
+export default class AppStore {
+  rootStore: RootStore
+  messages:  {
     [key: string]: any
   }
+  defaultLocale: string = DEFAULT_LOCALE
+  locale: string = DEFAULT_LOCALE
+  wordsHighlight: boolean = true
+  dynamicTextOrientation: boolean = false
+  pageColor: string = 'white'
+  pageBackgroundColor: string = '#0000'
+  isLoggedIn: boolean = false
+  isClientLoaded: boolean = false
+  isUseImageCover: boolean = true
+  imageCover: string =  '1'
 
-  const setLocale = action((locale: string) => {
-    if (Object.keys(messages).includes(locale)) {
-      store.locale = locale
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore
+    const globalIntlCache = createIntlCache()
+
+    createIntl({ locale: 'ru', messages: ru_messages }, globalIntlCache)
+    createIntl({ locale: 'en', messages: en_messages }, globalIntlCache)
+  
+    this.defaultLocale = 'en'
+    this.messages = {
+      en: en_messages,
+      ru: ru_messages,
+    } as {
+      [key: string]: any
+    }
+
+    cloud.load().then((x) => {
+      this.isClientLoaded = true
+      cloud.isLoggedIn().then((isLoggedIn) => (this.isLoggedIn = isLoggedIn))
+    })
+  }
+
+  setLocale = action((locale: string) => {
+    if (Object.keys(this.messages).includes(locale)) {
+      this.locale = locale
     } else {
       throw Error('Unsupported locale')
     }
   })
 
-  const setImageCoverAction = action((image: string) => store.imageCover = image)
+  setImageCoverAction = action(
+    (image: string) => (this.imageCover = image)
+  )
 
-  const getLocaleMessages = action(() => {
-    const locale = store.locale
-    return messages[locale]
+  getLocaleMessages = action(() => {
+    const locale = this.locale
+    return this.messages[locale]
   })
 
-  const toggleHightligting = action((value: boolean) => {
-    store.wordsHighlight = value
+  toggleHightligting = action((value: boolean) => {
+    this.wordsHighlight = value
   })
 
-  const toggleDynamicTextOrientation = action((value: boolean) => {
-    store.dynamicTextOrientation = value
+   toggleDynamicTextOrientation = action((value: boolean) => {
+    this.dynamicTextOrientation = value
   })
 
-  const setPageColor = action((value: string) => {
-    store.pageColor = value
+ setPageColor = action((value: string) => {
+    this.pageColor = value
   })
 
-  const toggleUseImageCover = action((value: boolean) => {
-    store.isUseImageCover = value
+ toggleUseImageCover = action((value: boolean) => {
+    this.isUseImageCover = value
   })
 
-  const setPageBackgroundColorAction = action((value: string) => {
-    store.pageBackgroundColor = value
+  setPageBackgroundColorAction = action((value: string) => {
+    this.pageBackgroundColor = value
   })
 
-  cloud.load().then((x) => {
-    store.isClientLoaded = true
-    cloud.isLoggedIn().then((isLoggedIn) => (store.isLoggedIn = isLoggedIn))
-  })
-
-  const signInAction = action(async () => {
+ signInAction = action(async () => {
     await cloud.signIn()
-    store.isLoggedIn = await cloud.isLoggedIn()
+    this.isLoggedIn = await cloud.isLoggedIn()
   })
 
-  const signOutAction = action(async () => {
+  signOutAction = action(async () => {
     await cloud.signOut()
-    store.isLoggedIn = await cloud.isLoggedIn()
-    // store.books = []
+    this.isLoggedIn = await cloud.isLoggedIn()
   })
-
-  
-  const store = observable({
-    defaultLocale,
-    locale: defaultLocale,
-    wordsHighlight: true,
-    dynamicTextOrientation: false,
-    pageColor: 'white',
-    pageBackgroundColor: '#0000',
-    messages,
-    isLoggedIn: false,
-    isClientLoaded: false,
-    isUseImageCover: true,
-    imageCover: '1',
-    setImageCoverAction, 
-    toggleUseImageCover,
-    signInAction,
-    signOutAction,
-    toggleHightligting,
-    toggleDynamicTextOrientation,
-    setLocale,
-    setPageColor,
-    setPageBackgroundColorAction,
-    getLocaleMessages,
-  })
-
-  return store
 }
-export default React.createContext<any>({})
