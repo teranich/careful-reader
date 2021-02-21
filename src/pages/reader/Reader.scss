@@ -10,11 +10,10 @@ $page-color: #d8b67d;
 
 .reader {
   background-color: $page-color;
-
+  overflow: hidden;
   .text-container {
-    height: 100vh;
+    // height: 100vh;
     width: 100vw;
-    overflow-x: hidden;
     margin: 0 auto;
     font-size: $reader-font-size;
     left: $page-switcher-width;

@@ -19,7 +19,6 @@ const App = observer(function App() {
   const messages = appStore.getLocaleMessages()
 
   useEffect(() => {
-    console.log('wtf')
     libraryStore.fetchBooksListAction()
   }, [])
 
