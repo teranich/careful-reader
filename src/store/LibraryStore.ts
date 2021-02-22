@@ -1,6 +1,5 @@
 import { RootStore } from './RootStore'
-import React from 'react'
-import { observable, action, makeObservable } from 'mobx'
+import { action, makeAutoObservable } from 'mobx'
 import libraryDB from '../uitls/clientDB'
 import { BookList, Book } from '../types'
 import * as converter from '../uitls/converter'
@@ -18,9 +17,7 @@ export class LibraryStore {
   private rootStore: RootStore
 
   constructor(rootStore: RootStore) {
-    makeObservable(this, {
-      books: observable,
-    })
+    makeAutoObservable(this)
     this.rootStore = rootStore
   }
   fetchBooksListAction = action(async () => {
@@ -51,14 +48,14 @@ export class LibraryStore {
   })
 
   removeBookAction = action(async (book: Book | null) => {
-    if (!book) return;
+    if (!book) return
     await libraryDB.delete(book.id)
     const bookIndex = this.books.indexOf(book)
     this.books.splice(bookIndex, 1)
     this.rootStore.notification('book has been removed')
   })
 
-   updateBookPositionAction = action(
+  updateBookPositionAction = action(
     async (bookId: number, positionElement: string) => {
       await libraryDB.updateBookMeta(bookId, { positionElement })
     }
@@ -72,11 +69,11 @@ export class LibraryStore {
     await libraryDB.updateBookMeta(bookId, bookProps)
   })
 
-   openBookAction = action(async (bookId: number) => {
+  openBookAction = action(async (bookId: number) => {
     if (this.currentBook && this.currentBook.info.id === bookId) {
       this.currentBook.info =
         (await libraryDB.getBookMeta(bookId)) || this.currentBook.info
-      return Promise.resolve()
+      return Promise.resolve(this.currentBook)
     } else {
       return Promise.all([
         libraryDB.getBookMeta(bookId),
@@ -85,11 +82,14 @@ export class LibraryStore {
         const info = prom[0] as Book
         const rawText = prom[1] || ''
         const text = converter.parseToInnerBook(rawText)
+
         this.currentBook = {
           info,
           text,
-          meta: null
+          meta: null,
         }
+        console.log('open book action', this.currentBook)
+        return this.currentBook
       })
     }
   })

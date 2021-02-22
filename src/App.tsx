@@ -17,7 +17,6 @@ const App = observer(function App() {
   const { appStore, libraryStore, remoteLibraryStore } = rootStore
   const { isLoggedIn } = remoteLibraryStore
   const messages = appStore.getLocaleMessages()
-
   useEffect(() => {
     libraryStore.fetchBooksListAction()
   }, [])
@@ -29,9 +28,8 @@ const App = observer(function App() {
     fetchBooks()
   }, [isLoggedIn])
 
-
   return (
-    <RootStoreContext.Provider value={rootStore} >
+    <RootStoreContext.Provider value={rootStore}>
       <IntlProvider
         locale={appStore.locale}
         defaultLocale={appStore.defaultLocale}

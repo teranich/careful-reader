@@ -40,16 +40,16 @@ export default observer(function Reader() {
     const { current } = textContainerRef
     const openBook = async () => {
       setLoading(true)
-      await openBookAction(bookId)
-      current!.innerHTML = currentBook?.text || ''
+      const { text, info } = await openBookAction(bookId)
+      current!.innerHTML = text
       elementsForHightlightRef.current = getElementsForHightlight()
+      console.log('elements', getPagesCount())
       setPagesCount(getPagesCount())
       const positions: any[] = []
-
       current
         ?.querySelectorAll('p')
         .forEach((o: HTMLElement) => positions.push(o.getAttribute('data-id')))
-      restoreScrollPoition(currentBook?.info.positionElement)
+      restoreScrollPoition(info.positionElement)
       setLoading(false)
     }
 

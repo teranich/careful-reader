@@ -1,4 +1,4 @@
-import { action } from 'mobx'
+import { action, makeAutoObservable } from 'mobx'
 import { createIntl, createIntlCache } from 'react-intl'
 
 import en_messages from '../translations/locales/en.json'
@@ -9,7 +9,7 @@ import { RootStore } from './RootStore'
 const DEFAULT_LOCALE = 'en'
 export default class AppStore {
   rootStore: RootStore
-  messages:  {
+  messages: {
     [key: string]: any
   }
   defaultLocale: string = DEFAULT_LOCALE
@@ -21,15 +21,16 @@ export default class AppStore {
   isLoggedIn: boolean = false
   isClientLoaded: boolean = false
   isUseImageCover: boolean = true
-  imageCover: string =  '1'
+  imageCover: string = '1'
 
   constructor(rootStore: RootStore) {
+    makeAutoObservable(this)
     this.rootStore = rootStore
     const globalIntlCache = createIntlCache()
 
     createIntl({ locale: 'ru', messages: ru_messages }, globalIntlCache)
     createIntl({ locale: 'en', messages: en_messages }, globalIntlCache)
-  
+
     this.defaultLocale = 'en'
     this.messages = {
       en: en_messages,
@@ -52,9 +53,7 @@ export default class AppStore {
     }
   })
 
-  setImageCoverAction = action(
-    (image: string) => (this.imageCover = image)
-  )
+  setImageCoverAction = action((image: string) => (this.imageCover = image))
 
   getLocaleMessages = action(() => {
     const locale = this.locale
@@ -65,15 +64,15 @@ export default class AppStore {
     this.wordsHighlight = value
   })
 
-   toggleDynamicTextOrientation = action((value: boolean) => {
+  toggleDynamicTextOrientation = action((value: boolean) => {
     this.dynamicTextOrientation = value
   })
 
- setPageColor = action((value: string) => {
+  setPageColor = action((value: string) => {
     this.pageColor = value
   })
 
- toggleUseImageCover = action((value: boolean) => {
+  toggleUseImageCover = action((value: boolean) => {
     this.isUseImageCover = value
   })
 
@@ -81,7 +80,7 @@ export default class AppStore {
     this.pageBackgroundColor = value
   })
 
- signInAction = action(async () => {
+  signInAction = action(async () => {
     await cloud.signIn()
     this.isLoggedIn = await cloud.isLoggedIn()
   })

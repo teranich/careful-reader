@@ -1,5 +1,5 @@
 import { RootStore } from './RootStore'
-import { action, makeObservable, observable } from 'mobx'
+import { action, makeAutoObservable } from 'mobx'
 import { Book } from '../types'
 import * as cloud from '../uitls/cloud'
 import libraryDB from '../uitls/clientDB'
@@ -17,13 +17,7 @@ export default class RemoteLibraryStore {
   private rootStore: RootStore
 
   constructor(rootStore: RootStore) {
-    makeObservable(this, {
-      books: observable,
-      isClientLoaded: observable,
-      isLoggedIn: observable,
-      isBooksLoading: observable,
-      isUploading: observable,
-    })
+    makeAutoObservable(this)
     this.rootStore = rootStore
     cloud.load().then(() => {
       this.isClientLoaded = true
@@ -113,7 +107,7 @@ export default class RemoteLibraryStore {
       .file(`name = '${book.name}'`)
       .then(({ file }) => file?.id && this.cloudDrive.remove(file.id))
 
-    return Promise.allSettled([cloudFile, cloudMetaFile])    
+    return Promise.allSettled([cloudFile, cloudMetaFile])
   }
 
   removeBookAction = action(async (book: Book | null) => {
