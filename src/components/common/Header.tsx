@@ -50,7 +50,7 @@ export default observer(function Header({ children, className = '', title }: any
   }
   const pathname: string = location.pathname || ''
   const headTitle = title || pathTitleMap[pathname]
-  const { libraryStore: {currentBook} } = useContext(RootStoreContext)
+  const { libraryStore: {lastBook} } = useContext(RootStoreContext)
 
   const toggleDrawer = (state: boolean) => (event: any) => {
     if (
@@ -69,13 +69,13 @@ export default observer(function Header({ children, className = '', title }: any
       onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {currentBook?.meta?.meta && (
-          <Link to={`/read/${currentBook.meta.id}`}>
+        {lastBook?.info?.meta && (
+          <Link to={`/read/${lastBook.info.id}`}>
             <ListItem button>
               <ListItemIcon>
                 <LibraryBooksIcon />
               </ListItemIcon>
-              <ListItemText primary={currentBook.meta.meta.title} />
+              <ListItemText primary={lastBook.info.meta.title} />
             </ListItem>
           </Link>
         )}

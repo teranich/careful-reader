@@ -24,8 +24,8 @@ export class RootStore {
   constructor() {
     makeAutoObservable(this)
     this.appStore = new AppStore(this)
-    this.libraryStore = new LibraryStore(this)
     this.remoteLibraryStore = new RemoteLibraryStore(this)
+    this.libraryStore = new LibraryStore(this, this.remoteLibraryStore)
   }
 
   removeNotification(index: number) {

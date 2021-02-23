@@ -10,6 +10,7 @@ import { Loading } from '../../components/loading'
 import { useDebounce } from 'use-debounce'
 import styled from 'styled-components'
 import { RootStoreContext } from '../../store/RootStore'
+import { TCurrentBook } from 'src/store/LibraryStore'
 
 const PageCount = styled.span`
   white-space: nowrap;
@@ -24,7 +25,9 @@ const dfunc = debounce((fn) => fn && fn(), 100)
 export default observer(function Reader() {
   const { appStore, libraryStore } = useContext(RootStoreContext)
   const { wordsHighlight, dynamicTextOrientation } = appStore
-  const { updateBookPositionAction, openBookAction, currentBook } = libraryStore
+  const { updateBookPositionAction, openBookAction, lastBook } = libraryStore
+  // const [ currentBook, setCurrentBook ] = useState(lastBook)
+  const currentBookRef =  useRef<TCurrentBook>(lastBook)
   const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(0)
   const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0')
   const [pagesCount, setPagesCount] = useState(0)
@@ -40,16 +43,16 @@ export default observer(function Reader() {
     const { current } = textContainerRef
     const openBook = async () => {
       setLoading(true)
-      const { text, info } = await openBookAction(bookId)
-      current!.innerHTML = text
+      const openedBook = await openBookAction(bookId)
+      currentBookRef.current = openedBook
+      openedBook && (current!.innerHTML = openedBook.text)
       elementsForHightlightRef.current = getElementsForHightlight()
-      console.log('elements', getPagesCount())
       setPagesCount(getPagesCount())
       const positions: any[] = []
       current
         ?.querySelectorAll('p')
         .forEach((o: HTMLElement) => positions.push(o.getAttribute('data-id')))
-      restoreScrollPoition(info.positionElement)
+      openedBook && restoreScrollPoition(openedBook.info.positionElement)
       setLoading(false)
     }
 
@@ -74,7 +77,7 @@ export default observer(function Reader() {
     }
   }
   const bookTitle = () =>
-    currentBook?.info?.meta?.title || currentBook?.info?.name
+    currentBookRef.current?.info?.meta?.title || currentBookRef.current?.info?.name
   useEventListener('deviceorientation', deviceOrientationHandler)
   return (
     <div className="reader">
@@ -129,7 +132,8 @@ export default observer(function Reader() {
   function updateBookPosition(posElement: HTMLElement) {
     if (posElement) {
       const positionElementId = posElement.getAttribute('data-id')
-      positionElementId && updateBookPositionAction(bookId, positionElementId)
+      const book = currentBookRef.current?.info
+      book && positionElementId && updateBookPositionAction(book, positionElementId)
     }
   }
 

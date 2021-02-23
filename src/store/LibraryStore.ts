@@ -3,23 +3,24 @@ import { action, makeAutoObservable } from 'mobx'
 import libraryDB from '../uitls/clientDB'
 import { BookList, Book } from '../types'
 import * as converter from '../uitls/converter'
+import RemoteLibraryStore from './RemoteLibraryStore'
 
-type TCurrentBook = null | {
+export type TCurrentBook ={
   info: Book
   text: string
-  meta: any
-}
+} | undefined
 export class LibraryStore {
   public isAddingBookInProcess = false
   public isFetchingBooksInProcess = false
 
   public books: BookList = []
-  public currentBook: TCurrentBook = null
+  public lastBook: TCurrentBook
   private rootStore: RootStore
-
-  constructor(rootStore: RootStore) {
+  private remoteStore: RemoteLibraryStore
+  constructor(rootStore: RootStore, remoteStore: RemoteLibraryStore) {
     makeAutoObservable(this)
     this.rootStore = rootStore
+    this.remoteStore = remoteStore
   }
   fetchBooksListAction = action(async () => {
     this.isFetchingBooksInProcess = true
@@ -59,8 +60,11 @@ export class LibraryStore {
   })
 
   updateBookPositionAction = action(
-    async (bookId: number, positionElement: string) => {
+    async (book: Book, positionElement: string) => {
+      const bookId = book.id
       await libraryDB.updateBookMeta(bookId, { positionElement })
+      book.positionElement = positionElement
+      await this.remoteStore.syncMetaAction(book)
     }
   )
 
@@ -72,11 +76,11 @@ export class LibraryStore {
     await libraryDB.updateBookMeta(bookId, bookProps)
   })
 
-  openBookAction = action(async (bookId: number) => {
-    if (this.currentBook && this.currentBook.info.id === bookId) {
-      this.currentBook.info =
-        (await libraryDB.getBookMeta(bookId)) || this.currentBook.info
-      return Promise.resolve(this.currentBook)
+  openBookAction = action(async (bookId: number): Promise<TCurrentBook> => {
+    if (this.lastBook && this.lastBook.info.id === bookId) {
+      this.lastBook.info =
+        (await libraryDB.getBookMeta(bookId)) || this.lastBook.info
+      return Promise.resolve(this.lastBook)
     } else {
       return Promise.all([
         libraryDB.getBookMeta(bookId),
@@ -85,14 +89,12 @@ export class LibraryStore {
         const info = prom[0] as Book
         const rawText = prom[1] || ''
         const text = converter.parseToInnerBook(rawText)
-
-        this.currentBook = {
+        
+        this.lastBook = {
           info,
           text,
-          meta: null,
         }
-        console.log('open book action', this.currentBook)
-        return this.currentBook
+        return this.lastBook
       })
     }
   })
