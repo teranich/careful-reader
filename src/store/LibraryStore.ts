@@ -1,26 +1,26 @@
 import { RootStore } from './RootStore'
-import { action, makeAutoObservable } from 'mobx'
+import { action, makeAutoObservable, toJS } from 'mobx'
 import libraryDB from '../uitls/clientDB'
 import { BookList, Book } from '../types'
 import * as converter from '../uitls/converter'
-import RemoteLibraryStore from './RemoteLibraryStore'
 
-export type TCurrentBook ={
-  info: Book
-  text: string
-} | undefined
+export type TCurrentBook =
+  | {
+      info: Book
+      text: string
+    }
+  | undefined
 export class LibraryStore {
   public isAddingBookInProcess = false
   public isFetchingBooksInProcess = false
-
   public books: BookList = []
   public lastBook: TCurrentBook
+
   private rootStore: RootStore
-  private remoteStore: RemoteLibraryStore
-  constructor(rootStore: RootStore, remoteStore: RemoteLibraryStore) {
+
+  constructor(rootStore: RootStore) {
     makeAutoObservable(this)
     this.rootStore = rootStore
-    this.remoteStore = remoteStore
   }
   fetchBooksListAction = action(async () => {
     this.isFetchingBooksInProcess = true
@@ -47,7 +47,10 @@ export class LibraryStore {
   })
 
   syncBookAction = action(async (meta: Book, body: string) => {
-    const book = await libraryDB.addBook(meta, body)
+    const { id, ...rest } = meta
+    const metaWithoutObserving = toJS(rest)
+    metaWithoutObserving.meta = toJS(metaWithoutObserving.meta)
+    const book = await libraryDB.addBook(metaWithoutObserving, body)
     this.books.push(book)
   })
 
@@ -64,7 +67,7 @@ export class LibraryStore {
       const bookId = book.id
       await libraryDB.updateBookMeta(bookId, { positionElement })
       book.positionElement = positionElement
-      await this.remoteStore.syncMetaAction(book)
+      await this.rootStore.syncMetaAction(book)
     }
   )
 
@@ -76,28 +79,30 @@ export class LibraryStore {
     await libraryDB.updateBookMeta(bookId, bookProps)
   })
 
-  openBookAction = action(async (bookId: number): Promise<TCurrentBook> => {
-    if (this.lastBook && this.lastBook.info.id === bookId) {
-      this.lastBook.info =
-        (await libraryDB.getBookMeta(bookId)) || this.lastBook.info
-      return Promise.resolve(this.lastBook)
-    } else {
-      return Promise.all([
-        libraryDB.getBookMeta(bookId),
-        libraryDB.getBookText(bookId),
-      ]).then((prom) => {
-        const info = prom[0] as Book
-        const rawText = prom[1] || ''
-        const text = converter.parseToInnerBook(rawText)
-        
-        this.lastBook = {
-          info,
-          text,
-        }
-        return this.lastBook
-      })
+  openBookAction = action(
+    async (bookId: number): Promise<TCurrentBook> => {
+      if (this.lastBook && this.lastBook.info.id === bookId) {
+        this.lastBook.info =
+          (await libraryDB.getBookMeta(bookId)) || this.lastBook.info
+        return Promise.resolve(this.lastBook)
+      } else {
+        return Promise.all([
+          libraryDB.getBookMeta(bookId),
+          libraryDB.getBookText(bookId),
+        ]).then((prom) => {
+          const info = prom[0] as Book
+          const rawText = prom[1] || ''
+          const text = converter.parseToInnerBook(rawText)
+
+          this.lastBook = {
+            info,
+            text,
+          }
+          return this.lastBook
+        })
+      }
     }
-  })
+  )
 
   fetchBookTextAction = action(
     async (bookId: number) => await libraryDB.getBookText(bookId)

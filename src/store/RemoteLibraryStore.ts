@@ -40,11 +40,13 @@ export default class RemoteLibraryStore {
         this.cloudAppFolder.download(fileMeta.id).then((content) => {
           //@ts-ignore
           const book: Book = JSON.parse(content)
+
           this.books.push(book)
         })
       )
       this.books = []
       await Promise.all(contentPromises)
+      console.log('remote books', this.books)
     } catch (e) {
       this.rootStore.notification.error('Fetching remote books error')
     } finally {
@@ -74,6 +76,8 @@ export default class RemoteLibraryStore {
         textFileId,
       })
       const result = await this.syncMetaAction(updatedBookMeta)
+      book.textFileId = textFileId
+      console.log('book', book)
       this.books.push(book)
       this.rootStore.notification.info('Upload success')
       return result
@@ -86,6 +90,7 @@ export default class RemoteLibraryStore {
 
   syncMetaAction = action(async (book: Book | null) => {
     if (!book) return
+    console.log('book for upload:', book)
     try {
       this.isUploading = true
       const metaFileName = book.name + '-meta.json'
@@ -114,8 +119,11 @@ export default class RemoteLibraryStore {
         this.rootStore.notification.info('download sucess')
         result = await this.cloudDrive.download(book.textFileId)
       }
+      await this.rootStore.syncBookAction(book, result)
+
       return result
     } catch (e) {
+      console.error(e)
       this.rootStore.notification.error('download error')
       return result
     } finally {

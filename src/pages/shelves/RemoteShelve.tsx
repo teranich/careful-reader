@@ -15,16 +15,13 @@ const RemoteBooksList = observer(() => {
     removeBookAction,
   } = remoteLibraryStore
 
-  const { addBookAction, isBookExist } = libraryStore
+  const { isBookExist } = libraryStore
 
   const collectBook = async (book: Book | null) => {
     if (isBookExist(book?.name)) {
       return
     }
-    const text = await downloadBookAction(book)
-    if (text && book) {
-      addBookAction(text, book?.name)
-    }
+    await downloadBookAction(book)
   }
   const actions: TSheveAction[] = [
     {

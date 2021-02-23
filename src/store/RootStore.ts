@@ -1,10 +1,11 @@
 import { action, makeAutoObservable } from 'mobx'
 import { createContext } from 'react'
+import { Book } from 'src/types'
 import AppStore from './AppStore'
 import { LibraryStore } from './LibraryStore'
 import RemoteLibraryStore from './RemoteLibraryStore'
 
-interface INotification  {
+interface INotification {
   message: string
   type: string
 }
@@ -21,11 +22,17 @@ export class RootStore {
       this.notifications.push({ message, type: 'error' })
     }),
   }
+  syncMetaAction = action(async (book: Book) => {
+    return await this.remoteLibraryStore.syncMetaAction(book)
+  })
+  syncBookAction = action(async (book: Book, body: string) => {
+    return await this.libraryStore.syncBookAction(book, body)
+  })
   constructor() {
     makeAutoObservable(this)
     this.appStore = new AppStore(this)
     this.remoteLibraryStore = new RemoteLibraryStore(this)
-    this.libraryStore = new LibraryStore(this, this.remoteLibraryStore)
+    this.libraryStore = new LibraryStore(this)
   }
 
   removeNotification(index: number) {
