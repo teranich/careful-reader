@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/careful-reader/static/css/main.bbeef402.chunk.css",
-    "main.js": "/careful-reader/static/js/main.90f075e1.chunk.js",
-    "main.js.map": "/careful-reader/static/js/main.90f075e1.chunk.js.map",
+    "main.js": "/careful-reader/static/js/main.a7d66cfd.chunk.js",
+    "main.js.map": "/careful-reader/static/js/main.a7d66cfd.chunk.js.map",
     "runtime-main.js": "/careful-reader/static/js/runtime-main.f271cedd.js",
     "runtime-main.js.map": "/careful-reader/static/js/runtime-main.f271cedd.js.map",
     "static/css/2.679831fc.chunk.css": "/careful-reader/static/css/2.679831fc.chunk.css",
@@ -24,6 +24,6 @@
     "static/css/2.679831fc.chunk.css",
     "static/js/2.5bcefa0b.chunk.js",
     "static/css/main.bbeef402.chunk.css",
-    "static/js/main.90f075e1.chunk.js"
+    "static/js/main.a7d66cfd.chunk.js"
   ]
 }
