@@ -39,7 +39,7 @@ export default class RemoteLibraryStore {
       const contentPromises = cloudFiles.map((fileMeta: { id: string }) =>
         this.cloudAppFolder.download(fileMeta.id).then((content) => {
           //@ts-ignore
-          const book: Book = content
+          const book: Book = JSON.parse(content)
           this.books.push(book)
         })
       )
