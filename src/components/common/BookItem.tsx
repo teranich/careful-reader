@@ -15,6 +15,7 @@ const Container = styled(Paper)`
   word-break: break-all;
   padding: 5px;
   margin: 5px;
+  cursor: pointer;
 `
 const Image = styled.img`
   display: block;
