@@ -10,7 +10,8 @@ type TCurrentBook = null | {
   meta: any
 }
 export class LibraryStore {
-  public isAddingBookInProcess: boolean = false
+  public isAddingBookInProcess = false
+  public isFetchingBooksInProcess = false
 
   public books: BookList = []
   public currentBook: TCurrentBook = null
@@ -21,7 +22,9 @@ export class LibraryStore {
     this.rootStore = rootStore
   }
   fetchBooksListAction = action(async () => {
+    this.isFetchingBooksInProcess = true
     this.books = await libraryDB.getAllMeta()
+    this.isFetchingBooksInProcess = false
   })
 
   isBookExist = (name: string | undefined) =>
@@ -39,7 +42,7 @@ export class LibraryStore {
     const book = await libraryDB.addBook(newBook, rawBookText)
     this.books.push(book)
     this.isAddingBookInProcess = false
-    this.rootStore.notification('book has been added')
+    this.rootStore.notification.info('book has been added')
   })
 
   syncBookAction = action(async (meta: Book, body: string) => {
@@ -52,7 +55,7 @@ export class LibraryStore {
     await libraryDB.delete(book.id)
     const bookIndex = this.books.indexOf(book)
     this.books.splice(bookIndex, 1)
-    this.rootStore.notification('book has been removed')
+    this.rootStore.notification.info('book has been removed')
   })
 
   updateBookPositionAction = action(

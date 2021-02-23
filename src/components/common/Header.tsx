@@ -19,6 +19,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import { AuthButtons } from '../controls'
 import styled from 'styled-components'
 import { RootStoreContext } from '../../store/RootStore'
+import { LoadingLine } from '../loading/Loading'
 
 const TopHeightWorkaround = styled.div``
 const Title = styled(Typography)`
@@ -126,6 +127,7 @@ export default observer(function Header({ children, className = '', title }: any
           {children}
           <AuthButtons />
         </Toolbar>
+        <LoadingLine />
       </AppBar>
     </>
   )

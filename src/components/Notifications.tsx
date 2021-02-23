@@ -2,24 +2,26 @@ import React, { useContext, useEffect } from 'react'
 import Snackbar from '@material-ui/core/Snackbar'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
+import Alert from '@material-ui/lab/Alert';
 import { observer } from 'mobx-react'
 import { RootStoreContext } from '../store/RootStore'
 
 const Notifications = observer(({ rootStore }: any) => {
-  const { messages } = useContext(
+  const { notifications } = useContext(
     RootStoreContext
   )
 
   return (
     <>
-      {messages.map((message: string, i: number) => (
-        <Notification message={message} index={i} key={`notification-${i}`} />
+      {notifications.map(({ message, type }, i: number) => (
+        <Notification message={message} index={i} type={type} key={`notification-${i}`} />
       ))}
     </>
   )
 })
 
-const Notification = ({ message, index }: { message: string, index: number }) => {
+type TNotificationProps = { message: string, index: number, type: string }
+const Notification = ({ message, index, type }: TNotificationProps) => {
   const [open, setOpen] = React.useState(true)
   const rootStore = useContext(
     RootStoreContext
@@ -28,29 +30,28 @@ const Notification = ({ message, index }: { message: string, index: number }) =>
     setOpen(false)
     rootStore.removeNotification(index)
   }
+  const getAlertClassForType = () => {
+    const typeClassMap = {
+      info: 'success',
+      error: 'error'
+    }
+    //@ts-ignore
+    return typeof type === 'string' ? typeClassMap[type] : 'success'
+  }
   return (
     <Snackbar
       anchorOrigin={{
-        vertical: 'bottom',
+        vertical: 'top',
         horizontal: 'left',
       }}
       open={open}
       autoHideDuration={3000}
       onClose={handleClose}
-      message={message}
-      action={
-        <React.Fragment>
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </React.Fragment>
-      }
-    />
+    >
+      <Alert onClose={handleClose} severity={getAlertClassForType()}>
+        {message}
+      </Alert>
+    </Snackbar>
   )
 }
 
