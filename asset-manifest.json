@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/careful-reader/static/css/main.bbeef402.chunk.css",
-    "main.js": "/careful-reader/static/js/main.a7d66cfd.chunk.js",
-    "main.js.map": "/careful-reader/static/js/main.a7d66cfd.chunk.js.map",
+    "main.css": "/careful-reader/static/css/main.1aebf901.chunk.css",
+    "main.js": "/careful-reader/static/js/main.7d61d26f.chunk.js",
+    "main.js.map": "/careful-reader/static/js/main.7d61d26f.chunk.js.map",
     "runtime-main.js": "/careful-reader/static/js/runtime-main.f271cedd.js",
     "runtime-main.js.map": "/careful-reader/static/js/runtime-main.f271cedd.js.map",
     "static/css/2.679831fc.chunk.css": "/careful-reader/static/css/2.679831fc.chunk.css",
-    "static/js/2.5bcefa0b.chunk.js": "/careful-reader/static/js/2.5bcefa0b.chunk.js",
-    "static/js/2.5bcefa0b.chunk.js.map": "/careful-reader/static/js/2.5bcefa0b.chunk.js.map",
+    "static/js/2.9e5e554b.chunk.js": "/careful-reader/static/js/2.9e5e554b.chunk.js",
+    "static/js/2.9e5e554b.chunk.js.map": "/careful-reader/static/js/2.9e5e554b.chunk.js.map",
     "index.html": "/careful-reader/index.html",
     "static/css/2.679831fc.chunk.css.map": "/careful-reader/static/css/2.679831fc.chunk.css.map",
-    "static/css/main.bbeef402.chunk.css.map": "/careful-reader/static/css/main.bbeef402.chunk.css.map",
-    "static/js/2.5bcefa0b.chunk.js.LICENSE.txt": "/careful-reader/static/js/2.5bcefa0b.chunk.js.LICENSE.txt",
+    "static/css/main.1aebf901.chunk.css.map": "/careful-reader/static/css/main.1aebf901.chunk.css.map",
+    "static/js/2.9e5e554b.chunk.js.LICENSE.txt": "/careful-reader/static/js/2.9e5e554b.chunk.js.LICENSE.txt",
     "static/media/back.adb63b87.svg": "/careful-reader/static/media/back.adb63b87.svg",
-    "static/media/home.d4a69c8f.svg": "/careful-reader/static/media/home.d4a69c8f.svg",
+    "static/media/home.b0dac3bc.svg": "/careful-reader/static/media/home.b0dac3bc.svg",
     "static/media/page1.7720a4ef.jpg": "/careful-reader/static/media/page1.7720a4ef.jpg",
     "static/media/Reader.scss": "/careful-reader/static/media/page2.c690ddc0.jpg",
     "static/media/page3.ce566b3c.jpg": "/careful-reader/static/media/page3.ce566b3c.jpg",
@@ -22,8 +22,8 @@
   "entrypoints": [
     "static/js/runtime-main.f271cedd.js",
     "static/css/2.679831fc.chunk.css",
-    "static/js/2.5bcefa0b.chunk.js",
-    "static/css/main.bbeef402.chunk.css",
-    "static/js/main.a7d66cfd.chunk.js"
+    "static/js/2.9e5e554b.chunk.js",
+    "static/css/main.1aebf901.chunk.css",
+    "static/js/main.7d61d26f.chunk.js"
   ]
 }
