@@ -1,8 +1,8 @@
 import { RootStore } from './RootStore'
 import { action, makeAutoObservable, toJS } from 'mobx'
-import libraryDB from '../uitls/clientDB'
+import libraryDB from '../utils/clientDB'
 import { BookList, Book } from '../types'
-import * as converter from '../uitls/converter'
+import * as converter from '../utils/converter'
 
 export type TCurrentBook =
   | {

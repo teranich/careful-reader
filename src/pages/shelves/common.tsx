@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { readFileContent } from '../../uitls/common'
+import { readFileContent } from '../../utils/common'
 import React, { useContext } from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';

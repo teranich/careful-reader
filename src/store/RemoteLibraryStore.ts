@@ -1,8 +1,8 @@
 import { RootStore } from './RootStore'
 import { action, makeAutoObservable } from 'mobx'
 import { Book } from '../types'
-import * as cloud from '../uitls/cloud'
-import libraryDB from '../uitls/clientDB'
+import * as cloud from '../utils/cloud'
+import libraryDB from '../utils/clientDB'
 
 export default class RemoteLibraryStore {
   books: Book[] = []

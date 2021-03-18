@@ -3,7 +3,7 @@ import { createIntl, createIntlCache } from 'react-intl'
 
 import en_messages from '../translations/locales/en.json'
 import ru_messages from '../translations/locales/ru.json'
-import * as cloud from '../uitls/cloud'
+import * as cloud from '../utils/cloud'
 import { RootStore } from './RootStore'
 
 const DEFAULT_LOCALE = 'en'
