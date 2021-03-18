@@ -21,7 +21,10 @@ export default class RemoteLibraryStore {
   constructor(rootStore: RootStore) {
     makeAutoObservable(this)
     this.rootStore = rootStore
-    cloud.load().then(() => {
+
+  }
+  load() {
+    return cloud.load().then(() => {
       this.isClientLoaded = true
       cloud.isLoggedIn().then((isLoggedIn) => (this.isLoggedIn = isLoggedIn))
     })
@@ -33,6 +36,7 @@ export default class RemoteLibraryStore {
   fetchBooksListAction = action(async () => {
     try {
       this.isBooksLoading = true
+
       const cloudFiles = await this.cloudAppFolder.find.file(
         `name contains '-meta.json'`
       )
@@ -47,8 +51,10 @@ export default class RemoteLibraryStore {
       this.books = []
       await Promise.all(contentPromises)
       console.log('remote books', this.books)
+      return this.books
     } catch (e) {
       this.rootStore.notification.error('Fetching remote books error')
+      console.error(e)
     } finally {
       this.isBooksLoading = false
     }

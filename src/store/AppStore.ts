@@ -39,12 +39,14 @@ export default class AppStore {
       [key: string]: any
     }
 
-    cloud.load().then((x) => {
+
+  }
+  load() {
+    return cloud.load().then(() => {
       this.isClientLoaded = true
       cloud.isLoggedIn().then((isLoggedIn) => (this.isLoggedIn = isLoggedIn))
     })
   }
-
   setLocale = action((locale: string) => {
     if (Object.keys(this.messages).includes(locale)) {
       this.locale = locale

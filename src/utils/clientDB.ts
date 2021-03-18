@@ -17,7 +17,7 @@ interface LibraryDB extends DBSchema {
   }
 }
 
-const dbPromise = openDB<LibraryDB>(DB_NAME, DB_VERSION, {
+const dbPromise = async () => openDB<LibraryDB>(DB_NAME, DB_VERSION, {
   upgrade(db, oldVersion) {
     if (oldVersion < 1) {
       db.createObjectStore(DB_INDEX_NAME, { keyPath: 'id' })
@@ -27,17 +27,17 @@ const dbPromise = openDB<LibraryDB>(DB_NAME, DB_VERSION, {
 })
 
 const txPromise = async () =>
-  (await dbPromise).transaction([DB_INDEX_NAME, DB_STORE_NAME], 'readwrite')
+  (await dbPromise()).transaction([DB_INDEX_NAME, DB_STORE_NAME], 'readwrite')
 
 const libraryDB = {
   async getBookMeta(id: number) {
-    return (await dbPromise).get(DB_INDEX_NAME, id)
+    return (await dbPromise()).get(DB_INDEX_NAME, id)
   },
   async getAllMeta() {
-    return (await dbPromise).getAll(DB_INDEX_NAME)
+    return (await dbPromise()).getAll(DB_INDEX_NAME)
   },
   async getBookText(id: number): Promise<string> {
-    const result = await (await dbPromise).get(DB_STORE_NAME, id)
+    const result = await (await dbPromise()).get(DB_STORE_NAME, id)
     if (!result) {
       throw Error(`can not find book ${id} in the locale db`)
     } else {

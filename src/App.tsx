@@ -17,8 +17,15 @@ const App = observer(function App() {
   const { appStore, libraryStore, remoteLibraryStore } = rootStore
   const { isLoggedIn } = remoteLibraryStore
   const messages = appStore.getLocaleMessages()
+
   useEffect(() => {
-    libraryStore.fetchBooksListAction()
+    console.count()
+    Promise.all([
+      appStore.load(),
+      remoteLibraryStore.load()
+    ]).then(() => {
+      libraryStore.fetchBooksListAction()
+    })
   }, [])
 
   const fetchBooks = async () => {
