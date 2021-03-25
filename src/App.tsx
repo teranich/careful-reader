@@ -19,11 +19,7 @@ const App = observer(function App() {
   const messages = appStore.getLocaleMessages()
 
   useEffect(() => {
-    console.count()
-    Promise.all([
-      appStore.load(),
-      remoteLibraryStore.load()
-    ]).then(() => {
+    Promise.all([appStore.load(), remoteLibraryStore.load()]).then(() => {
       libraryStore.fetchBooksListAction()
     })
   }, [])
