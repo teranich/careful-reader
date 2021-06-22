@@ -42,7 +42,7 @@
     "use-debounce": "^6.0.0"
   },
   "scripts": {
-    "start": "cross-env PORT=3087 react-app-rewired start",
+    "start": "cross-env PORT=3087 BROWSER=none react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
