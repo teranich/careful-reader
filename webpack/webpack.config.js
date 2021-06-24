@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const ReactRefreshTypeScript = require('react-refresh-typescript');
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -10,6 +11,7 @@ const paths = {
     public: path.resolve(__dirname, '../public'),
     src: path.resolve(__dirname, '../src'),
     build: path.resolve(__dirname, '../build'),
+    sw: path.resolve(__dirname, '../src/service-worker.ts'),
 };
 const { isDevBuild, devOnly, prodOnly, removeEmpty, getClientEnvironment } = require('./utils');
 const env = getClientEnvironment(paths.public.slice(0, -1));
@@ -57,7 +59,7 @@ module.exports = {
         modules: [paths.src, 'node_modules'],
         extensions: ['.web.ts', '.ts', '.web.tsx', '.tsx', '.web.js', '.js', '.json', '.web.jsx', '.jsx'],
         alias: {
-            theme: `${paths.src}/theme.ts`
+            theme: `${paths.src}/theme.ts`,
         },
     },
     module: {
@@ -118,6 +120,11 @@ module.exports = {
                 }),
             ),
         }),
+        new InjectManifest({
+            swSrc: paths.sw,
+            swDest: 'sw.js',
+            maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        }),
         new WebpackManifestPlugin({
             fileName: 'manifest.json',
         }),
@@ -125,9 +132,7 @@ module.exports = {
         devOnly({
             apply: (compiler) => {
                 compiler.hooks.afterCompile.tap('CarefulReader', () =>
-                    process.stdout.write(
-                        `\x1B[2J\x1B[3J\x1B[H\n🧐Careful Reader📖\n`,
-                    ),
+                    process.stdout.write(`\x1B[2J\x1B[3J\x1B[H\n🧐Careful Reader📖\t on: http://localhost:${port}\n`),
                 );
             },
         }),
