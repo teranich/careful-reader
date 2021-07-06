@@ -67,7 +67,7 @@ export class LibraryStore {
       const bookId = book.id
       await libraryDB.updateBookMeta(bookId, { positionElement })
       book.positionElement = positionElement
-      await this.rootStore.syncMetaAction(book)
+      // await this.rootStore.syncMetaAction(book)
     }
   )
 
