@@ -83,7 +83,7 @@ module.exports = {
                 options: {
                     transpileOnly: true,
                     getCustomTransformers: () => ({
-                        before: [ReactRefreshTypeScript()],
+                        before: removeEmpty([devOnly(ReactRefreshTypeScript())]),
                     }),
                 },
             },
