@@ -18,4 +18,9 @@ if ('serviceWorker' in navigator) {
                 console.log('SW registration failed: ', registrationError);
             });
     });
+    // navigator.serviceWorker.ready.then(registration => {
+    //     registration.unregister().then(() => {
+    //         window.location.reload();
+    //     });
+    // });
 }
