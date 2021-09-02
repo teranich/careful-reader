@@ -9,7 +9,9 @@
     "intl:extract": "formatjs extract src/**/*.messages.ts --out-file src/translations/extracted/en.json --format formatter.js",
     "intl:translation": "node ./translationRunner.js",
     "intl:manage": "yarn intl:extract && yarn intl:translation",
-    "deploy": "react-app-rewired build && gh-pages -d build"
+    "deploy": "react-app-rewired build && gh-pages -d build",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "supportedLocales": [
     "en",
@@ -65,11 +67,19 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.15.0",
     "@formatjs/cli": "^4.2.21",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@storybook/addon-actions": "^6.3.7",
+    "@storybook/addon-essentials": "^6.3.7",
+    "@storybook/addon-links": "^6.3.7",
+    "@storybook/builder-webpack5": "^6.3.7",
+    "@storybook/manager-webpack5": "^6.3.7",
+    "@storybook/react": "^6.3.7",
     "@testing-library/jest-dom": "^5.14.1",
+    "babel-loader": "^8.2.2",
     "babel-plugin-react-intl": "^8.2.10",
-    "copy-webpack-plugin": "^9.0.0",
+    "copy-webpack-plugin": "^9.0.1",
     "cross-env": "^7.0.2",
     "css-loader": "^5.2.6",
     "formatjs": "^0.1.1",
