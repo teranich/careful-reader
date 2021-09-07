@@ -26,12 +26,14 @@ for (let i = 0; i < 100; i++) {
     const tone = i * 2;
     classes += `.w${i} {
     color: rgb(${tone},${tone},${tone});
-  }
-  `;
+    }
+    `;
 }
+
 interface IHightlighter {
     readonly wordsHighlight: boolean;
 }
+
 const Hightlighter = styled.div<IHightlighter>`
     height: 100vh;
     overflow-x: hidden;
@@ -42,7 +44,6 @@ const Hightlighter = styled.div<IHightlighter>`
     background-color: #d8b67d;
     /* font-family: 'Adobe Garamond'; */
     /* text-align: justify; */
-
     .section {
         padding: 10px;
     }
@@ -58,9 +59,9 @@ const Hightlighter = styled.div<IHightlighter>`
             height: 90vmin;
         }
     }
-
     ${(props) => props.wordsHighlight && classes}
 `;
+
 const dfunc = debounce((fn) => fn && fn(), 100);
 
 export default observer(function Reader() {
@@ -93,7 +94,6 @@ export default observer(function Reader() {
             openedBook && restoreScrollPoition(openedBook.info.positionElement);
             setLoading(false);
         };
-
         openBook();
         current!.addEventListener('scroll', handleScroll);
         return () => {
@@ -118,10 +118,10 @@ export default observer(function Reader() {
     useEventListener('deviceorientation', deviceOrientationHandler);
     return (
         <>
-            <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
+            {/* <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
                 <div>{currenPositionPercent}%</div>
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
-            </Header>
+            </Header> */}
             <Loading loading={loading}>
                 <Hightlighter
                     wordsHighlight={wordsHighlight}

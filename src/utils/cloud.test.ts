@@ -1,40 +1,39 @@
-import { importScript } from './common'
-import * as cloud from './cloud'
-jest.mock('./common')
+import * as cloud from './cloud';
+jest.mock('./common');
 
-beforeEach(()=> {
+beforeEach(() => {
     Object.defineProperty(window, 'gapi', {
         writable: true,
         value: {
             load: (a, f) => f(),
             client: {
                 init: () => {
-                    return Promise.resolve()
-                }
-            }
-        }
-      });
-})
+                    return Promise.resolve();
+                },
+            },
+        },
+    });
+});
 
 describe('cloud', () => {
     test('loadGapi', () => {
         cloud.loadGapi().then((result) => {
-            expect(result).toBe(true)
-        })
-    })
+            expect(result).toBe(true);
+        });
+    });
     test('load', () => {
-        return cloud.load().then(result => {
-            expect(result).toBe(true)
-        })
-    })
+        return cloud.load().then((result) => {
+            expect(result).toBe(true);
+        });
+    });
     describe('drive', () => {
         test('exists', () => {
-            expect(cloud.drive).toBeDefined()
-         })
-    })
+            expect(cloud.drive).toBeDefined();
+        });
+    });
     describe('appFolder', () => {
         test('exists', () => {
-            expect(cloud.appFolder).toBeDefined()
-         })
-    })
-})
+            expect(cloud.appFolder).toBeDefined();
+        });
+    });
+});
