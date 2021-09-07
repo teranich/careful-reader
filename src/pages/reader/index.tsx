@@ -36,7 +36,6 @@ export default observer(function Reader() {
             const meta = await getBookMeta(bookId);
             const openedBook = await openBookAction(bookId);
             setBook(openedBook);
-            console.log('meta', meta, meta?.format);
             meta && setCurrentReader(meta?.format);
         };
         openBook();
