@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-
 import PDFReader from './PDFReader';
 import { Book } from 'src/types';
 
@@ -12,9 +11,19 @@ export default {
     },
 } as ComponentMeta<typeof PDFReader>;
 
-const Template: ComponentStory<typeof PDFReader> = (args) => <PDFReader {...args} />;
+const Template: ComponentStory<typeof PDFReader> = (args) => {
+    const [file, setFile] = useState('./gita.pdf');
+    const book = {
+        info: {} as Book,
+        text: file,
+    };
 
-export const Primary = Template.bind({});
-Primary.args = {
-    book: { info: {} as Book, text: 'string' },
+    return <PDFReader book={book} />;
 };
+
+const Primary = Template.bind({});
+Primary.args = {
+    book: { info: {} as Book, text: 'gita' },
+};
+
+export { Primary };

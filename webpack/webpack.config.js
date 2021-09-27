@@ -15,6 +15,7 @@ const paths = {
 };
 const { isDevBuild, devOnly, prodOnly, removeEmpty, getClientEnvironment } = require('./utils');
 const env = getClientEnvironment(paths.public.slice(0, -1));
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     target: isDevBuild() ? 'web' : 'browserslist',
@@ -65,7 +66,7 @@ module.exports = {
     module: {
         rules: removeEmpty([
             {
-                test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
+                test: /\.(?:ico|gif|png|jpg|jpeg|pdf)$/i,
                 type: 'asset/resource',
             },
             {
@@ -127,6 +128,9 @@ module.exports = {
         }),
         new WebpackManifestPlugin({
             fileName: 'manifest.json',
+        }),
+        new CopyWebpackPlugin({
+            patterns: [{ from: 'node_modules/pdfjs-dist/cmaps/', to: 'cmaps/' }],
         }),
         devOnly(new ReactRefreshPlugin({ overlay: false })),
         devOnly({
