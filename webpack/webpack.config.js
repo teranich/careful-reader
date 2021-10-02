@@ -121,11 +121,12 @@ module.exports = {
                 }),
             ),
         }),
-        new InjectManifest({
+
+        prodOnly(new InjectManifest({
             swSrc: paths.sw,
             swDest: 'sw.js',
             maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        }),
+        })),
         new WebpackManifestPlugin({
             fileName: 'manifest.json',
         }),

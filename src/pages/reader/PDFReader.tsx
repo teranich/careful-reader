@@ -47,7 +47,7 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
         setPageWidth(width);
     };
     return (
-        <div>
+        <PDFReaderContainer>
             {file && (
                 <>
                     <button onClick={nextPage}>next</button>
@@ -69,6 +69,6 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
                     </DocumentContainer>
                 </>
             )}
-        </div>
+        </PDFReaderContainer>
     );
 });
