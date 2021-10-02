@@ -77,3 +77,8 @@ export const pdfTextToObjectUrl = (text: string) => {
     let url = window.URL.createObjectURL(blob);
     return url;
 };
+
+export const getClientSize = () => ({
+    width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+    height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
+});
