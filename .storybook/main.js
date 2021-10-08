@@ -5,21 +5,17 @@ module.exports = {
         builder: 'webpack5',
     },
     webpackFinal: async (config, { configType }) => {
-    // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
-    // You can change the configuration based on that.
-    // 'PRODUCTION' is used when building the static version of storybook.
+        config.module.rules.forEach((rule) => {
+            if (rule.type === 'asset/resource') {
+                rule.test = /\.(svg|ico|jpg|jpeg|png|apng|gif|eot|otf|webp|ttf|woff|woff2|cur|ani)$/;
+            }
+        });
 
-    // Make whatever fine-grained changes you need
-    config.module.rules.push({
-      test: /\.pdf$/,
-      use: [
-      {
-        loader: 'raw-loader',
-      }
-    ]
-    });
+        config.module.rules.push({
+            test: /\.pdf$/,
+            use: 'binary-loader',
+        });
 
-    // Return the altered config
-    return config;
-  },
+        return config;
+    },
 };

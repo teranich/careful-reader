@@ -66,7 +66,7 @@ module.exports = {
     module: {
         rules: removeEmpty([
             {
-                test: /\.(?:ico|gif|png|jpg|jpeg|pdf)$/i,
+                test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
                 type: 'asset/resource',
             },
             {
