@@ -31,6 +31,7 @@ export default observer(function Reader() {
     const { updateBookPositionAction, openBookAction, lastBook } = libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
+
     useEffect(() => {
         const openBook = async () => {
             const meta = await getBookMeta(bookId);

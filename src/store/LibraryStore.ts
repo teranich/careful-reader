@@ -3,6 +3,7 @@ import { action, makeAutoObservable, toJS } from 'mobx';
 import libraryDB from '../utils/clientDB';
 import { BookList, Book } from '../types';
 import * as converter from '../utils/converter';
+import { PDFBookFormat } from '../utils/formats/PDFBookFormat';
 
 export type TCurrentBook =
     | {
@@ -34,7 +35,9 @@ export class LibraryStore {
         console.log(name, type);
 
         if (type === 'application/pdf') {
-            console.log('application/pdf');
+        console.log('application/pdf');
+            const pdfFormat = new PDFBookFormat(rawBookText)
+            console.log('pdf', pdfFormat.getBookCover())
             const newBook = {
                 name: 'gita',
                 format: 'pdf',
@@ -90,9 +93,11 @@ export class LibraryStore {
         }
         await libraryDB.updateBookMeta(bookId, bookProps);
     });
+
     getBookMeta = action(async (bookId: number) => {
         return await libraryDB.getBookMeta(bookId);
     });
+
     openBookAction = action(async (bookId: number): Promise<TCurrentBook> => {
         if (this.lastBook && this.lastBook.info.id === bookId) {
             this.lastBook.info = (await libraryDB.getBookMeta(bookId)) || this.lastBook.info;

@@ -5,25 +5,25 @@ import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
 import styled from 'styled-components';
 
-const DocumentContainer = styled(Document)`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    color: transparent;
-    transform: translate(-50%, -50%) rotate(0deg);
+const DocumentIS = styled(Document)`
     pointer-events: none;
+    display: flex;
+    justify-content: center;
 `;
+const PageIS = styled(Page)``;
 
-const PDFReaderContainer = styled.div``;
+const PDFReaderContainerIS = styled.div``;
 export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
-    const [file, setFile] = useState<string | undefined>('./gita.pdf');
+    const [file, setFile] = useState<string | undefined>();
     const [pageWidth, setPageWidth] = useState(600);
     const [pageHeight, setPageHeight] = useState(600);
 
     useEffect(() => {
-        if (book?.text) setFile(pdfTextToObjectUrl(book.text));
+        if (book?.text) {
+            setFile(pdfTextToObjectUrl(book.text));
+        }
     }, [book?.text]);
     function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages);
@@ -40,35 +40,35 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
         changePage(1);
     }
 
-
     const fitPageSize = () => {
-       const {width, height} = getClientSize()
-       console.log('width, height', width, height)
+        const { width, height } = getClientSize();
         setPageWidth(width);
     };
+
     return (
-        <PDFReaderContainer>
+        <PDFReaderContainerIS>
             {file && (
                 <>
                     <button onClick={nextPage}>next</button>
+                    <button onClick={previousPage}>prev</button>
                     <button onClick={fitPageSize}>fit</button>
 
-                    <DocumentContainer
+                    <DocumentIS
                         file={file}
                         onLoadSuccess={onDocumentLoadSuccess}
-                        renderMode="svg"
+                        // renderMode="svg"
                         options={{
                             cMapUrl: 'cmaps/',
                             cMapPacked: true,
                         }}
                     >
-                        <Page pageNumber={pageNumber} width={pageWidth} height={pageHeight} />
+                        <PageIS pageNumber={pageNumber} width={pageWidth} height={pageHeight} />
                         {/* {Array.from(new Array(numPages), (el, index) => (
                             <Page key={`page_${index + 1}`} pageNumber={index + 1} />
                         ))} */}
-                    </DocumentContainer>
+                    </DocumentIS>
                 </>
             )}
-        </PDFReaderContainer>
+        </PDFReaderContainerIS>
     );
 });

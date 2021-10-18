@@ -61,19 +61,21 @@ export function importScript(src: string) {
     });
 }
 
-function str2ab(str: string) {
+export function str2ab(str: string) {
     var idx,
         len = str.length,
         arr = new Array(len);
     for (idx = 0; idx < len; ++idx) {
         arr[idx] = str.charCodeAt(idx) & 0xff;
     }
-    // You may create an ArrayBuffer from a standard array (of values) as follows:
+
     return new Uint8Array(arr).buffer;
 }
 
 export const pdfTextToObjectUrl = (text: string) => {
-    let blob = new Blob([str2ab(text)], { type: 'application/pdf' });
+    const ab = str2ab(text);
+    console.log('ab', ab)
+    let blob = new Blob([ab], { type: 'application/pdf' });
     let url = window.URL.createObjectURL(blob);
     return url;
 };
