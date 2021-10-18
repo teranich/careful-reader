@@ -74,7 +74,6 @@ export function str2ab(str: string) {
 
 export const pdfTextToObjectUrl = (text: string) => {
     const ab = str2ab(text);
-    console.log('ab', ab)
     let blob = new Blob([ab], { type: 'application/pdf' });
     let url = window.URL.createObjectURL(blob);
     return url;
