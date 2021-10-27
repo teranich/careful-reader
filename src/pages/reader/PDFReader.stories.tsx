@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PDFReader from './PDFReader';
 import { Book } from 'src/types';
 import text from '../../mocks/book.pdf';
-console.log(text)
+import { PDFBookFormat } from '../../utils/formats/PDFBookFormat';
+
 export default {
     title: 'PDF reader',
     component: PDFReader,
@@ -26,4 +27,24 @@ Primary.args = {
     book: { info: {} as Book, text: 'gita' },
 };
 
+const PDFFormat = () => {
+    const pdf = new PDFBookFormat(text);
+    const [Image, setImage] = useState('<span>no</span>');
+    useEffect(() => {
+
+    const cover = pdf.getBookCover().then((canvas) => {
+      canvas.then(el => {
+
+        console.log(el)
+      })
+    });
+    }, [])
+    return (
+        <>
+            pdf
+          <img src={Image}/>
+        </>
+    );
+};
+export { PDFFormat };
 export { Primary };

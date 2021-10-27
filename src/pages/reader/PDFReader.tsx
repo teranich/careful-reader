@@ -13,6 +13,7 @@ const DocumentIS = styled(Document)`
 const PageIS = styled(Page)``;
 
 const PDFReaderContainerIS = styled.div``;
+
 export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
