@@ -39,13 +39,13 @@ export class LibraryStore {
             if (type === 'application/pdf') {
                 console.log('application/pdf');
                 const pdfFormat = new PDFBookFormat(rawBookText);
-                console.log('pdf', pdfFormat.getBookCover());
+                const cover = await pdfFormat.getBookCover()
                 const newBook = {
                     name: 'gita',
                     format: 'pdf',
                     meta: {},
-                    cover:
-                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAUklEQVR42u3VMQoAIBADQf8Pgj+OD9hG2CtONJB2ymQkKe0HbwAP0xucDiQWARITIDEBEnMgMQ8S8+AqBIl6kKgHiXqQqAeJepBo/z38J/U0uAHlaBkBl9I4GwAAAABJRU5ErkJggg==',
+                    cover
+                        
                 };
                 const book = await libraryDB.addBook(newBook, rawBookText);
                 this.books.push(book);

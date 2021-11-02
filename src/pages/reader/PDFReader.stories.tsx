@@ -23,6 +23,7 @@ const Template: ComponentStory<typeof PDFReader> = (args) => {
 };
 
 const Primary = Template.bind({});
+
 Primary.args = {
     book: { info: {} as Book, text: 'gita' },
 };
@@ -31,20 +32,18 @@ const PDFFormat = () => {
     const pdf = new PDFBookFormat(text);
     const [Image, setImage] = useState('<span>no</span>');
     useEffect(() => {
-
-    const cover = pdf.getBookCover().then((canvas) => {
-      canvas.then(el => {
-
-        console.log(el)
-      })
-    });
-    }, [])
+        pdf.getBookCover().then((canvas) => {
+            const canvasBase64 = canvas?.toDataURL();
+            setImage(canvasBase64);
+        });
+    }, []);
     return (
         <>
-            pdf
-          <img src={Image}/>
+            <h1>pdf cover</h1>
+            <img src={Image} />
         </>
     );
 };
+
 export { PDFFormat };
 export { Primary };
