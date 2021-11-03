@@ -32,7 +32,7 @@ export class PDFBookFormat implements BookFormat {
         const text = this.getBookText();
         const loadingTask = pdfjs.getDocument(text);
 
-        return new Promise((resolve) => {
+        return new Promise<string>((resolve) => {
             loadingTask.promise
                 .then(function (pdfDocument) {
                     pdfDocument.getPage(1).then(function (pdfPage) {

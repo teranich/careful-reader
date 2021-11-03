@@ -30,11 +30,11 @@ Primary.args = {
 
 const PDFFormat = () => {
     const pdf = new PDFBookFormat(text);
-    const [Image, setImage] = useState('<span>no</span>');
+    const [Image, setImage] = useState<string>('#');
+
     useEffect(() => {
-        pdf.getBookCover().then((canvas) => {
-            const canvasBase64 = canvas?.toDataURL();
-            setImage(canvasBase64);
+        pdf.getBookCover().then((canvasBase64) => {
+            if (canvasBase64) setImage(canvasBase64);
         });
     }, []);
     return (
