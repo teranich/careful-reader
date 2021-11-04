@@ -9,17 +9,21 @@ const DocumentIS = styled(Document)`
     pointer-events: none;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 `;
 const PageIS = styled(Page)``;
 
 const PDFReaderContainerIS = styled.div``;
 
 export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
-    const [numPages, setNumPages] = useState(null);
+    const [pageCount, setPageCount] = useState(0);
     const [pageNumber, setPageNumber] = useState(1);
     const [file, setFile] = useState<string | undefined>();
-    const [pageWidth, setPageWidth] = useState(600);
-    const [pageHeight, setPageHeight] = useState(600);
+    const { width:clientWidth, height:clientHeiht } = getClientSize();
+    const [pageWidth, setPageWidth] = useState(clientWidth);
+    const [pageHeight, setPageHeight] = useState(clientHeiht);
+    const onePageMode = false;
 
     useEffect(() => {
         if (book?.text) {
@@ -27,7 +31,7 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
         }
     }, [book?.text]);
     function onDocumentLoadSuccess({ numPages }) {
-        setNumPages(numPages);
+        setPageCount(numPages);
     }
     function changePage(offset) {
         setPageNumber((prevPageNumber) => prevPageNumber + offset);
@@ -45,15 +49,12 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
         const { width, height } = getClientSize();
         setPageWidth(width);
     };
+    const pageSize = {width: pageWidth, height: pageHeight}
 
     return (
         <PDFReaderContainerIS>
             {file && (
                 <>
-                    <button onClick={nextPage}>next</button>
-                    <button onClick={previousPage}>prev</button>
-                    <button onClick={fitPageSize}>fit</button>
-
                     <DocumentIS
                         file={file}
                         onLoadSuccess={onDocumentLoadSuccess}
@@ -63,13 +64,50 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
                             cMapPacked: true,
                         }}
                     >
-                        <PageIS pageNumber={pageNumber} width={pageWidth} height={pageHeight} />
-                        {/* {Array.from(new Array(numPages), (el, index) => (
-                            <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-                        ))} */}
+                        {onePageMode ? (
+                            <OnePage
+                                pageNumber={pageNumber}
+                                pageSize={pageSize}
+                            />
+                        ) : (
+                            <AllPages
+                                pageCount={pageCount}
+                                pageSize={pageSize}
+                            />
+                        )}
                     </DocumentIS>
                 </>
             )}
         </PDFReaderContainerIS>
     );
 });
+
+const OnePage = ({pageNumber, pageSize}) => {
+    return (
+        <>
+            <PageIS
+                pageNumber={pageNumber}
+                width={pageSize.width}
+                height={pageSize.height}
+            />
+        </>
+    );
+};
+
+const AllPages = ({pageCount, pageSize}) => {
+  console.log(pageCount, pageSize)
+    return (
+        <>
+            {Array(pageCount)
+                .fill(0)
+                .map((_, i) => (
+                    <PageIS
+                        key={`pdf-page-${i}`}
+                        pageNumber={i + 1}
+                        width={pageSize.width}
+                        height={pageSize.height}
+                    />
+                ))}
+        </>
+    );
+};
