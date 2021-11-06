@@ -16,11 +16,17 @@ const PageIS = styled(Page)``;
 
 const PDFReaderContainerIS = styled.div``;
 
-export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
+export default observer(function PDFReader({
+    book,
+    onPageChange,
+    onBookLoaded,
+}: {
+    book: TCurrentBook;
+}) {
     const [pageCount, setPageCount] = useState(0);
     const [pageNumber, setPageNumber] = useState(1);
     const [file, setFile] = useState<string | undefined>();
-    const { width:clientWidth, height:clientHeiht } = getClientSize();
+    const { width: clientWidth, height: clientHeiht } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
     const [pageHeight, setPageHeight] = useState(clientHeiht);
     const onePageMode = false;
@@ -32,9 +38,11 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
     }, [book?.text]);
     function onDocumentLoadSuccess({ numPages }) {
         setPageCount(numPages);
+        onBookLoaded && onBookLoaded(numPages);
     }
     function changePage(offset) {
         setPageNumber((prevPageNumber) => prevPageNumber + offset);
+        onPageChange(pageNumber);
     }
 
     function previousPage() {
@@ -49,7 +57,7 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
         const { width, height } = getClientSize();
         setPageWidth(width);
     };
-    const pageSize = {width: pageWidth, height: pageHeight}
+    const pageSize = { width: pageWidth, height: pageHeight };
 
     return (
         <PDFReaderContainerIS>
@@ -82,7 +90,7 @@ export default observer(function PDFReader({ book }: { book: TCurrentBook }) {
     );
 });
 
-const OnePage = ({pageNumber, pageSize}) => {
+const OnePage = ({ pageNumber, pageSize }) => {
     return (
         <>
             <PageIS
@@ -94,8 +102,8 @@ const OnePage = ({pageNumber, pageSize}) => {
     );
 };
 
-const AllPages = ({pageCount, pageSize}) => {
-  console.log(pageCount, pageSize)
+const AllPages = ({ pageCount, pageSize }) => {
+    console.log(pageCount, pageSize);
     return (
         <>
             {Array(pageCount)

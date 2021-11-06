@@ -42,6 +42,8 @@ export default observer(function Reader() {
         openBook();
     }, []);
 
+    const onBookLoaded = (count) => setPagesCount(count) 
+
     return (
         <>
             <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
@@ -49,7 +51,7 @@ export default observer(function Reader() {
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
             </Header>
             {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
-            {currentReader === 'pdf' && <PDFReader book={book}></PDFReader>}
+	    {currentReader === 'pdf' && <PDFReader book={book} onBookLoaded={onBookLoaded}></PDFReader>}
         </>
     );
 });
