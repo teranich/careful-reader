@@ -25,17 +25,39 @@ export default observer(function PDFReader({
 }) {
     const [pageCount, setPageCount] = useState(0);
     const [pageNumber, setPageNumber] = useState(1);
-    const [file, setFile] = useState<string | undefined>();
+    const [bookFileURI, setBookFileURI] = useState<string | undefined>();
     const { width: clientWidth, height: clientHeiht } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
     const [pageHeight, setPageHeight] = useState(clientHeiht);
+    const textContainerRef = useRef(null);
+
     const onePageMode = false;
+
+    const handleScroll = () => {
+        const { current } = textContainerRef;
+        const page = Math.round(current!.scrollTop / current!.clientHeight);
+        console.log('new page', page);
+        setPageNumber(page);
+    };
 
     useEffect(() => {
         if (book?.text) {
-            setFile(pdfTextToObjectUrl(book.text));
+            setBookFileURI(pdfTextToObjectUrl(book.text));
         }
     }, [book?.text]);
+
+    useEffect(() => {
+        const { current } = textContainerRef;
+
+        if (bookFileURI && current) {
+            console.log('ref?', current);
+            current?.addEventListener('scroll', handleScroll);
+            return () => {
+                return current?.removeEventListener('scroll', handleScroll);
+            };
+        }
+    }, [textContainerRef.current]);
+
     function onDocumentLoadSuccess({ numPages }) {
         setPageCount(numPages);
         onBookLoaded && onBookLoaded(numPages);
@@ -60,11 +82,11 @@ export default observer(function PDFReader({
     const pageSize = { width: pageWidth, height: pageHeight };
 
     return (
-        <PDFReaderContainerIS>
-            {file && (
+        <PDFReaderContainerIS ref={textContainerRef}>
+            {bookFileURI && (
                 <>
                     <DocumentIS
-                        file={file}
+                        file={bookFileURI}
                         onLoadSuccess={onDocumentLoadSuccess}
                         // renderMode="svg"
                         options={{
@@ -103,7 +125,6 @@ const OnePage = ({ pageNumber, pageSize }) => {
 };
 
 const AllPages = ({ pageCount, pageSize }) => {
-    console.log(pageCount, pageSize);
     return (
         <>
             {Array(pageCount)

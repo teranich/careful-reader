@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { debounce } from '../../utils/common';
 import { hightLightElementsOnScreen } from '../../utils/styler';
-import { Header } from '../../components/common';
 import { observer } from 'mobx-react';
 import useEventListener from '@use-it/event-listener';
 import { Loading } from '../../components/loading';

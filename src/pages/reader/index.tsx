@@ -27,8 +27,14 @@ export default observer(function Reader() {
     const [showControls, setShowControls] = useState(true);
     const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0');
     const [pagesCount, setPagesCount] = useState(0);
-    const bookTitle = () => currentBookRef.current?.info?.meta?.title || currentBookRef.current?.info?.name;
-    const { updateBookPositionAction, openBookAction, lastBook } = libraryStore;
+    const bookTitle = () =>
+        currentBookRef.current?.info?.meta?.title ||
+        currentBookRef.current?.info?.name;
+    const {
+        updateBookPositionAction,
+        openBookAction,
+        lastBook,
+    } = libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
 
@@ -42,16 +48,26 @@ export default observer(function Reader() {
         openBook();
     }, []);
 
-    const onBookLoaded = (count) => setPagesCount(count) 
+    const onBookLoaded = (count) => setPagesCount(count);
+    const onPageChange = (page) => setNumberOfCurrentPage(page);
 
     return (
         <>
-            <Header className={`${showControls ? '' : ' hidden'} `} title={bookTitle()}>
+            <Header
+                className={`${showControls ? '' : ' hidden'} `}
+                title={bookTitle()}
+            >
                 <div>{currenPositionPercent}%</div>
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
             </Header>
             {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
-	    {currentReader === 'pdf' && <PDFReader book={book} onBookLoaded={onBookLoaded}></PDFReader>}
+            {currentReader === 'pdf' && (
+                <PDFReader
+                    book={book}
+                    onBookLoaded={onBookLoaded}
+                    onPageChange={onPageChange}
+                ></PDFReader>
+            )}
         </>
     );
 });
