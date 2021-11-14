@@ -33,30 +33,26 @@ export default observer(function PDFReader({
 
     const onePageMode = false;
 
-    const handleScroll = () => {
-        const { current } = textContainerRef;
-        const page = Math.round(current!.scrollTop / current!.clientHeight);
-        console.log('new page', page);
+    const handleScroll = (e) => {
+        const scrollContainer = window
+        const page = Math.round(
+		window.scrollY / window.innerHeight
+        );
+
         setPageNumber(page);
+	onPageChange(page)
     };
 
     useEffect(() => {
         if (book?.text) {
             setBookFileURI(pdfTextToObjectUrl(book.text));
-        }
-    }, [book?.text]);
-
-    useEffect(() => {
-        const { current } = textContainerRef;
-
-        if (bookFileURI && current) {
-            console.log('ref?', current);
-            current?.addEventListener('scroll', handleScroll);
+            console.log('listener to body');
+            window.addEventListener('scroll', handleScroll);
             return () => {
-                return current?.removeEventListener('scroll', handleScroll);
+                return window.removeEventListener('scroll', handleScroll);
             };
         }
-    }, [textContainerRef.current]);
+    }, [book?.text]);
 
     function onDocumentLoadSuccess({ numPages }) {
         setPageCount(numPages);
