@@ -46,7 +46,7 @@ function shuffle<T>(array: Array<T>) {
 function textNodesUnder(el: HTMLElement) {
   let n
   const result = []
-  let walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
+  let walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null )
   while ((n = walk.nextNode())) result.push(n)
   return result
 }
@@ -63,7 +63,7 @@ export function stylize(element: HTMLElement) {
   })
 }
 
-function isOnScreen(el: any, screenContainerElement: any) {
+export function isOnScreen(el: HTMLElement, screenContainerElement: HTMLElement) {
   const viewportTop = screenContainerElement.scrollTop
   const viewportHeight = screenContainerElement.clientHeight
   const viewportBottom = viewportTop + viewportHeight

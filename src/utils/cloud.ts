@@ -81,7 +81,6 @@ const create = (spaces: string) => (type: string) => async (
   name: string,
   folderId?: string
 ) => {
-  console.log(spaces, type, name, folderId)
   const mimeType = type === 'folder' ? folderMIME : fileMIME
   const parents = folderId ? [folderId] : spaces === 'drive' ? [] : [spaces]
   const response = await promisify(gapi.client.drive.files.create, {

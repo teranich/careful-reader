@@ -34,13 +34,11 @@ export default observer(function PDFReader({
     const onePageMode = false;
 
     const handleScroll = (e) => {
-        const scrollContainer = window
-        const page = Math.round(
-		window.scrollY / window.innerHeight
-        );
+        const scrollContainer = window;
+        const page = Math.round(window.scrollY / document.body.offsetWidth);
 
         setPageNumber(page);
-	onPageChange(page)
+        onPageChange(page);
     };
 
     useEffect(() => {
