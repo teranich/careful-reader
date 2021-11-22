@@ -12,7 +12,6 @@ const DocumentIS = styled(Document)`
     flex-direction: column;
     align-items: center;
 `;
-const PageIS = styled(Page)``;
 
 const PDFReaderContainerIS = styled.div``;
 
@@ -29,13 +28,15 @@ export default observer(function PDFReader({
     const { width: clientWidth, height: clientHeiht } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
     const [pageHeight, setPageHeight] = useState(clientHeiht);
+    const [actualPageHeight, setActualPageHeight] = useState(clientHeiht);
     const textContainerRef = useRef(null);
 
     const onePageMode = false;
 
     const handleScroll = (e) => {
         const scrollContainer = window;
-        const page = Math.round(window.scrollY / document.body.offsetWidth);
+	const centered = actualPageHeight / 2
+        const page = Math.round((window.scrollY + centered) / actualPageHeight);
 
         setPageNumber(page);
         onPageChange(page);
@@ -44,7 +45,6 @@ export default observer(function PDFReader({
     useEffect(() => {
         if (book?.text) {
             setBookFileURI(pdfTextToObjectUrl(book.text));
-            console.log('listener to body');
             window.addEventListener('scroll', handleScroll);
             return () => {
                 return window.removeEventListener('scroll', handleScroll);
@@ -75,6 +75,10 @@ export default observer(function PDFReader({
     };
     const pageSize = { width: pageWidth, height: pageHeight };
 
+    const onLoadSuccess = (page) => {
+        const { height } = page;
+        setActualPageHeight(height);
+    };
     return (
         <PDFReaderContainerIS ref={textContainerRef}>
             {bookFileURI && (
@@ -92,11 +96,13 @@ export default observer(function PDFReader({
                             <OnePage
                                 pageNumber={pageNumber}
                                 pageSize={pageSize}
+                                onLoadSuccess={onLoadSuccess}
                             />
                         ) : (
                             <AllPages
                                 pageCount={pageCount}
                                 pageSize={pageSize}
+                                onLoadSuccess={onLoadSuccess}
                             />
                         )}
                     </DocumentIS>
@@ -106,19 +112,23 @@ export default observer(function PDFReader({
     );
 });
 
-const OnePage = ({ pageNumber, pageSize }) => {
+const PageIS = styled(Page)`
+    border: 1px solid black;
+`;
+const OnePage = ({ pageNumber, pageSize, onLoadSuccess }) => {
     return (
         <>
             <PageIS
                 pageNumber={pageNumber}
                 width={pageSize.width}
                 height={pageSize.height}
+                onLoadSuccess={onLoadSuccess}
             />
         </>
     );
 };
 
-const AllPages = ({ pageCount, pageSize }) => {
+const AllPages = ({ pageCount, pageSize, onLoadSuccess }) => {
     return (
         <>
             {Array(pageCount)
@@ -129,6 +139,7 @@ const AllPages = ({ pageCount, pageSize }) => {
                         pageNumber={i + 1}
                         width={pageSize.width}
                         height={pageSize.height}
+                        onLoadSuccess={onLoadSuccess}
                     />
                 ))}
         </>
