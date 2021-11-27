@@ -30,13 +30,12 @@ export default observer(function PDFReader({
     const [pageHeight, setPageHeight] = useState(clientHeiht);
     const [actualPageHeight, setActualPageHeight] = useState(clientHeiht);
     const textContainerRef = useRef(null);
-
     const onePageMode = false;
 
-    const handleScroll = (e) => {
+    const handleScroll = () => {
         const scrollContainer = window;
-	const centered = actualPageHeight / 2
-        const page = Math.round((window.scrollY + centered) / actualPageHeight);
+	const pageMiddle = actualPageHeight / 2
+        const page = Math.round((window.scrollY + pageMiddle) / actualPageHeight);
 
         setPageNumber(page);
         onPageChange(page);

@@ -41,8 +41,6 @@ const Hightlighter = styled.div<IHightlighter>`
     font-size: calc(16px + 1vw);
     left: calc(2.8rem / 2);
     background-color: #d8b67d;
-    /* font-family: 'Adobe Garamond'; */
-    /* text-align: justify; */
     .section {
         padding: 10px;
     }
