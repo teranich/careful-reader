@@ -25,7 +25,9 @@ export default class RemoteLibraryStore {
     load() {
         return cloud.load().then(() => {
             this.isClientLoaded = true;
-            cloud.isLoggedIn().then((isLoggedIn) => (this.isLoggedIn = isLoggedIn));
+            cloud
+                .isLoggedIn()
+                .then((isLoggedIn) => (this.isLoggedIn = isLoggedIn));
         });
     }
     initLibrary = action(async () => {
@@ -36,14 +38,19 @@ export default class RemoteLibraryStore {
         try {
             this.isBooksLoading = true;
 
-            const cloudFiles = await this.cloudAppFolder.find.file(`name contains '-meta.json'`);
-            const contentPromises = cloudFiles.map((fileMeta: { id: string }) =>
-                this.cloudAppFolder.download(fileMeta.id).then((content) => {
-                    //@ts-ignore
-                    const book: Book = JSON.parse(content);
+            const cloudFiles = await this.cloudAppFolder.find.file(
+                `name contains '-meta.json'`,
+            );
+            const contentPromises = cloudFiles.map(
+                (fileMeta: { id: string }) =>
+                    this.cloudAppFolder
+                        .download(fileMeta.id)
+                        .then((content) => {
+                            //@ts-ignore
+                            const book: Book = JSON.parse(content);
 
-                    this.books.push(book);
-                }),
+                            this.books.push(book);
+                        }),
             );
             this.books = [];
             await Promise.all(contentPromises);
@@ -70,7 +77,10 @@ export default class RemoteLibraryStore {
                 currentFolder.id,
             );
             const bookText = await libraryDB.getBookText(book.id);
-            const { id: textFileId } = await this.cloudDrive.upload(currentFile.id, bookText);
+            const { id: textFileId } = await this.cloudDrive.upload(
+                currentFile.id,
+                bookText,
+            );
             const updatedBookMeta = await libraryDB.updateBookMeta(book.id, {
                 textFileId,
             });
@@ -93,8 +103,14 @@ export default class RemoteLibraryStore {
         try {
             this.isUploading = true;
             const metaFileName = book.name + '-meta.json';
-            const [currentFile] = await this.cloudAppFolder.getOrCreate.file(`name = '${metaFileName}'`, metaFileName);
-            const { id: metaFileId } = await this.cloudAppFolder.upload(currentFile.id, JSON.stringify(book));
+            const [currentFile] = await this.cloudAppFolder.getOrCreate.file(
+                `name = '${metaFileName}'`,
+                metaFileName,
+            );
+            const { id: metaFileId } = await this.cloudAppFolder.upload(
+                currentFile.id,
+                JSON.stringify(book),
+            );
             return await libraryDB.updateBookMeta(book.id, { metaFileId });
         } catch (e) {
             this.rootStore.notification.error('sync error');
@@ -149,8 +165,10 @@ export default class RemoteLibraryStore {
             } else {
                 const promises = [];
 
-                book.textFileId && promises.push(this.cloudDrive.remove(book.textFileId));
-                book.metaFileId && promises.push(this.cloudAppFolder.remove(book.metaFileId));
+                book.textFileId &&
+                    promises.push(this.cloudDrive.remove(book.textFileId));
+                book.metaFileId &&
+                    promises.push(this.cloudAppFolder.remove(book.metaFileId));
                 await Promise.allSettled(promises);
             }
             this.rootStore.notification.info('book remove sucess');
