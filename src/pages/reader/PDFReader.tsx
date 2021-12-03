@@ -31,14 +31,45 @@ export default observer(function PDFReader({
     const [actualPageHeight, setActualPageHeight] = useState(clientHeiht);
     const textContainerRef = useRef(null);
     const onePageMode = false;
+    const pageSize = { width: pageWidth, height: pageHeight };
 
     const handleScroll = () => {
         const scrollContainer = window;
-	const pageMiddle = actualPageHeight / 2
-        const page = Math.round((window.scrollY + pageMiddle) / actualPageHeight);
+        const pageMiddle = actualPageHeight / 2;
+        const page = Math.round(
+            (window.scrollY + pageMiddle) / actualPageHeight,
+        );
 
         setPageNumber(page);
         onPageChange(page);
+    };
+
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setPageCount(numPages);
+        onBookLoaded && onBookLoaded(numPages);
+    };
+
+    const changePage = (offset) => {
+        setPageNumber((prevPageNumber) => prevPageNumber + offset);
+        onPageChange(pageNumber);
+    };
+
+    const previousPage = () => {
+        changePage(-1);
+    };
+
+    const nextPage = () => {
+        changePage(1);
+    };
+
+    const fitPageSize = () => {
+        const { width, height } = getClientSize();
+        setPageWidth(width);
+    };
+
+    const onLoadSuccess = (page) => {
+        const { height } = page;
+        setActualPageHeight(height);
     };
 
     useEffect(() => {
@@ -51,33 +82,6 @@ export default observer(function PDFReader({
         }
     }, [book?.text]);
 
-    function onDocumentLoadSuccess({ numPages }) {
-        setPageCount(numPages);
-        onBookLoaded && onBookLoaded(numPages);
-    }
-    function changePage(offset) {
-        setPageNumber((prevPageNumber) => prevPageNumber + offset);
-        onPageChange(pageNumber);
-    }
-
-    function previousPage() {
-        changePage(-1);
-    }
-
-    function nextPage() {
-        changePage(1);
-    }
-
-    const fitPageSize = () => {
-        const { width, height } = getClientSize();
-        setPageWidth(width);
-    };
-    const pageSize = { width: pageWidth, height: pageHeight };
-
-    const onLoadSuccess = (page) => {
-        const { height } = page;
-        setActualPageHeight(height);
-    };
     return (
         <PDFReaderContainerIS ref={textContainerRef}>
             {bookFileURI && (
