@@ -1,5 +1,5 @@
 //fix isolated-modules warnings
-// @ts-ignore
+//@ts-ignore
 
 const content: {[key: string]: any} = {
     'm1': JSON.stringify({

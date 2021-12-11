@@ -11,7 +11,8 @@
         "intl:manage": "yarn intl:extract && yarn intl:translation",
         "deploy": "react-app-rewired build && gh-pages -d build",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook"
+        "build-storybook": "build-storybook",
+        "fix:adult": "npm_config_yes=true npx yarn-audit-fix"
     },
     "supportedLocales": [
         "en",
@@ -38,6 +39,7 @@
         "@use-it/event-listener": "^0.1.5",
         "fs-extra": "^10.0.0",
         "idb": "^6.1.5",
+        "lodash": "^4.17.21",
         "mobx": "^6.3.5",
         "mobx-react": "^7.2.1",
         "node-sass": "^6.0.1",
