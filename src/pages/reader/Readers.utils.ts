@@ -1,4 +1,5 @@
 import { uniq } from 'lodash';
+import React, { useState } from 'react';
 
 const FRAME_UP = 1;
 const FRAME_DOWN = 3;
@@ -19,13 +20,14 @@ export const getRendersFrame = (
     return [up, page, down];
 };
 
-export const usePagesManager = (pages = [], pageCount = 0) => {
+export const usePagesManager = (initialPages = [], pageCount = 0) => {
+    const [pages, setPages] = useState(initialPages);
     const goToPage = (page) => {
         const frame = getRendersFrame(page, pageCount);
-        result.pages = uniq([...result.pages, ...frame].sort());
-        console.log(result.pages)
+        const newPages = uniq([...result.pages, ...frame].sort());
+        setPages(newPages);
+        console.log(pages);
     };
-    const result = {pages, goToPage};
 
-    return result;
+    return {pages, goToPage};
 };
