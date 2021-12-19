@@ -130,9 +130,9 @@ module.exports = {
         new WebpackManifestPlugin({
             fileName: 'manifest.json',
         }),
-        // new CopyWebpackPlugin({
-        //     patterns: [{ from: 'node_modules/pdfjs-dist/cmaps/', to: 'cmaps/' }],
-        // }),
+        new CopyWebpackPlugin({
+            patterns: [{ from: 'node_modules/pdfjs-dist/cmaps/', to: 'cmaps/' }],
+        }),
         devOnly(new ReactRefreshPlugin({ overlay: false })),
         devOnly({
             apply: (compiler) => {

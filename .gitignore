@@ -33,12 +33,3 @@ yarn-error.log*
 .idea
 .vscode
 .eslintcache
-
-# yarn2
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
