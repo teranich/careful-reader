@@ -90,9 +90,9 @@ module.exports = {
             },
         ]),
     },
-    experiments: {
-        asset: true,
-    },
+    // experiments: {
+    //     asset: true,
+    // },
     plugins: removeEmpty([
         new webpack.DefinePlugin(env.stringified),
         new HtmlWebpackPlugin({
