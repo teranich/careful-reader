@@ -39,7 +39,6 @@ describe('Readers utils tests', () => {
             expect(getRendersFrame(-1, 100)).toEqual([1, 2]);
         });
 
-
         test('should return valid frame above zero in one pages document', () => {
             expect(getRendersFrame(-1, 1)).toEqual([1]);
         });
@@ -54,6 +53,7 @@ describe('Readers utils tests', () => {
             const wrapper = shallow(
                 <GotoPageHook init={[2, 3]} gotoPageNumber={2} />,
             );
+
             wrapper.find('button').simulate('click');
             expect(wrapper.find('.result').text()).toBe('1,2,3,4,5');
         });
