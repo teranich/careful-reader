@@ -30,6 +30,23 @@ describe('Readers utils tests', () => {
         test('should return valid frame in end', () => {
             expect(getRendersFrame(99, 100)).toEqual([98, 99, 100]);
         });
+
+        test('should return valid frame out of range', () => {
+            expect(getRendersFrame(101, 100)).toEqual([100]);
+        });
+
+        test('should return valid frame above zero', () => {
+            expect(getRendersFrame(-1, 100)).toEqual([1, 2]);
+        });
+
+
+        test('should return valid frame above zero in one pages document', () => {
+            expect(getRendersFrame(-1, 1)).toEqual([1]);
+        });
+
+        test('should return valid frame above zero in zero page document', () => {
+            expect(getRendersFrame(-1, 0)).toEqual([]);
+        });
     });
 
     describe('usePagesManager', () => {
