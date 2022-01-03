@@ -14,20 +14,20 @@ export const getRendersFrame = (
     page: number = 0,
     pageCount: number = page,
 ) => {
-    const up = page - FRAME_UP > 0 ? page - FRAME_UP : 0;
-    const down = page + FRAME_DOWN < pageCount ? page + FRAME_DOWN : pageCount;
+    const up = page - FRAME_UP > 0 ? page - FRAME_UP : 1;
+    const down =
+        page + FRAME_DOWN < pageCount ? page + FRAME_DOWN : pageCount;
 
-    return [up, page, down];
+    return Array(down - up + 1).fill('0').map((_, i) => up + i) 
 };
 
 export const usePagesManager = (initialPages = [], pageCount = 0) => {
     const [pages, setPages] = useState(initialPages);
     const goToPage = (page) => {
         const frame = getRendersFrame(page, pageCount);
-        const newPages = uniq([...result.pages, ...frame].sort());
+        const newPages = uniq([...pages, ...frame].sort());
         setPages(newPages);
-        console.log(pages);
     };
 
-    return {pages, goToPage};
+    return { pages, goToPage };
 };

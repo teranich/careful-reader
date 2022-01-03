@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { getRendersFrame, usePagesManager } from './Readers.utils';
 import { shallow } from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
@@ -5,30 +6,43 @@ import Enzyme from 'enzyme';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-const Hook = ({init, goTo}) => {
-    const {pages, goToPage} = usePagesManager(init, 100)
-    goTo = goToPage
-    return <>{pages}</>
-}
+const GotoPageHook = ({ init, gotoPageNumber }) => {
+    const { pages, goToPage } = usePagesManager(init, 100);
 
-describe('Readers utils test', () => {
+    return (
+        <>
+            <button onClick={() => goToPage(gotoPageNumber)}>goto</button>
+            <div className="result">{pages.join(',')}</div>
+        </>
+    );
+};
+
+describe('Readers utils tests', () => {
     describe('render frame', () => {
-        it('should ', () => {
-            expect(getRendersFrame(2, 3)).toEqual([1, 2, 3]);
+        test('should return valid frame in begin', () => {
+            expect(getRendersFrame(1, 100)).toEqual([1, 2, 3, 4]);
+        });
+
+        test('should return valid frame', () => {
+            expect(getRendersFrame(2, 100)).toEqual([1, 2, 3, 4, 5]);
+        });
+
+        test('should return valid frame in middle', () => {
+            expect(getRendersFrame(50, 100)).toEqual([49, 50, 51, 52, 53]);
+        });
+
+        test('should return valid frame in end', () => {
+            expect(getRendersFrame(99, 100)).toEqual([98, 99, 100]);
         });
     });
-    describe('usePagesManager', () => {
-        test('usePagesManager should run', () => {
-            let goTo = () => {}
-            const wrapper = shallow(<Hook init={[]} goTo={goTo}/>);
-            goTo(2)
-            expect(wrapper).toEqual([]);
-        });
 
-        // test('usePagesManager goToPage', () => {
-        //     const { pages, goToPage } = usePagesManager([], 100);
-        //     goToPage(3);
-        //     expect(pages).toEqual([1, 2, 3]);
-        // });
+    describe('usePagesManager', () => {
+        test('usePagesManager`s hook should run', () => {
+            const wrapper = shallow(
+                <GotoPageHook init={[2, 3]} gotoPageNumber={2} />,
+            );
+            wrapper.find('button').simulate('click');
+            expect(wrapper.find('.result').text()).toBe('1,2,3,4,5');
+        });
     });
 });
