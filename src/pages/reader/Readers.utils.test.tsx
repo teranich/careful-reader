@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
 import { getRendersFrame, usePagesManager } from './Readers.utils';
 import { shallow } from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import Enzyme from 'enzyme';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 const GotoPageHook = ({ init, gotoPageNumber }) => {
     const { pages, goToPage } = usePagesManager(init, 100);
