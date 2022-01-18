@@ -64,6 +64,7 @@ export default observer(function Reader() {
             {currentReader === 'pdf' && (
                 <PDFReader
                     book={book}
+                    mode="greed"
                     onBookLoaded={onBookLoaded}
                     onPageChange={onPageChange}
                 ></PDFReader>

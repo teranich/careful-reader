@@ -19,7 +19,7 @@ const Template: ComponentStory<typeof PDFReader> = (args) => {
         text,
     };
 
-    return <PDFReader book={book} />;
+    return <PDFReader book={book} mode="greed"/>;
 };
 
 const Primary = Template.bind({});

@@ -2,17 +2,6 @@ import { useEffect } from 'react';
 import { getRendersFrame, usePagesManager } from './Readers.utils';
 import { shallow } from 'enzyme';
 
-const GotoPageHook = ({ init, gotoPageNumber }) => {
-    const { pages, goToPage } = usePagesManager(init, 100);
-
-    return (
-        <>
-            <button onClick={() => goToPage(gotoPageNumber)}>goto</button>
-            <div className="result">{pages.join(',')}</div>
-        </>
-    );
-};
-
 describe('Readers utils tests', () => {
     describe('render frame', () => {
         test('should return valid frame in begin', () => {
@@ -48,14 +37,65 @@ describe('Readers utils tests', () => {
         });
     });
 
+    const GotoPageHook = ({ initPages, gotoPageNumber }) => {
+        const { pages, goToPage } = usePagesManager(initPages, 100);
+
+        return (
+            <>
+                <button onClick={() => goToPage(gotoPageNumber)} />
+                <div className="result">{pages.join(',')}</div>
+            </>
+        );
+    };
+
+    const NextPageHook = ({ initPages }) => {
+        const { pages, next } = usePagesManager(initPages, 100);
+
+        return (
+            <>
+                <button onClick={() => next()} />
+                <div className="result">{pages.join(',')}</div>
+            </>
+        );
+    };
+
+    const PrevPageHook = ({ initPages }) => {
+        const { pages, prev } = usePagesManager(initPages, 100);
+
+        return (
+            <>
+                <button onClick={() => prev()} />
+                <div className="result">{pages.join(',')}</div>
+            </>
+        );
+    };
+
     describe('usePagesManager', () => {
         test('usePagesManager`s hook should run', () => {
             const wrapper = shallow(
-                <GotoPageHook init={[2, 3]} gotoPageNumber={2} />,
+                <GotoPageHook initPages={[2, 3]} gotoPageNumber={2} />,
             );
 
             wrapper.find('button').simulate('click');
             expect(wrapper.find('.result').text()).toBe('1,2,3,4,5');
+        });
+
+        test('method: next should change frame', () => {
+            const wrapper = shallow(
+                <NextPageHook initPages={[10]}  />,
+            );
+
+            wrapper.find('button').simulate('click');
+            expect(wrapper.find('.result').text()).toBe('10,11,12,13,14');
+        });
+
+        test('method: prev should change frame', () => {
+            const wrapper = shallow(
+                <PrevPageHook initPages={[10]}  />,
+            );
+
+            wrapper.find('button').simulate('click');
+            expect(wrapper.find('.result').text()).toBe('8,9,10,11,12');
         });
     });
 });
