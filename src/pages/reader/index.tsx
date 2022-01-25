@@ -30,11 +30,8 @@ export default observer(function Reader() {
     const bookTitle = () =>
         currentBookRef.current?.info?.meta?.title ||
         currentBookRef.current?.info?.name;
-    const {
-        updateBookPositionAction,
-        openBookAction,
-        lastBook,
-    } = libraryStore;
+    const { updateBookPositionAction, openBookAction, lastBook } =
+        libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
 

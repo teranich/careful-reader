@@ -64,7 +64,8 @@ const dfunc = debounce((fn) => fn && fn(), 100);
 export default observer(function Reader() {
     const { appStore, libraryStore } = useContext(RootStoreContext);
     const { wordsHighlight, dynamicTextOrientation } = appStore;
-    const { updateBookPositionAction, openBookAction, lastBook } = libraryStore;
+    const { updateBookPositionAction, openBookAction, lastBook } =
+        libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(0);
     const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0');
@@ -87,8 +88,13 @@ export default observer(function Reader() {
             elementsForHightlightRef.current = getElementsForHightlight();
             setPagesCount(getPagesCount());
             const positions: any[] = [];
-            current?.querySelectorAll('p').forEach((o: HTMLElement) => positions.push(o.getAttribute('data-id')));
-            openedBook && restoreScrollPoition(openedBook.info.positionElement);
+            current
+                ?.querySelectorAll('p')
+                .forEach((o: HTMLElement) =>
+                    positions.push(o.getAttribute('data-id')),
+                );
+            openedBook &&
+                restoreScrollPoition(openedBook.info.positionElement);
             setLoading(false);
         };
         openBook();
@@ -111,7 +117,9 @@ export default observer(function Reader() {
             setMotionStyle(style);
         }
     };
-    const bookTitle = () => currentBookRef.current?.info?.meta?.title || currentBookRef.current?.info?.name;
+    const bookTitle = () =>
+        currentBookRef.current?.info?.meta?.title ||
+        currentBookRef.current?.info?.name;
     useEventListener('deviceorientation', deviceOrientationHandler);
     return (
         <>
@@ -146,7 +154,11 @@ export default observer(function Reader() {
             setCurrenPositionPercent(percent.toFixed(2));
             setNumberOfCurrentPage(getNumberOfCurrentPage());
             dfunc(() => {
-                const onScreen = hightLightElementsOnScreen(current, elementsForHightlight) || [];
+                const onScreen =
+                    hightLightElementsOnScreen(
+                        current,
+                        elementsForHightlight,
+                    ) || [];
                 updateBookPosition(onScreen[0]);
             });
         }
@@ -154,20 +166,26 @@ export default observer(function Reader() {
 
     function getPercentOfScroll() {
         const { current } = textContainerRef;
-        return current ? (current.scrollTop * 100) / current.scrollHeight : 0.0;
+        return current
+            ? (current.scrollTop * 100) / current.scrollHeight
+            : 0.0;
     }
 
     function updateBookPosition(posElement: HTMLElement) {
         if (posElement) {
             const positionElementId = posElement.getAttribute('data-id');
             const book = currentBookRef.current?.info;
-            book && positionElementId && updateBookPositionAction(book, positionElementId);
+            book &&
+                positionElementId &&
+                updateBookPositionAction(book, positionElementId);
         }
     }
 
     function restoreScrollPoition(positionId: string) {
         if (positionId) {
-            const toElement = document.querySelector(`[data-id="${positionId}"]`);
+            const toElement = document.querySelector(
+                `[data-id="${positionId}"]`,
+            );
             toElement?.scrollIntoView();
         }
     }
