@@ -24,8 +24,8 @@ export default observer(function PDFReader({
 }: {
     book: TCurrentBook;
     mode: string;
-    onBookLoaded: () => {};
-    onPageChange: () => {};
+    onBookLoaded: (numPages: number) => {};
+    onPageChange: (page: number) => {};
 }) {
     const [pageCount, setPageCount] = useState(0);
     const [currentPageNumber, setCurrentPageNumber] = useState(1);
@@ -60,12 +60,12 @@ export default observer(function PDFReader({
         onPageChange(page);
     };
 
-    const onDocumentLoadSuccess = ({ numPages }) => {
+    const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
         setPageCount(numPages);
         onBookLoaded && onBookLoaded(numPages);
     };
 
-    const changePage = (offset) => {
+    const changePage = (offset: number) => {
         setCurrentPageNumber((prevPageNumber) => prevPageNumber + offset);
         onPageChange(currentPageNumber);
     };
@@ -83,8 +83,8 @@ export default observer(function PDFReader({
         setPageWidth(width);
     };
 
-    const onLoadSuccess = (page) => {
-        const { height } = page;
+    const onLoadSuccess = (pdfDocument: any) => {
+        const { height } = pdfDocument;
         setActualPageHeight(height);
     };
 
@@ -145,7 +145,19 @@ const PageIS = styled(Page)`
     border: 1px solid black;
 `;
 
-const OnePage = ({ pageNumber, pageSize, onLoadSuccess }) => {
+type TPageComponent = {
+    pageNumber: number;
+    pageSize: { width: number; height: number };
+    onLoadSuccess: () => {};
+};
+
+type TOnePageComponent = TPageComponent;
+
+const OnePage = ({
+    pageNumber,
+    pageSize,
+    onLoadSuccess,
+}: TOnePageComponent) => {
     return (
         <>
             <PageIS
@@ -158,7 +170,17 @@ const OnePage = ({ pageNumber, pageSize, onLoadSuccess }) => {
     );
 };
 
-const AllPages = ({ pageCount, pageSize, onLoadSuccess }) => {
+type TAllPagesComponent = TPageComponent & {
+    pageNumber: number;
+    pageCount: number;
+};
+
+const AllPages = ({
+    pageNumber,
+    pageCount,
+    pageSize,
+    onLoadSuccess,
+}: TAllPagesComponent) => {
     return (
         <>
             {Array(pageCount)
@@ -176,7 +198,18 @@ const AllPages = ({ pageCount, pageSize, onLoadSuccess }) => {
     );
 };
 
-const InFramePages = ({ pages = [], pageSize, onLoadSuccess }) => {
+type TInFramePagesComponent = TPageComponent & {
+    pageNumber: number;
+    pageCount: number;
+    pages: number[];
+};
+
+const InFramePages = ({
+    pages = [],
+    pageNumber,
+    pageSize,
+    onLoadSuccess,
+}: TInFramePagesComponent) => {
     return pages.map((number) => (
         <>
             <PageIS
