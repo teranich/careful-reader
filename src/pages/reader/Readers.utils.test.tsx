@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { getRendersFrame, usePagesManager } from './Readers.utils';
 import { shallow } from 'enzyme';
 
@@ -37,7 +36,18 @@ describe('Readers utils tests', () => {
         });
     });
 
-    const GotoPageHook = ({ initPages, gotoPageNumber }) => {
+    type TPageHookParams = {
+        initPages: number[];
+    };
+
+    type TGotoPageHookParams = TPageHookParams & {
+        gotoPageNumber: number;
+    };
+
+    const GotoPageHook = ({
+        initPages,
+        gotoPageNumber,
+    }: TGotoPageHookParams) => {
         const { pages, goToPage } = usePagesManager(initPages, 100);
 
         return (
@@ -48,7 +58,7 @@ describe('Readers utils tests', () => {
         );
     };
 
-    const NextPageHook = ({ initPages }) => {
+    const NextPageHook = ({ initPages }: TPageHookParams) => {
         const { pages, next } = usePagesManager(initPages, 100);
 
         return (
@@ -59,7 +69,7 @@ describe('Readers utils tests', () => {
         );
     };
 
-    const PrevPageHook = ({ initPages }) => {
+    const PrevPageHook = ({ initPages }: TPageHookParams) => {
         const { pages, prev } = usePagesManager(initPages, 100);
 
         return (
@@ -81,18 +91,14 @@ describe('Readers utils tests', () => {
         });
 
         test('method: next should change frame', () => {
-            const wrapper = shallow(
-                <NextPageHook initPages={[10]}  />,
-            );
+            const wrapper = shallow(<NextPageHook initPages={[10]} />);
 
             wrapper.find('button').simulate('click');
             expect(wrapper.find('.result').text()).toBe('10,11,12,13,14');
         });
 
         test('method: prev should change frame', () => {
-            const wrapper = shallow(
-                <PrevPageHook initPages={[10]}  />,
-            );
+            const wrapper = shallow(<PrevPageHook initPages={[10]} />);
 
             wrapper.find('button').simulate('click');
             expect(wrapper.find('.result').text()).toBe('8,9,10,11,12');
