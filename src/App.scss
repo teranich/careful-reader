@@ -1,8 +1,26 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 a {
-  color: inherit;
-  text-decoration: inherit;
+    color: inherit;
+    text-decoration: inherit;
+}
+
+::-webkit-scrollbar {
+    width: 24px;
+    background-color: #3f51b5;
+}
+
+::-webkit-scrollbar-thumb {
+    height: 66px;
+    border: 1px solid black;
+    background-color: #3f51b5;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+    // border-radius: 10px;
+    background-color: white;
 }

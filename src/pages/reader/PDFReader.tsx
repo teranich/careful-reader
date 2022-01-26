@@ -14,7 +14,9 @@ const DocumentIS = styled(Document)`
     align-items: center;
 `;
 
-const PDFReaderContainerIS = styled.div``;
+const PDFReaderContainerIS = styled.div`
+    overflow: hidden;
+`;
 
 export default observer(function PDFReader({
     book,
@@ -37,7 +39,7 @@ export default observer(function PDFReader({
     const textContainerRef = useRef(null);
     const onePageMode = false;
     const pageSize = { width: pageWidth, height: pageHeight };
-    const { pages, goToPage, prev, next } = usePagesManager([5], 100);
+    const { pages, goToPage, prev, next } = usePagesManager([1], 100);
 
     const handleScroll = () => {
         const scrollContainer = window;
