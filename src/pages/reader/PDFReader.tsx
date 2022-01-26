@@ -39,7 +39,7 @@ export default observer(function PDFReader({
     const textContainerRef = useRef(null);
     const onePageMode = false;
     const pageSize = { width: pageWidth, height: pageHeight };
-    const { pages, goToPage, prev, next } = usePagesManager([1], 100);
+    const pageManager = usePagesManager([1], 100);
 
     const handleScroll = () => {
         const scrollContainer = window;
@@ -51,11 +51,11 @@ export default observer(function PDFReader({
             document.body.clientHeight - window.innerHeight - window.scrollY;
 
         if (triggerScroll < actualPageHeight * 2) {
-            next();
+            pageManager.next();
         }
 
         if (window.scrollY === 0) {
-            prev();
+            pageManager.prev();
         }
 
         setCurrentPageNumber(page);
@@ -130,7 +130,7 @@ export default observer(function PDFReader({
                             )}
                             {mode === 'greed' && (
                                 <InFramePages
-                                    pages={pages}
+                                    pages={pageManager.pages}
                                     pageSize={pageSize}
                                     onLoadSuccess={onLoadSuccess}
                                 />
