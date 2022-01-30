@@ -42,11 +42,6 @@ export default observer(function PDFReader({
     const pageManager = usePagesManager([1], 100);
 
     const handleScroll = () => {
-        const scrollContainer = window;
-        const pageMiddle = actualPageHeight / 2;
-        const page = Math.round(
-            (window.scrollY + pageMiddle) / actualPageHeight,
-        );
         const triggerScroll =
             document.body.clientHeight - window.innerHeight - window.scrollY;
 
@@ -58,8 +53,33 @@ export default observer(function PDFReader({
             pageManager.prev();
         }
 
-        setCurrentPageNumber(page);
-        onPageChange(page);
+    };
+
+    const handleIntersectionObserver = (pages) => {
+        const options = {
+            root: null,
+            threshold: 0.5,
+        };
+        const callback = (entries, observer) => {
+            const { target, isIntersecting } = entries[0];
+
+            if (!isIntersecting) return;
+            const currentPage = Number(
+                target.getAttribute('data-page-number'),
+            );
+            onPageChange(currentPage);
+            setCurrentPageNumber(currentPage);
+        };
+        
+        const observer = new IntersectionObserver(callback, options);
+
+        pages.forEach((page) => {
+            const target = document.querySelector(
+                `[data-page-number="${page}"`,
+            );
+            observer.observe(target);
+        });
+        return observer;
     };
 
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -100,9 +120,19 @@ export default observer(function PDFReader({
         }
     }, [book?.text]);
 
+    useEffect(() => {
+        if (pageManager.pages.length > 1) {
+            const observer = handleIntersectionObserver(pageManager.pages);
+
+            return () => {
+                observer.disconnect();
+            };
+        }
+    }, [pageManager.pages.length]);
+
     return (
         <>
-            <PDFReaderContainerIS ref={textContainerRef}>
+            <PDFReaderContainerIS ref={textContainerRef} id="pdf-container">
                 {bookFileURI && (
                     <>
                         <DocumentIS
@@ -215,6 +245,7 @@ const InFramePages = ({
     return pages.map((number) => (
         <>
             <PageIS
+                className="page"
                 key={`pdf-page-${number}`}
                 pageNumber={number}
                 width={pageSize.width}
