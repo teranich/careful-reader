@@ -11,8 +11,6 @@ import Notifications from './components/Notifications';
 
 const rootStore = new RootStore();
 const App = observer(function App() {
-    const basename =
-        process.env.NODE_ENV === 'development' ? '/' : process.env.PUBLIC_URL;
     const { appStore, libraryStore, remoteLibraryStore } = rootStore;
     const { isLoggedIn } = remoteLibraryStore;
     const messages = appStore.getLocaleMessages();
@@ -37,11 +35,8 @@ const App = observer(function App() {
                 defaultLocale={appStore.defaultLocale}
                 messages={messages}
             >
-                <BrowserRouter basename={basename}>
+                <BrowserRouter basename="">
                     <Routes>
-                        {/* <Route exact path="/">
-                  <Feed />
-                </Route> */}
                         <Route path="/" element={<Shelves />} />
                         <Route path="/read/:bookId" element={<Reader />} />
                         <Route path="/settings" element={<Settings />} />

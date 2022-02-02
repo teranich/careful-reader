@@ -97,7 +97,7 @@ module.exports = {
         new webpack.DefinePlugin(env.stringified),
         new HtmlWebpackPlugin({
             inject: true,
-            template: path.resolve(`${paths.public}`, './index.html'),
+            template: path.resolve(`${paths.src}`, './index.html'),
             minimizer: prodOnly(
                 new TerserPlugin({
                     terserOptions: {

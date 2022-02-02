@@ -1,4 +1,5 @@
-Demo: https://teranich.github.io/careful-reader/
+Demo: 
+    https://careful-reader.vercel.app/
 
 TODO:
   * Добавить меню для выбора доступных обложек у добавляемой книги. Обложки 
