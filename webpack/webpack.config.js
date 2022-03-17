@@ -25,8 +25,11 @@ module.exports = {
         hot: true,
         open: false,
         port,
+        static: {
+            directory: paths.public
+          },
         // disableHostCheck: true,
-        historyApiFallback: { disableDotRule: true },
+        historyApiFallback: true,
         compress: true,
         // stats: devOnly({
         //     colors: true,
@@ -51,6 +54,7 @@ module.exports = {
     entry: `${paths.src}/index.tsx`,
     output: {
         path: paths.build,
+        publicPath: '/',
         filename: '[name].bundle.js',
         // Point sourcemap entries to original disk location (format as URL on Windows)
         devtoolModuleFilenameTemplate: (info) =>

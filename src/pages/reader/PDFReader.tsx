@@ -77,7 +77,7 @@ export default observer(function PDFReader({
             const target = document.querySelector(
                 `[data-page-number="${page}"`,
             );
-            observer.observe(target);
+            observer?.observe(target);
         });
         return observer;
     };
