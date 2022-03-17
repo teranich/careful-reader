@@ -27,7 +27,7 @@ module.exports = {
         port,
         static: {
             directory: paths.public
-          },
+        },
         // disableHostCheck: true,
         historyApiFallback: true,
         compress: true,

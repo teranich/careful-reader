@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { TCurrentBook } from '../../store/LibraryStore';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
 import styled from 'styled-components';
 import { usePagesManager } from './Readers.utils';
+import { RootStore, RootStoreContext } from '../../store/RootStore';
 
 const DocumentIS = styled(Document)`
     pointer-events: none;
@@ -25,21 +26,25 @@ export default observer(function PDFReader({
     onBookLoaded: (numPages: number) => {};
     onPageChange: (page: number) => {};
 }) {
+    const oldPageNumber = parseInt(localStorage.getItem(String(book?.info.id)))
     const [pageCount, setPageCount] = useState(0);
-    const [currentPageNumber, setCurrentPageNumber] = useState(1);
+    let currentPageNumber = useRef(oldPageNumber);
     const [bookFileURI, setBookFileURI] = useState<string | undefined>();
     const { width: clientWidth, height: clientHeight } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
     const [pageHeight, setPageHeight] = useState(clientHeight);
     const [actualPageHeight, setActualPageHeight] = useState(clientHeight);
     const textContainerRef = useRef(null);
-    const onePageMode = false;
     const pageSize = { width: pageWidth, height: pageHeight };
-    const pageManager = usePagesManager([1, 2], 100);
+    const pageManager = usePagesManager([oldPageNumber], 100);
+    const { libraryStore } = useContext(RootStoreContext);
+    const { updateLocalBookPositionAction } = libraryStore
 
     const handleScroll = () => {
         const triggerScroll =
             document.body.clientHeight - window.innerHeight - window.scrollY;
+
+        updateLocalBookPositionAction(book?.info, currentPageNumber.current);
 
         if (triggerScroll < actualPageHeight * 2) {
             pageManager.next();
@@ -48,7 +53,6 @@ export default observer(function PDFReader({
         if (window.scrollY === 0) {
             pageManager.prev();
         }
-
     };
 
     const handleIntersectionObserver = (pages) => {
@@ -64,7 +68,7 @@ export default observer(function PDFReader({
                 target?.getAttribute('data-page-number'),
             );
             onPageChange(currentPage);
-            setCurrentPageNumber(currentPage);
+            currentPageNumber.current  = currentPage
         };
 
         const observer = new IntersectionObserver(callback, options);
@@ -84,8 +88,8 @@ export default observer(function PDFReader({
     };
 
     const changePage = (offset: number) => {
-        setCurrentPageNumber((prevPageNumber) => prevPageNumber + offset);
-        onPageChange(currentPageNumber);
+        currentPageNumber.current += offset
+        onPageChange(currentPageNumber.current);
     };
 
     const previousPage = () => {
@@ -110,6 +114,7 @@ export default observer(function PDFReader({
         if (book?.text) {
             setBookFileURI(pdfTextToObjectUrl(book.text));
             window.addEventListener('scroll', handleScroll);
+
             return () => {
                 return window.removeEventListener('scroll', handleScroll);
             };
@@ -126,6 +131,7 @@ export default observer(function PDFReader({
         }
     }, [pageManager.pages.length]);
 
+
     return (
         <>
             {bookFileURI && (
@@ -141,7 +147,7 @@ export default observer(function PDFReader({
                 >
                     {mode === 'one' && (
                         <OnePage
-                            pageNumber={currentPageNumber}
+                            pageNumber={currentPageNumber.current}
                             pageSize={pageSize}
                             onLoadSuccess={onLoadSuccess}
                         />
@@ -234,9 +240,9 @@ const InFramePages = ({
     pageNumber,
     pageSize,
     onLoadSuccess,
-}: TInFramePagesComponent) => {
-    return pages.map((number) => (
-        <>
+}: TInFramePagesComponent) => (
+    <>
+        {pages.map((number) => (
             <PageIS
                 className="page"
                 key={`pdf-page-${number}`}
@@ -244,7 +250,8 @@ const InFramePages = ({
                 width={pageSize.width}
                 height={pageSize.height}
                 onLoadSuccess={onLoadSuccess}
-            />
-        </>
-    ));
-};
+            />))
+        }
+    </>
+);
+

@@ -38,9 +38,8 @@ export default class AppStore {
     } as {
       [key: string]: any
     }
-
-
   }
+  
   load() {
     return cloud.load().then(() => {
       this.isClientLoaded = true

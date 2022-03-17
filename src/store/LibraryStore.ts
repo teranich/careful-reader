@@ -94,6 +94,12 @@ export class LibraryStore {
         },
     );
 
+    updateLocalBookPositionAction = action(
+        async (book: Book, pageNumber: number) => {
+            localStorage.setItem(String(book.id), String(pageNumber))
+        }
+    );
+
     updateBookAction = action(async (bookId: number, bookProps: any) => {
         const bookInStore = this.books.find((book) => book.id === bookId);
         if (bookInStore) {
