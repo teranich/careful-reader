@@ -14,10 +14,6 @@ const DocumentIS = styled(Document)`
     align-items: center;
 `;
 
-const PDFReaderContainerIS = styled.div`
-    overflow-y: hidden;
-`;
-
 export default observer(function PDFReader({
     book,
     onPageChange,
@@ -39,7 +35,7 @@ export default observer(function PDFReader({
     const textContainerRef = useRef(null);
     const onePageMode = false;
     const pageSize = { width: pageWidth, height: pageHeight };
-    const pageManager = usePagesManager([1], 100);
+    const pageManager = usePagesManager([1, 2], 100);
 
     const handleScroll = () => {
         const triggerScroll =
@@ -65,19 +61,19 @@ export default observer(function PDFReader({
 
             if (!isIntersecting) return;
             const currentPage = Number(
-                target.getAttribute('data-page-number'),
+                target?.getAttribute('data-page-number'),
             );
             onPageChange(currentPage);
             setCurrentPageNumber(currentPage);
         };
-        
+
         const observer = new IntersectionObserver(callback, options);
 
         pages.forEach((page) => {
             const target = document.querySelector(
                 `[data-page-number="${page}"`,
             );
-            observer?.observe(target);
+            target && observer?.observe(target);
         });
         return observer;
     };
@@ -132,43 +128,40 @@ export default observer(function PDFReader({
 
     return (
         <>
-            <PDFReaderContainerIS ref={textContainerRef} id="pdf-container">
-                {bookFileURI && (
-                    <>
-                        <DocumentIS
-                            file={bookFileURI}
-                            onLoadSuccess={onDocumentLoadSuccess}
-                            // renderMode="svg"
-                            options={{
-                                cMapUrl: 'cmaps/',
-                                cMapPacked: true,
-                            }}
-                        >
-                            {mode === 'one' && (
-                                <OnePage
-                                    pageNumber={currentPageNumber}
-                                    pageSize={pageSize}
-                                    onLoadSuccess={onLoadSuccess}
-                                />
-                            )}
-                            {mode === 'all' && (
-                                <AllPages
-                                    pageCount={pageCount}
-                                    pageSize={pageSize}
-                                    onLoadSuccess={onLoadSuccess}
-                                />
-                            )}
-                            {mode === 'greed' && (
-                                <InFramePages
-                                    pages={pageManager.pages}
-                                    pageSize={pageSize}
-                                    onLoadSuccess={onLoadSuccess}
-                                />
-                            )}
-                        </DocumentIS>
-                    </>
-                )}
-            </PDFReaderContainerIS>
+            {bookFileURI && (
+                <DocumentIS
+                    ref={textContainerRef}
+                    file={bookFileURI}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    // renderMode="svg"
+                    options={{
+                        cMapUrl: 'cmaps/',
+                        cMapPacked: true,
+                    }}
+                >
+                    {mode === 'one' && (
+                        <OnePage
+                            pageNumber={currentPageNumber}
+                            pageSize={pageSize}
+                            onLoadSuccess={onLoadSuccess}
+                        />
+                    )}
+                    {mode === 'all' && (
+                        <AllPages
+                            pageCount={pageCount}
+                            pageSize={pageSize}
+                            onLoadSuccess={onLoadSuccess}
+                        />
+                    )}
+                    {mode === 'greed' && (
+                        <InFramePages
+                            pages={pageManager.pages}
+                            pageSize={pageSize}
+                            onLoadSuccess={onLoadSuccess}
+                        />
+                    )}
+                </DocumentIS>
+            )}
         </>
     );
 });
