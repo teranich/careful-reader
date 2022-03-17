@@ -15,7 +15,7 @@ const DocumentIS = styled(Document)`
 `;
 
 const PDFReaderContainerIS = styled.div`
-    overflow: hidden;
+    overflow-y: hidden;
 `;
 
 export default observer(function PDFReader({

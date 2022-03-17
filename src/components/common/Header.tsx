@@ -106,7 +106,7 @@ export default observer(function Header({ children, className = '', title }: any
         <AppBar />
         <Toolbar />
       </TopHeightWorkaround>
-      <AppBar position="fixed">
+      <AppBar>
         <Toolbar>
           <IconButton
             edge="start"
