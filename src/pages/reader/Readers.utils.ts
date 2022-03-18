@@ -1,5 +1,5 @@
-import { uniq } from 'lodash';
-import { useState } from 'react';
+import { initial, uniq } from 'lodash';
+import { useRef, useState } from 'react';
 
 const FRAME_UP = 1;
 const FRAME_DOWN = 3;
@@ -23,13 +23,11 @@ export const getRendersFrame = (
 };
 
 const prepare = (mess: number[]) =>
-    uniq(mess).sort(
-        (a: number, b: number) => {
-            if (a > b) return 1;
-            if (a < b) return -1;
-            return 0;
-        },
-    );
+    uniq(mess).sort((a: number, b: number) => {
+        if (a > b) return 1;
+        if (a < b) return -1;
+        return 0;
+    });
 
 export const usePagesManager = (
     initialPages: number[] = [],
@@ -37,14 +35,14 @@ export const usePagesManager = (
 ) => {
     const [pages, setPages] = useState(() => {
         const page = initialPages.length ? initialPages[0] : 1;
-        const withFrame = getRendersFrame(page, pageCount)
-        
-        return prepare([...initialPages, ...withFrame])
+        const withFrame = getRendersFrame(page, pageCount);
+
+        return prepare([...initialPages, ...withFrame]);
     });
 
     const goToPage = (page: number) => {
         const frame = getRendersFrame(page, pageCount);
-        const newPages = prepare([...pages, ...frame])
+        const newPages = prepare([...pages, ...frame]);
 
         pages.splice(0, pages.length, ...newPages);
         setPages(newPages);
@@ -66,3 +64,11 @@ export const usePagesManager = (
 
     return { pages, goToPage, prev, next };
 };
+
+export function useSingle<T>(initialValue: T): [() => T, (value: T) => T] {
+    const ref = useRef(initialValue);
+    const getValue = () => ref.current;
+    const setValue = (value: T) => ref.current = value
+
+    return [getValue, setValue];
+}

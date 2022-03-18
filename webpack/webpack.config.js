@@ -30,7 +30,7 @@ module.exports = {
         },
         // disableHostCheck: true,
         historyApiFallback: true,
-        // compress: true,
+        compress: true,
         // stats: devOnly({
         //     colors: true,
         //     chunks: false,

@@ -1,11 +1,10 @@
 import { observer } from 'mobx-react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TCurrentBook } from '../../store/LibraryStore';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
 import styled from 'styled-components';
-import { usePagesManager } from './Readers.utils';
-import { RootStore, RootStoreContext } from '../../store/RootStore';
+import { usePagesManager, useSingle } from './Readers.utils';
 
 const DocumentIS = styled(Document)`
     pointer-events: none;
@@ -16,27 +15,26 @@ const DocumentIS = styled(Document)`
 `;
 
 const scrollToPage = (page: number) => {
-    const target = document.querySelector(
-        `[data-page-number="${page}"`,
-    )
+    const target = document.querySelector(`[data-page-number="${page}"`);
     target?.scrollIntoView();
-}
+};
 
 export default observer(function PDFReader({
     book,
+    oldPageNumber,
     onPageChange,
     onBookLoaded,
     mode,
 }: {
     book: TCurrentBook;
+    oldPageNumber: number;
     mode: string;
     onBookLoaded: (numPages: number) => {};
     onPageChange: (page: number) => {};
 }) {
-    const oldPageNumber =
-        parseInt(localStorage.getItem(String(book?.info.id))) || 1;
     const [pageCount, setPageCount] = useState(0);
-    let currentPageNumber = useRef(oldPageNumber);
+    const [getCurrentPageNumber, setCurrentPageNumber] =
+        useSingle<number>(oldPageNumber);
     const [bookFileURI, setBookFileURI] = useState<string | undefined>();
     const { width: clientWidth, height: clientHeight } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
@@ -45,18 +43,10 @@ export default observer(function PDFReader({
     const textContainerRef = useRef(null);
     const pageSize = { width: pageWidth, height: pageHeight };
     const pageManager = usePagesManager([oldPageNumber], 100);
-    const { libraryStore } = useContext(RootStoreContext);
-    const { updateLocalBookPositionAction } = libraryStore;
 
     const handleScroll = () => {
         const triggerScroll =
             document.body.clientHeight - window.innerHeight - window.scrollY;
-
-        book?.info &&
-            updateLocalBookPositionAction(
-                book.info,
-                currentPageNumber.current,
-            );
 
         if (triggerScroll < actualPageHeight * 2) {
             pageManager.next();
@@ -75,12 +65,14 @@ export default observer(function PDFReader({
         const callback = (entries, observer) => {
             const { target, isIntersecting } = entries[0];
 
-            if (!isIntersecting) return;
-            const currentPage = Number(
+            if (!isIntersecting) return null;
+            const pageNumberInView = Number(
                 target?.getAttribute('data-page-number'),
-            );
-            onPageChange(currentPage);
-            currentPageNumber.current = currentPage;
+            )
+            if (pageNumberInView !== getCurrentPageNumber()) {
+                setCurrentPageNumber(pageNumberInView);
+                onPageChange(getCurrentPageNumber());
+            }
         };
 
         const observer = new IntersectionObserver(callback, options);
@@ -89,7 +81,7 @@ export default observer(function PDFReader({
             const target = document.querySelector(
                 `[data-page-number="${page}"`,
             );
-            // console.log('page', page, target)
+
             target && observer?.observe(target);
         });
         return observer;
@@ -101,8 +93,8 @@ export default observer(function PDFReader({
     };
 
     const changePage = (offset: number) => {
-        currentPageNumber.current += offset;
-        onPageChange(currentPageNumber.current);
+        setCurrentPageNumber(getCurrentPageNumber() + offset);
+        onPageChange(getCurrentPageNumber());
     };
 
     const previousPage = () => {
@@ -118,17 +110,15 @@ export default observer(function PDFReader({
         setPageWidth(width);
     };
 
-    const observer = useRef()
+    const [getOserver, setObserver] = useSingle<any>();
     const onPageLoadSuccess = (pdfDocument: any) => {
         const { height } = pdfDocument;
         setActualPageHeight(height);
-        scrollToPage(currentPageNumber.current)
-        console.log('onPageLoadSuccess', arguments)
-        observer.current?.disconnect()
-        observer.current = handleIntersectionObserver(pageManager.pages);
+        scrollToPage(getCurrentPageNumber());
+
+        getOserver()?.disconnect();
+        setObserver(handleIntersectionObserver(pageManager.pages));
     };
-
-
 
     useEffect(() => {
         if (book?.text) {
@@ -140,16 +130,6 @@ export default observer(function PDFReader({
             };
         }
     }, [book?.text]);
-
-    // useEffect(() => {
-    //     if (pageManager.pages.length > 1) {
-    //         const observer = handleIntersectionObserver(pageManager.pages);
-
-    //         return () => {
-    //             observer.disconnect();
-    //         };
-    //     }
-    // }, [pageManager.pages.length]);
 
     return (
         <>
@@ -166,7 +146,7 @@ export default observer(function PDFReader({
                 >
                     {mode === 'one' && (
                         <OnePage
-                            pageNumber={currentPageNumber.current}
+                            pageNumber={getCurrentPageNumber()}
                             pageSize={pageSize}
                             onLoadSuccess={onPageLoadSuccess}
                         />

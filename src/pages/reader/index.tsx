@@ -18,19 +18,21 @@ const PageCount = styled.span`
 `;
 
 export default observer(function Reader() {
+    const queryParams = useParams<QueryParams>();
+    const bookId = parseInt(queryParams.bookId);
+    const oldPageNumber =
+        parseInt(localStorage.getItem(String(bookId))) || 1;
     const [currentReader, setCurrentReader] = useState<undefined | string>();
     const { libraryStore } = useContext(RootStoreContext);
     const { getBookMeta } = libraryStore;
-    const queryParams = useParams<QueryParams>();
-    const bookId = parseInt(queryParams.bookId);
-    const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(0);
+    const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(oldPageNumber);
     const [showControls, setShowControls] = useState(true);
     const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0');
     const [pagesCount, setPagesCount] = useState(0);
     const bookTitle = () =>
         currentBookRef.current?.info?.meta?.title ||
         currentBookRef.current?.info?.name;
-    const { updateBookPositionAction, openBookAction, lastBook } =
+    const { updateBookPositionAction, openBookAction, lastBook, updateLocalBookPositionAction } =
         libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
@@ -46,7 +48,10 @@ export default observer(function Reader() {
     }, []);
 
     const onBookLoaded = (count) => setPagesCount(count);
-    const onPageChange = (page) => setNumberOfCurrentPage(page);
+    const onPageChange = (page) => {
+        setNumberOfCurrentPage(page)
+        book?.info && updateLocalBookPositionAction(book?.info, page)
+    };
 
     return (
         <>
@@ -62,6 +67,7 @@ export default observer(function Reader() {
                 <PDFReader
                     book={book}
                     mode="greed"
+                    oldPageNumber={oldPageNumber}
                     onBookLoaded={onBookLoaded}
                     onPageChange={onPageChange}
                 ></PDFReader>
