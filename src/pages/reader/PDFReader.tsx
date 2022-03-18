@@ -7,11 +7,7 @@ import styled from 'styled-components';
 import { usePagesManager, useSingle } from './Readers.utils';
 
 const DocumentIS = styled(Document)`
-    pointer-events: none;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+    overflow: hidden;
 `;
 
 const scrollToPage = (page: number) => {
@@ -68,7 +64,7 @@ export default observer(function PDFReader({
             if (!isIntersecting) return null;
             const pageNumberInView = Number(
                 target?.getAttribute('data-page-number'),
-            )
+            );
             if (pageNumberInView !== getCurrentPageNumber()) {
                 setCurrentPageNumber(pageNumberInView);
                 onPageChange(getCurrentPageNumber());
@@ -130,6 +126,12 @@ export default observer(function PDFReader({
             };
         }
     }, [book?.text]);
+
+    useEffect(() => {
+        window.addEventListener('resize', fitPageSize);
+
+        return () => window.removeEventListener('resize', fitPageSize);
+    }, []);
 
     return (
         <>
