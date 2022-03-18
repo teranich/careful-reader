@@ -22,21 +22,28 @@ export const getRendersFrame = (
         .map((_, i) => up + i);
 };
 
+const prepare = (mess: number[]) =>
+    uniq(mess).sort(
+        (a: number, b: number) => {
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
+        },
+    );
+
 export const usePagesManager = (
     initialPages: number[] = [],
     pageCount = 0,
 ) => {
-    const [pages, setPages] = useState(initialPages);
+    const [pages, setPages] = useState(() => {
+        const page = initialPages.length ? initialPages[0] : 1;
+        const withFrame = getRendersFrame(page, pageCount)
+        return prepare([...initialPages, ...withFrame])
+    });
 
     const goToPage = (page: number) => {
         const frame = getRendersFrame(page, pageCount);
-        const newPages = uniq([...pages, ...frame]).sort(
-            (a: number, b: number) => {
-                if (a > b) return 1;
-                if (a < b) return -1;
-                return 0;
-            },
-        );
+        const newPages = prepare([...pages, ...frame])
 
         pages.splice(0, pages.length, ...newPages);
         setPages(newPages);

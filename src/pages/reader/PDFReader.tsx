@@ -68,7 +68,7 @@ export default observer(function PDFReader({
                 target?.getAttribute('data-page-number'),
             );
             onPageChange(currentPage);
-            currentPageNumber.current  = currentPage
+            currentPageNumber.current = currentPage
         };
 
         const observer = new IntersectionObserver(callback, options);
@@ -108,6 +108,10 @@ export default observer(function PDFReader({
     const onLoadSuccess = (pdfDocument: any) => {
         const { height } = pdfDocument;
         setActualPageHeight(height);
+        const target = document.querySelector(
+            `[data-page-number="${currentPageNumber.current}"`,
+        )
+        target?.scrollIntoView();
     };
 
     useEffect(() => {
