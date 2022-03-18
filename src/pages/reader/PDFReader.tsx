@@ -15,6 +15,13 @@ const DocumentIS = styled(Document)`
     align-items: center;
 `;
 
+const scrollToPage = (page: number) => {
+    const target = document.querySelector(
+        `[data-page-number="${page}"`,
+    )
+    target?.scrollIntoView();
+}
+
 export default observer(function PDFReader({
     book,
     onPageChange,
@@ -26,7 +33,8 @@ export default observer(function PDFReader({
     onBookLoaded: (numPages: number) => {};
     onPageChange: (page: number) => {};
 }) {
-    const oldPageNumber = parseInt(localStorage.getItem(String(book?.info.id))) || 1;
+    const oldPageNumber =
+        parseInt(localStorage.getItem(String(book?.info.id))) || 1;
     const [pageCount, setPageCount] = useState(0);
     let currentPageNumber = useRef(oldPageNumber);
     const [bookFileURI, setBookFileURI] = useState<string | undefined>();
@@ -38,13 +46,17 @@ export default observer(function PDFReader({
     const pageSize = { width: pageWidth, height: pageHeight };
     const pageManager = usePagesManager([oldPageNumber], 100);
     const { libraryStore } = useContext(RootStoreContext);
-    const { updateLocalBookPositionAction } = libraryStore
+    const { updateLocalBookPositionAction } = libraryStore;
 
     const handleScroll = () => {
         const triggerScroll =
             document.body.clientHeight - window.innerHeight - window.scrollY;
 
-        updateLocalBookPositionAction(book?.info, currentPageNumber.current);
+        book?.info &&
+            updateLocalBookPositionAction(
+                book.info,
+                currentPageNumber.current,
+            );
 
         if (triggerScroll < actualPageHeight * 2) {
             pageManager.next();
@@ -68,7 +80,7 @@ export default observer(function PDFReader({
                 target?.getAttribute('data-page-number'),
             );
             onPageChange(currentPage);
-            currentPageNumber.current = currentPage
+            currentPageNumber.current = currentPage;
         };
 
         const observer = new IntersectionObserver(callback, options);
@@ -77,6 +89,7 @@ export default observer(function PDFReader({
             const target = document.querySelector(
                 `[data-page-number="${page}"`,
             );
+            // console.log('page', page, target)
             target && observer?.observe(target);
         });
         return observer;
@@ -88,7 +101,7 @@ export default observer(function PDFReader({
     };
 
     const changePage = (offset: number) => {
-        currentPageNumber.current += offset
+        currentPageNumber.current += offset;
         onPageChange(currentPageNumber.current);
     };
 
@@ -105,14 +118,17 @@ export default observer(function PDFReader({
         setPageWidth(width);
     };
 
-    const onLoadSuccess = (pdfDocument: any) => {
+    const observer = useRef()
+    const onPageLoadSuccess = (pdfDocument: any) => {
         const { height } = pdfDocument;
         setActualPageHeight(height);
-        // const target = document.querySelector(
-        //     `[data-page-number="${currentPageNumber.current}"`,
-        // )
-        // target?.scrollIntoView();
+        scrollToPage(currentPageNumber.current)
+        console.log('onPageLoadSuccess', arguments)
+        observer.current?.disconnect()
+        observer.current = handleIntersectionObserver(pageManager.pages);
     };
+
+
 
     useEffect(() => {
         if (book?.text) {
@@ -125,16 +141,15 @@ export default observer(function PDFReader({
         }
     }, [book?.text]);
 
-    useEffect(() => {
-        if (pageManager.pages.length > 1) {
-            const observer = handleIntersectionObserver(pageManager.pages);
+    // useEffect(() => {
+    //     if (pageManager.pages.length > 1) {
+    //         const observer = handleIntersectionObserver(pageManager.pages);
 
-            return () => {
-                observer.disconnect();
-            };
-        }
-    }, [pageManager.pages.length]);
-
+    //         return () => {
+    //             observer.disconnect();
+    //         };
+    //     }
+    // }, [pageManager.pages.length]);
 
     return (
         <>
@@ -153,21 +168,21 @@ export default observer(function PDFReader({
                         <OnePage
                             pageNumber={currentPageNumber.current}
                             pageSize={pageSize}
-                            onLoadSuccess={onLoadSuccess}
+                            onLoadSuccess={onPageLoadSuccess}
                         />
                     )}
                     {mode === 'all' && (
                         <AllPages
                             pageCount={pageCount}
                             pageSize={pageSize}
-                            onLoadSuccess={onLoadSuccess}
+                            onLoadSuccess={onPageLoadSuccess}
                         />
                     )}
                     {mode === 'greed' && (
                         <InFramePages
                             pages={pageManager.pages}
                             pageSize={pageSize}
-                            onLoadSuccess={onLoadSuccess}
+                            onLoadSuccess={onPageLoadSuccess}
                         />
                     )}
                 </DocumentIS>
@@ -254,8 +269,7 @@ const InFramePages = ({
                 width={pageSize.width}
                 height={pageSize.height}
                 onLoadSuccess={onLoadSuccess}
-            />))
-        }
+            />
+        ))}
     </>
 );
-
