@@ -26,7 +26,7 @@ export default observer(function PDFReader({
     onBookLoaded: (numPages: number) => {};
     onPageChange: (page: number) => {};
 }) {
-    const oldPageNumber = parseInt(localStorage.getItem(String(book?.info.id)))
+    const oldPageNumber = parseInt(localStorage.getItem(String(book?.info.id))) || 1;
     const [pageCount, setPageCount] = useState(0);
     let currentPageNumber = useRef(oldPageNumber);
     const [bookFileURI, setBookFileURI] = useState<string | undefined>();
@@ -108,10 +108,10 @@ export default observer(function PDFReader({
     const onLoadSuccess = (pdfDocument: any) => {
         const { height } = pdfDocument;
         setActualPageHeight(height);
-        const target = document.querySelector(
-            `[data-page-number="${currentPageNumber.current}"`,
-        )
-        target?.scrollIntoView();
+        // const target = document.querySelector(
+        //     `[data-page-number="${currentPageNumber.current}"`,
+        // )
+        // target?.scrollIntoView();
     };
 
     useEffect(() => {

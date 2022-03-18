@@ -30,7 +30,7 @@ module.exports = {
         },
         // disableHostCheck: true,
         historyApiFallback: true,
-        compress: true,
+        // compress: true,
         // stats: devOnly({
         //     colors: true,
         //     chunks: false,
@@ -80,6 +80,11 @@ module.exports = {
             {
                 test: /\.(scss|css)$/,
                 use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+            },
+            {
+                test: /\.js$/,
+                enforce: "pre",
+                use: ["source-map-loader"],
             },
             {
                 test: [/\.ts$/, /\.tsx$/],
@@ -132,7 +137,7 @@ module.exports = {
             maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         })),
         new WebpackManifestPlugin({
-            fileName: 'manifest.json',
+            fileName: '../public/manifest.json',
         }),
         new CopyWebpackPlugin({
             patterns: [{ from: 'node_modules/pdfjs-dist/cmaps/', to: 'cmaps/' }],

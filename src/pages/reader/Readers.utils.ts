@@ -38,6 +38,7 @@ export const usePagesManager = (
     const [pages, setPages] = useState(() => {
         const page = initialPages.length ? initialPages[0] : 1;
         const withFrame = getRendersFrame(page, pageCount)
+        
         return prepare([...initialPages, ...withFrame])
     });
 
