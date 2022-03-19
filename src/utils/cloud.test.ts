@@ -17,7 +17,7 @@ beforeEach(() => {
 
 describe('cloud', () => {
     test('loadGapi', () => {
-        cloud.loadGapi().then((result) => {
+        cloud.injectGAPIScripts().then((result) => {
             expect(result).toBe(true);
         });
     });

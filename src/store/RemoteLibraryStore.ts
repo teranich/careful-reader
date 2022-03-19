@@ -22,14 +22,15 @@ export default class RemoteLibraryStore {
         makeAutoObservable(this);
         this.rootStore = rootStore;
     }
-    load() {
-        return cloud.load().then(() => {
+
+    async load() {
+        try {
+            await cloud.load();
             this.isClientLoaded = true;
-            cloud
-                .isLoggedIn()
-                .then((isLoggedIn) => (this.isLoggedIn = isLoggedIn));
-        });
+            this.isLoggedIn = await cloud.isLoggedIn()
+        } catch (e) {}
     }
+
     initLibrary = action(async () => {
         cloud.drive.create.folder('books-folder');
     });
@@ -86,7 +87,6 @@ export default class RemoteLibraryStore {
             });
             const result = await this.syncMetaAction(updatedBookMeta);
             book.textFileId = textFileId;
-            console.log('book', book);
             this.books.push(book);
             this.rootStore.notification.info('Upload success');
             return result;
@@ -99,7 +99,7 @@ export default class RemoteLibraryStore {
 
     syncMetaAction = action(async (book: Book | null) => {
         if (!book) return;
-        console.log('book for upload:', book);
+
         try {
             this.isUploading = true;
             const metaFileName = book.name + '-meta.json';

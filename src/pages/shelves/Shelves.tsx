@@ -47,7 +47,6 @@ export default observer(function Shelves() {
       icon: <AddIcon />,
       label: 'Add',
       clickHandler: () => {
-        console.log('hey you')
       },
     },
   ]

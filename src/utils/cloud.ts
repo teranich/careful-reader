@@ -3,11 +3,23 @@ import { importScript } from './common';
 interface Files {
     id: string;
 }
-
+const WINDOW_GAPI = 'https://apis.google.com/js/platform.js?onload=init';
+const CLIENT_PLATFORM = 'https://apis.google.com/js/client:platform.js';
+const GOOGLE_DRIVE_API_DOCUMENT =
+    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+const SCOPE =
+    'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive';
 let loaded = false;
-export async function loadGapi() {
+
+export async function injectGAPIScripts() {
     if (loaded) return true;
-    return importScript('https://apis.google.com/js/client:platform.js')
+    await importScript(WINDOW_GAPI);
+    return importScript(CLIENT_PLATFORM)
+        .then(() => {
+            return new Promise((resolve, reject) =>
+                window.gapi.load('client', resolve),
+            );
+        })
         .then(() => {
             return new Promise((resolve, reject) =>
                 window.gapi.load('auth2', () => resolve(window.gapi.auth2)),
@@ -23,21 +35,31 @@ export async function loadGapi() {
 }
 
 let isGAPILoaded = false;
-const googleDriveAPIDocument =
-    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-const scope =
-    'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive';
+
 export async function load() {
-    if (!window?.gapi?.client) return;
     if (isGAPILoaded) return;
-    await loadGapi();
+    if (!window?.gapi?.client) {
+        await injectGAPIScripts();
+    }
+
     return new Promise((resolve, reject) => {
         return window.gapi.client
             .init({
                 apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
                 clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-                discoveryDocs: [googleDriveAPIDocument],
-                scope: scope,
+                discoveryDocs: [GOOGLE_DRIVE_API_DOCUMENT],
+                scope: SCOPE,
+            })
+            .then((ga) => {
+                if (!ga) {
+                    console.error(
+                        `Fail to load gapi. Check you credentials:
+                        API_KEY ${process.env.REACT_APP_GOOGLE_API_KEY},
+                        CLIENT_ID ${process.env.REACT_APP_GOOGLE_CLIENT_ID},
+                        API_DOCUMENT $(GOOGLE_DRIVE_API_DOCUMENT}`,
+                    );
+                    return reject();
+                }
             })
             .then(() => (isGAPILoaded = true))
             .then(resolve)
@@ -46,8 +68,9 @@ export async function load() {
 }
 
 export async function signIn() {
-    await load();
     try {
+        await load();
+
         return window.gapi.auth2.getAuthInstance().signIn();
     } catch (e) {
         console.error('error in signIn', e);
@@ -55,8 +78,8 @@ export async function signIn() {
 }
 
 export async function signOut() {
-    await load();
     try {
+        await load();
         return window.gapi.auth2.getAuthInstance().signOut();
     } catch (e) {
         console.error('error in signOut', e);
@@ -64,8 +87,8 @@ export async function signOut() {
 }
 
 export async function isLoggedIn() {
-    await load();
     try {
+        await load();
         return (
             window.gapi.auth2.getAuthInstance() &&
             window.gapi.auth2.getAuthInstance().isSignedIn.get()
@@ -78,22 +101,26 @@ export async function isLoggedIn() {
 const folderMIME = 'application/vnd.google-apps.folder';
 const fileMIME = 'text/plain';
 
-const create = (spaces: string) => (type: string) => async (
-    name: string,
-    folderId?: string,
-) => {
-    const mimeType = type === 'folder' ? folderMIME : fileMIME;
-    const parents = folderId ? [folderId] : spaces === 'drive' ? [] : [spaces];
-    const response = await promisify(gapi.client.drive.files.create, {
-        resource: {
-            name,
-            mimeType,
-            parents,
-        },
-        fields: '*',
-    });
-    return response.result;
-};
+const create =
+    (spaces: string) =>
+    (type: string) =>
+    async (name: string, folderId?: string) => {
+        const mimeType = type === 'folder' ? folderMIME : fileMIME;
+        const parents = folderId
+            ? [folderId]
+            : spaces === 'drive'
+            ? []
+            : [spaces];
+        const response = await promisify(gapi.client.drive.files.create, {
+            resource: {
+                name,
+                mimeType,
+                parents,
+            },
+            fields: '*',
+        });
+        return response.result;
+    };
 
 const find = (spaces: string) => (type: string) => async (query: string) => {
     const mimeType =
@@ -148,14 +175,15 @@ const remove = async (fileId: string) => {
     }
 };
 
-const getOrCreate = (spaces: string) => (type: string) => async (
-    q: string,
-    name: string,
-    folderId?: string,
-) => {
-    const exist = await find(spaces)(type)(q);
-    return exist.length ? exist : [await create(spaces)(type)(name, folderId)];
-};
+const getOrCreate =
+    (spaces: string) =>
+    (type: string) =>
+    async (q: string, name: string, folderId?: string) => {
+        const exist = await find(spaces)(type)(q);
+        return exist.length
+            ? exist
+            : [await create(spaces)(type)(name, folderId)];
+    };
 
 const upload = (spaces: string) => async (fileId: string, content: string) => {
     try {
