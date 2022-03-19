@@ -27,8 +27,10 @@ export default class RemoteLibraryStore {
         try {
             await cloud.load();
             this.isClientLoaded = true;
-            this.isLoggedIn = await cloud.isLoggedIn()
-        } catch (e) {}
+            this.isLoggedIn = await cloud.isLoggedIn();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     initLibrary = action(async () => {

@@ -15,14 +15,13 @@ const App = observer(function App() {
     const { isLoggedIn } = remoteLibraryStore;
     const messages = appStore.getLocaleMessages();
 
-    useEffect(() => {
-        Promise.all([appStore.load(), remoteLibraryStore.load()]).then(() => {
-            libraryStore.fetchBooksListAction();
-        });
+    useEffect(async () => {
+        await Promise.all([appStore.load(), remoteLibraryStore.load()])
+        libraryStore.fetchBooksListAction();
     }, []);
 
     const fetchBooks = async () => {
-        if (isLoggedIn) await remoteLibraryStore.fetchBooksListAction();
+        isLoggedIn && await remoteLibraryStore.fetchBooksListAction();
     };
     useEffect(() => {
         fetchBooks();

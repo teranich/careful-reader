@@ -45,7 +45,9 @@ export default class AppStore {
             await cloud.load();
             this.isClientLoaded = true;
             this.isLoggedIn = await cloud.isLoggedIn();
-        } catch (e) {}
+        } catch (e) {
+            console.error(e);
+        }
     }
     setLocale = action((locale: string) => {
         if (Object.keys(this.messages).includes(locale)) {

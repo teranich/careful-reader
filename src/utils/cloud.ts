@@ -9,6 +9,10 @@ const GOOGLE_DRIVE_API_DOCUMENT =
     'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 const SCOPE =
     'https://www.googleapis.com/auth/drive.appfolder https://www.googleapis.com/auth/drive';
+const REACT_APP_GOOGLE_API_KEY = 'AIzaSyCPUP5x1qzZKw0KqVvyKt7tH8EiK_8HUxY';
+const REACT_APP_GOOGLE_CLIENT_ID =
+    '200803973510-oejcrm8bu57ai7gb5tt1h3hkff4ju49r.apps.googleusercontent.com';
+
 let loaded = false;
 
 export async function injectGAPIScripts() {
@@ -35,7 +39,6 @@ export async function injectGAPIScripts() {
 }
 
 let isGAPILoaded = false;
-
 export async function load() {
     if (isGAPILoaded) return;
     if (!window?.gapi?.client) {
@@ -45,8 +48,8 @@ export async function load() {
     return new Promise((resolve, reject) => {
         return window.gapi.client
             .init({
-                apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
-                clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+                apiKey: REACT_APP_GOOGLE_API_KEY,
+                clientId: REACT_APP_GOOGLE_CLIENT_ID,
                 discoveryDocs: [GOOGLE_DRIVE_API_DOCUMENT],
                 scope: SCOPE,
             })
@@ -54,9 +57,9 @@ export async function load() {
                 if (!ga) {
                     console.error(
                         `Fail to load gapi. Check you credentials:
-                        API_KEY ${process.env.REACT_APP_GOOGLE_API_KEY},
-                        CLIENT_ID ${process.env.REACT_APP_GOOGLE_CLIENT_ID},
-                        API_DOCUMENT $(GOOGLE_DRIVE_API_DOCUMENT}`,
+                        API_KEY ${REACT_APP_GOOGLE_API_KEY},
+                        CLIENT_ID ${REACT_APP_GOOGLE_CLIENT_ID},
+                        API_DOCUMENT ${GOOGLE_DRIVE_API_DOCUMENT}`,
                     );
                     return reject();
                 }
@@ -70,7 +73,6 @@ export async function load() {
 export async function signIn() {
     try {
         await load();
-
         return window.gapi.auth2.getAuthInstance().signIn();
     } catch (e) {
         console.error('error in signIn', e);
