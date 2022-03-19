@@ -17,7 +17,7 @@ let loaded = false;
 
 export async function injectGAPIScripts() {
     if (loaded) return true;
-    await importScript(WINDOW_GAPI);
+    // await importScript(WINDOW_GAPI);
     return importScript(CLIENT_PLATFORM)
         .then(() => {
             return new Promise((resolve, reject) =>
@@ -46,20 +46,20 @@ export async function load() {
     }
 
     return new Promise((resolve, reject) => {
+        const credentials = {
+            apiKey: REACT_APP_GOOGLE_API_KEY,
+            clientId: REACT_APP_GOOGLE_CLIENT_ID,
+            discoveryDocs: [GOOGLE_DRIVE_API_DOCUMENT],
+            scope: SCOPE,
+        }
         return window.gapi.client
-            .init({
-                apiKey: REACT_APP_GOOGLE_API_KEY,
-                clientId: REACT_APP_GOOGLE_CLIENT_ID,
-                discoveryDocs: [GOOGLE_DRIVE_API_DOCUMENT],
-                scope: SCOPE,
-            })
-            .then((ga) => {
+            .init(credentials)
+            .then(() => {
+                const ga = gapi.auth2.getAuthInstance()
                 if (!ga) {
+
                     console.error(
-                        `Fail to load gapi. Check you credentials:
-                        API_KEY ${REACT_APP_GOOGLE_API_KEY},
-                        CLIENT_ID ${REACT_APP_GOOGLE_CLIENT_ID},
-                        API_DOCUMENT ${GOOGLE_DRIVE_API_DOCUMENT}`,
+                        'Fail to load gapi. Check you credentials:\n', JSON.stringify(credentials, null, '\t')
                     );
                     return reject();
                 }

@@ -29,7 +29,7 @@ export default class RemoteLibraryStore {
             this.isClientLoaded = true;
             this.isLoggedIn = await cloud.isLoggedIn();
         } catch (e) {
-            console.error(e);
+            console.error('fail to load: ', e);
         }
     }
 
