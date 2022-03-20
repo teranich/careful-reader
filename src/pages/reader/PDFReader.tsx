@@ -1,13 +1,22 @@
 import { observer } from 'mobx-react';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { TCurrentBook } from '../../store/LibraryStore';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
 import styled from 'styled-components';
 import { usePagesManager, useSingle } from './Readers.utils';
+import { stylize, stylizeJSX } from '../../utils/styler';
+import { Hightlighter } from './Hightlighter';
+import { RootStoreContext } from '../../store/RootStore';
 
+const opacity = `
+.page canvas {
+    opacity: 0;
+}`
 const DocumentIS = styled(Document)`
     overflow: hidden;
+    ${(props) => props.wordsHighlight && opacity}
+
 `;
 
 const scrollToPage = (page: number) => {
@@ -39,6 +48,8 @@ export default observer(function PDFReader({
     const textContainerRef = useRef(null);
     const pageSize = { width: pageWidth, height: pageHeight };
     const pageManager = usePagesManager([oldPageNumber], 100);
+    const { appStore, libraryStore } = useContext(RootStoreContext);
+    const { wordsHighlight, dynamicTextOrientation } = appStore;
 
     const handleScroll = () => {
         const triggerScroll =
@@ -133,14 +144,17 @@ export default observer(function PDFReader({
         return () => window.removeEventListener('resize', fitPageSize);
     }, []);
 
+    const customTextRenderer = ({ str }) => wordsHighlight ? stylizeJSX(str) : str;
+
     return (
-        <>
+        <Hightlighter wordsHighlight={true}>
             {bookFileURI && (
                 <DocumentIS
                     ref={textContainerRef}
                     file={bookFileURI}
                     onLoadSuccess={onDocumentLoadSuccess}
                     // renderMode="svg"
+                    wordsHighlight={wordsHighlight}
                     options={{
                         cMapUrl: 'cmaps/',
                         cMapPacked: true,
@@ -165,11 +179,12 @@ export default observer(function PDFReader({
                             pages={pageManager.pages}
                             pageSize={pageSize}
                             onLoadSuccess={onPageLoadSuccess}
+                            customTextRenderer={customTextRenderer}
                         />
                     )}
                 </DocumentIS>
             )}
-        </>
+        </Hightlighter>
     );
 });
 
@@ -234,12 +249,14 @@ type TInFramePagesComponent = TPageComponent & {
     pageNumber: number;
     pageCount: number;
     pages: number[];
+    customTextRenderer: () => any;
 };
 
 const InFramePages = ({
     pages = [],
     pageNumber,
     pageSize,
+    customTextRenderer,
     onLoadSuccess,
 }: TInFramePagesComponent) => (
     <>
@@ -251,6 +268,7 @@ const InFramePages = ({
                 width={pageSize.width}
                 height={pageSize.height}
                 onLoadSuccess={onLoadSuccess}
+                customTextRenderer={customTextRenderer}
             />
         ))}
     </>

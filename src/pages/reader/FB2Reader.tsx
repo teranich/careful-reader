@@ -10,6 +10,7 @@ import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import { RootStoreContext } from '../../store/RootStore';
 import { TCurrentBook } from 'src/store/LibraryStore';
+import { Hightlighter } from './Hightlighter';
 import BackgroundImage from './page2.jpg';
 
 const PageCount = styled.span`
@@ -20,20 +21,7 @@ interface QueryParams {
     bookId: string;
 }
 
-let classes = ``;
-for (let i = 0; i < 100; i++) {
-    const tone = i * 2;
-    classes += `.w${i} {
-    color: rgb(${tone},${tone},${tone});
-    }
-    `;
-}
-
-interface IHightlighter {
-    readonly wordsHighlight: boolean;
-}
-
-const Hightlighter = styled.div<IHightlighter>`
+const TextContainer = styled.div`
     height: 100vh;
     overflow-x: hidden;
     width: 100vw;
@@ -56,9 +44,7 @@ const Hightlighter = styled.div<IHightlighter>`
             height: 90vmin;
         }
     }
-    ${(props) => props.wordsHighlight && classes}
 `;
-
 const dfunc = debounce((fn) => fn && fn(), 100);
 
 export default observer(function Reader() {
@@ -128,12 +114,13 @@ export default observer(function Reader() {
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
             </Header> */}
             <Loading loading={loading}>
-                <Hightlighter
-                    wordsHighlight={wordsHighlight}
-                    onClick={toggleMenuHandler}
-                    style={dtoStyle}
-                    ref={textContainerRef}
-                ></Hightlighter>
+                <Hightlighter wordsHighlight={wordsHighlight}>
+                    <TextContainer
+                        onClick={toggleMenuHandler}
+                        style={dtoStyle}
+                        ref={textContainerRef}
+                    />
+                </Hightlighter>
             </Loading>
         </>
     );
