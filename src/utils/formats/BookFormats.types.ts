@@ -5,4 +5,5 @@ export interface BookFormat {
     getBookMeta: () => Book;
     getBookText: () => string;
     getBookCover: () => string;
+    saveBook: () => Promise<Book> ;
 }

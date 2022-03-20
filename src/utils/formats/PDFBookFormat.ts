@@ -2,11 +2,15 @@ import { Book } from '../../types';
 import { str2ab } from '../common';
 import { BookFormat } from './BookFormats.types';
 import { pdfjs } from 'react-pdf';
+import libraryDB from '../clientDB';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
 export class PDFBookFormat implements BookFormat {
     private rawText: string;
+    static isPDF(type: string) {
+        return type === 'application/pdf';
+    }
 
     constructor(rawText: string) {
         this.rawText = rawText;
@@ -66,4 +70,16 @@ export class PDFBookFormat implements BookFormat {
     }
 
     parse() {}
+
+    async saveBook(): Promise<Book> {
+        const cover = await this.getBookCover();
+        const newBook = {
+            name: 'gita',
+            meta: {},
+            format: 'pdf',
+            cover,
+        };
+
+        return await libraryDB.addBook(newBook, this.rawText);
+    }
 }

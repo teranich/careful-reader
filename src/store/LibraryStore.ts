@@ -3,7 +3,7 @@ import { action, makeAutoObservable, toJS } from 'mobx';
 import libraryDB from '../utils/clientDB';
 import { BookList, Book } from '../types';
 import * as converter from '../utils/converter';
-import { PDFBookFormat } from '../utils/formats/PDFBookFormat';
+import { getBookFormat } from '../utils/BookFormats';
 
 export type TCurrentBook =
     | {
@@ -34,34 +34,11 @@ export class LibraryStore {
 
     addBookAction = action(
         async (rawBookText: string, name: string, type: string) => {
-            console.log(name, type);
+            const format = getBookFormat(rawBookText, name, type);
 
-            if (type === 'application/pdf') {
-                console.log('application/pdf');
-                const pdfFormat = new PDFBookFormat(rawBookText);
-                const cover = await pdfFormat.getBookCover()
-                const newBook = {
-                    name: 'gita',
-                    format: 'pdf',
-                    meta: {},
-                    cover
-                        
-                };
-                const book = await libraryDB.addBook(newBook, rawBookText);
-                this.books.push(book);
-            } else if (type === 'text/xml') {
-                const { cover, meta } = converter.getBookPreviewInfo(
-                    rawBookText,
-                );
-                const newBook = {
-                    name,
-                    meta,
-                    format: 'fb2',
-                    cover,
-                };
+            if (format) {
+                const book = await format.saveBook();
 
-                this.isAddingBookInProcess = true;
-                const book = await libraryDB.addBook(newBook, rawBookText);
                 this.books.push(book);
                 this.isAddingBookInProcess = false;
                 this.rootStore.notification.info('book has been added');
@@ -96,8 +73,8 @@ export class LibraryStore {
 
     updateLocalBookPositionAction = action(
         async (book: Book, pageNumber: number) => {
-            localStorage.setItem(String(book.id), String(pageNumber))
-        }
+            localStorage.setItem(String(book.id), String(pageNumber));
+        },
     );
 
     updateBookAction = action(async (bookId: number, bookProps: any) => {
@@ -112,35 +89,32 @@ export class LibraryStore {
         return await libraryDB.getBookMeta(bookId);
     });
 
-    openBookAction = action(
-        async (bookId: number): Promise<TCurrentBook> => {
-            if (this.lastBook && this.lastBook.info.id === bookId) {
-                this.lastBook.info =
-                    (await libraryDB.getBookMeta(bookId)) ||
-                    this.lastBook.info;
-                return Promise.resolve(this.lastBook);
-            } else {
-                return Promise.all([
-                    libraryDB.getBookMeta(bookId),
-                    libraryDB.getBookText(bookId),
-                ]).then((prom) => {
-                    const info = prom[0] as Book;
-                    const rawText = prom[1] || '';
+    openBookAction = action(async (bookId: number): Promise<TCurrentBook> => {
+        if (this.lastBook && this.lastBook.info.id === bookId) {
+            this.lastBook.info =
+                (await libraryDB.getBookMeta(bookId)) || this.lastBook.info;
+            return Promise.resolve(this.lastBook);
+        } else {
+            return Promise.all([
+                libraryDB.getBookMeta(bookId),
+                libraryDB.getBookText(bookId),
+            ]).then((prom) => {
+                const info = prom[0] as Book;
+                const rawText = prom[1] || '';
 
-                    const text =
-                        info.format === 'fb2'
-                            ? converter.parseToInnerBook(rawText)
-                            : rawText;
+                const text =
+                    info.format === 'fb2'
+                        ? converter.parseToInnerBook(rawText)
+                        : rawText;
 
-                    this.lastBook = {
-                        info,
-                        text,
-                    };
-                    return this.lastBook;
-                });
-            }
-        },
-    );
+                this.lastBook = {
+                    info,
+                    text,
+                };
+                return this.lastBook;
+            });
+        }
+    });
 
     fetchBookTextAction = action(
         async (bookId: number) => await libraryDB.getBookText(bookId),
