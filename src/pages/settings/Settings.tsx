@@ -16,7 +16,7 @@ import styled from 'styled-components'
 import PageCoverImage1 from '../../static/page1.jpg'
 import PageCoverImage2 from '../../static/page2.jpg'
 import PageCoverImage3 from '../../static/page3.jpg'
-import { RootStoreContext } from '../..//store/RootStore'
+import { RootStoreContext } from '../../store/RootStore'
 
 const FormControlStyled = styled(FormControl)`
   margin: 10px;

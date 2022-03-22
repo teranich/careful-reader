@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { Header } from '../../components/common';
 import styled from 'styled-components';
 import { TCurrentBook } from 'src/store/LibraryStore';
-
+import { HightlightSwitcher } from '../../components/controls';
 interface QueryParams {
     bookId: string;
 }
@@ -20,20 +20,24 @@ const PageCount = styled.span`
 export default observer(function Reader() {
     const queryParams = useParams<QueryParams>();
     const bookId = parseInt(queryParams.bookId);
-    const oldPageNumber =
-        parseInt(localStorage.getItem(String(bookId))) || 1;
+    const oldPageNumber = parseInt(localStorage.getItem(String(bookId))) || 1;
     const [currentReader, setCurrentReader] = useState<undefined | string>();
     const { libraryStore } = useContext(RootStoreContext);
     const { getBookMeta } = libraryStore;
-    const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(oldPageNumber);
+    const [numberOfcurrentPage, setNumberOfCurrentPage] =
+        useState(oldPageNumber);
     const [showControls, setShowControls] = useState(true);
     const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0');
     const [pagesCount, setPagesCount] = useState(0);
     const bookTitle = () =>
         currentBookRef.current?.info?.meta?.title ||
         currentBookRef.current?.info?.name;
-    const { updateBookPositionAction, openBookAction, lastBook, updateLocalBookPositionAction } =
-        libraryStore;
+    const {
+        updateBookPositionAction,
+        openBookAction,
+        lastBook,
+        updateLocalBookPositionAction,
+    } = libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
 
@@ -49,8 +53,8 @@ export default observer(function Reader() {
 
     const onBookLoaded = (count) => setPagesCount(count);
     const onPageChange = (page) => {
-        setNumberOfCurrentPage(page)
-        book?.info && updateLocalBookPositionAction(book?.info, page)
+        setNumberOfCurrentPage(page);
+        book?.info && updateLocalBookPositionAction(book?.info, page);
     };
 
     return (
@@ -59,6 +63,7 @@ export default observer(function Reader() {
                 className={`${showControls ? '' : ' hidden'} `}
                 title={bookTitle()}
             >
+                <HightlightSwitcher />
                 <div>{currenPositionPercent}%</div>
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
             </Header>

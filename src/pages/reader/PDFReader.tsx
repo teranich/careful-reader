@@ -10,8 +10,8 @@ import { Hightlighter } from './Hightlighter';
 import { RootStoreContext } from '../../store/RootStore';
 
 const opacity = `
-.page canvas {
-    opacity: 0;
+.page canvas, .page svg {
+    opacity: 0.1;
 }`
 const DocumentIS = styled(Document)`
     overflow: hidden;
@@ -49,7 +49,7 @@ export default observer(function PDFReader({
     const pageSize = { width: pageWidth, height: pageHeight };
     const pageManager = usePagesManager([oldPageNumber], 100);
     const { appStore, libraryStore } = useContext(RootStoreContext);
-    const { wordsHighlight, dynamicTextOrientation } = appStore;
+    const { wordsHighlight } = appStore;
 
     const handleScroll = () => {
         const triggerScroll =
@@ -267,6 +267,7 @@ const InFramePages = ({
                 pageNumber={number}
                 width={pageSize.width}
                 height={pageSize.height}
+                renderMode="svg"
                 onLoadSuccess={onLoadSuccess}
                 customTextRenderer={customTextRenderer}
             />
