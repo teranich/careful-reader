@@ -40,7 +40,12 @@ const useStyles = makeStyles({
   },
 })
 
-export default observer(function Header({ children, className = '', title }: any) {
+const ContainerIS = styled.div`
+  display: ${props => props.visible? 'block': 'none'}
+  
+`
+
+export default observer(function Header({ children, className = '', title, visible = true }: any) {
   const classes = useStyles()
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation()
@@ -101,7 +106,9 @@ export default observer(function Header({ children, className = '', title }: any
     </div>
   )
   return (
-    <>
+    <ContainerIS 
+      visible={visible}    
+    >
       <TopHeightWorkaround>
         <AppBar />
         <Toolbar />
@@ -129,6 +136,6 @@ export default observer(function Header({ children, className = '', title }: any
         </Toolbar>
         <LoadingLine />
       </AppBar>
-    </>
+    </ContainerIS>
   )
 })

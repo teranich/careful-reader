@@ -22,6 +22,7 @@ export default class AppStore {
     isClientLoaded: boolean = false;
     isUseImageCover: boolean = true;
     imageCover: string = '1';
+    isHeaderVisible: boolean = true;
 
     constructor(rootStore: RootStore) {
         makeAutoObservable(this);
@@ -78,6 +79,10 @@ export default class AppStore {
 
     toggleUseImageCover = action((value: boolean) => {
         this.isUseImageCover = value;
+    });
+    
+    toggleHeaderVisible = action((value: boolean | undefined) => {
+        this.isHeaderVisible = value || !this.isHeaderVisible;
     });
 
     setPageBackgroundColorAction = action((value: string) => {

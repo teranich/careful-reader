@@ -8,6 +8,7 @@ import { Header } from '../../components/common';
 import styled from 'styled-components';
 import { TCurrentBook } from 'src/store/LibraryStore';
 import { HightlightSwitcher } from '../../components/controls';
+import useDoubleClick from '../../hooks/UseDoubleClick';
 interface QueryParams {
     bookId: string;
 }
@@ -33,14 +34,13 @@ export default observer(function Reader() {
         currentBookRef.current?.info?.meta?.title ||
         currentBookRef.current?.info?.name;
     const {
-        updateBookPositionAction,
         openBookAction,
         lastBook,
         updateLocalBookPositionAction,
     } = libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
-
+    const textContainerRef = useRef();
     useEffect(() => {
         const openBook = async () => {
             const meta = await getBookMeta(bookId);
@@ -57,26 +57,34 @@ export default observer(function Reader() {
         book?.info && updateLocalBookPositionAction(book?.info, page);
     };
 
+    useDoubleClick({
+        onSingleClick: () => {},
+        onDoubleClick: () => {
+            setShowControls(!showControls);
+        },
+        ref: textContainerRef,
+        latency: 200,
+    });
+
     return (
         <>
-            <Header
-                className={`${showControls ? '' : ' hidden'} `}
-                title={bookTitle()}
-            >
+            <Header visible={showControls} title={bookTitle()}>
                 <HightlightSwitcher />
                 <div>{currenPositionPercent}%</div>
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
             </Header>
-            {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
-            {currentReader === 'pdf' && (
-                <PDFReader
-                    book={book}
-                    mode="greed"
-                    oldPageNumber={oldPageNumber}
-                    onBookLoaded={onBookLoaded}
-                    onPageChange={onPageChange}
-                ></PDFReader>
-            )}
+            <div ref={textContainerRef}>
+                {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
+                {currentReader === 'pdf' && (
+                    <PDFReader
+                        book={book}
+                        mode="greed"
+                        oldPageNumber={oldPageNumber}
+                        onBookLoaded={onBookLoaded}
+                        onPageChange={onPageChange}
+                    ></PDFReader>
+                )}
+            </div>
         </>
     );
 });
