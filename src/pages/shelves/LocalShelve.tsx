@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
-import { Book } from '../../types';
+import { IBook } from '../../types';
 import { useNavigate } from 'react-router-dom';
 import Shelve, { TSheveAction } from './Shelve';
 import { RootStoreContext } from '../..//store/RootStore';
@@ -10,7 +10,7 @@ const LocalBooksList = observer(() => {
     const { libraryStore, remoteLibraryStore } = useContext(RootStoreContext);
     const { books, removeBookAction } = libraryStore;
     const { uploadBookAction, syncMetaAction } = remoteLibraryStore;
-    const handleBookRead = (book: Book | null) => {
+    const handleBookRead = (book: IBook | null) => {
         book && navigate(`/read/${book.id}`);
     };
 

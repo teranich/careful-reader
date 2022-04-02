@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { observer } from 'mobx-react'
-import { Book } from '../../types'
+import { IBook } from '../../types'
 import BookItem from '../../components/common/BookItem'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import styled from 'styled-components'
 
-type TShelveActionHandler = (book: Book | null) => void
+type TShelveActionHandler = (book: IBook | null) => void
 
 const Spacer = styled.div`
   height: 56px;
@@ -24,7 +24,7 @@ export type TSheveAction = {
   handler: TShelveActionHandler
 }
 interface TShelve {
-  books: Book[]
+  books: IBook[]
   dialogBookClickHandler?: TShelveActionHandler
   actions: TSheveAction[]
 }
@@ -32,8 +32,8 @@ interface TShelve {
 const Shelve = observer(
   ({ books, actions, dialogBookClickHandler }: TShelve) => {
     const [isBookDialogOpenned, setIsBookDialogOpenned] = useState(false)
-    const [selectedBook, setSelectedBook] = useState<Book | null>(null)
-    const bookClickHandler = (book: Book) => {
+    const [selectedBook, setSelectedBook] = useState<IBook | null>(null)
+    const bookClickHandler = (book: IBook) => {
       setIsBookDialogOpenned(true)
       setSelectedBook(book)
     }
@@ -45,12 +45,12 @@ const Shelve = observer(
       action.handler(selectedBook)
       handleDialogClose()
     }
-    const handleDefaultAction = (book: Book) => dialogBookClickHandler && dialogBookClickHandler(book)
+    const handleDefaultAction = (book: IBook) => dialogBookClickHandler && dialogBookClickHandler(book)
 
     return (
       <>
         <Box display="flex" justifyContent="center" flexWrap="wrap">
-          {books.map((book: Book, index: number) => (
+          {books.map((book: IBook, index: number) => (
             <BookItem key={index} book={book}
               onSingleClick={() => bookClickHandler(book)}
               onDoubleClick={() => handleDefaultAction(book)}

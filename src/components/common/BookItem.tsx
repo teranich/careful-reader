@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { observer } from 'mobx-react'
-import { Book } from '../../types'
+import { IBook } from '../../types'
 import Paper from '@material-ui/core/Paper'
 import styled from 'styled-components'
 import useDoubleClick from '../../hooks/UseDoubleClick'
@@ -23,7 +23,7 @@ const Image = styled.img`
   height: 100%;
 `
 interface BookItemProps {
-  book: Book
+  book: IBook
   onSingleClick?: () => void
   onDoubleClick?: () => void
   children?: any

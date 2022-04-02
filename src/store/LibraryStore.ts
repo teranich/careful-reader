@@ -1,13 +1,13 @@
 import { RootStore } from './RootStore';
 import { action, makeAutoObservable, toJS } from 'mobx';
 import libraryDB from '../utils/clientDB';
-import { BookList, Book } from '../types';
+import { BookList, IBook } from '../types';
 import * as converter from '../utils/converter';
 import { getBookFormat } from '../utils/BookFormats';
 
 export type TCurrentBook =
     | {
-          info: Book;
+          info: IBook;
           text: string;
       }
     | undefined;
@@ -30,7 +30,7 @@ export class LibraryStore {
     });
 
     isBookExist = (name: string | undefined) =>
-        this.books.find((book: Book) => book.name === name);
+        this.books.find((book: IBook) => book.name === name);
 
     addBookAction = action(
         async (rawBookText: string, name: string, type: string) => {
@@ -46,7 +46,7 @@ export class LibraryStore {
         },
     );
 
-    syncBookAction = action(async (meta: Book, body: string) => {
+    syncBookAction = action(async (meta: IBook, body: string) => {
         const { id, ...rest } = meta;
         const metaWithoutObserving = toJS(rest);
         metaWithoutObserving.meta = toJS(metaWithoutObserving.meta);
@@ -54,7 +54,7 @@ export class LibraryStore {
         this.books.push(book);
     });
 
-    removeBookAction = action(async (book: Book | null) => {
+    removeBookAction = action(async (book: IBook | null) => {
         if (!book) return;
         await libraryDB.delete(book.id);
         const bookIndex = this.books.indexOf(book);
@@ -63,7 +63,7 @@ export class LibraryStore {
     });
 
     updateBookPositionAction = action(
-        async (book: Book, positionElement: string) => {
+        async (book: IBook, positionElement: string) => {
             const bookId = book.id;
             await libraryDB.updateBookMeta(bookId, { positionElement });
             book.positionElement = positionElement;
@@ -72,7 +72,7 @@ export class LibraryStore {
     );
 
     updateLocalBookPositionAction = action(
-        async (book: Book, pageNumber: number) => {
+        async (book: IBook, pageNumber: number) => {
             localStorage.setItem(String(book.id), String(pageNumber));
         },
     );
@@ -99,7 +99,7 @@ export class LibraryStore {
                 libraryDB.getBookMeta(bookId),
                 libraryDB.getBookText(bookId),
             ]).then((prom) => {
-                const info = prom[0] as Book;
+                const info = prom[0] as IBook;
                 const rawText = prom[1] || '';
 
                 const text =

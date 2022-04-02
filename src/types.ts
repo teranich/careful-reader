@@ -2,7 +2,7 @@ enum formats {
     fb2 = 'fb2',
     pdf = 'pdf',
 }
-export interface Book {
+export interface IBook {
     id: number;
     meta?: any;
     metaFileId?: string;
@@ -14,4 +14,4 @@ export interface Book {
     timestamp?: number;
 }
 
-export type BookList = Book[];
+export type BookList = IBook[];

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PDFReader from './PDFReader';
-import { Book } from 'src/types';
+import { IBook } from 'src/types';
 import text from '../../mocks/book.pdf';
 import { PDFBookFormat } from '../../utils/formats/PDFBookFormat';
 
@@ -15,7 +15,7 @@ export default {
 const Template: ComponentStory<typeof PDFReader> = (args) => {
     // const [file, setFile] = useState('./gita.pdff');
     const book = {
-        info: {} as Book,
+        info: {} as IBook,
         text,
     };
 
@@ -25,7 +25,7 @@ const Template: ComponentStory<typeof PDFReader> = (args) => {
 const Primary = Template.bind({});
 
 Primary.args = {
-    book: { info: {} as Book, text: 'gita' },
+    book: { info: {} as IBook, text: 'gita' },
 };
 
 const PDFFormat = () => {

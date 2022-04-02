@@ -1,7 +1,7 @@
 import { BookFormat } from './BookFormats.types';
 import * as converter from '../../utils/converter';
 import libraryDB from '../clientDB';
-import { Book } from '../../types';
+import { IBook } from '../../types';
 export class FB2BookFormat implements BookFormat {
     rawText: string
     static isFB2(name: string = '') { 
@@ -16,7 +16,7 @@ export class FB2BookFormat implements BookFormat {
         );
     }
 
-    async saveBook(): Promise<Book> {
+    async saveBook(): Promise<IBook> {
         const { cover, meta } = converter.getBookPreviewInfo(
             this.rawText
         );

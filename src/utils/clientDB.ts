@@ -1,5 +1,5 @@
 import { openDB, DBSchema } from 'idb'
-import { Book } from '../types'
+import { IBook } from '../types'
 
 const DB_VERSION = 1
 const DB_NAME = 'library'
@@ -9,7 +9,7 @@ const DB_STORE_NAME = 'books'
 interface LibraryDB extends DBSchema {
   [DB_INDEX_NAME]: {
     key: number
-    value: Book
+    value: IBook
   }
   [DB_STORE_NAME]: {
     key: number
@@ -44,11 +44,11 @@ const libraryDB = {
       return result
     }
   },
-  async addBook(meta: any, body: string = ''): Promise<Book> {
+  async addBook(meta: any, body: string = ''): Promise<IBook> {
     const timestamp = Date.now()
     const tx = await txPromise()
     const id = await tx.objectStore(DB_STORE_NAME).add(body)
-    const book: Book = { ...meta, id, timestamp }
+    const book: IBook = { ...meta, id, timestamp }
 
     await tx.objectStore(DB_INDEX_NAME).add(book)
     await tx.done

@@ -1,4 +1,4 @@
-import { Book } from '../../types';
+import { IBook } from '../../types';
 import { str2ab } from '../common';
 import { BookFormat } from './BookFormats.types';
 import { pdfjs } from 'react-pdf';
@@ -16,7 +16,7 @@ export class PDFBookFormat implements BookFormat {
         this.rawText = rawText;
     }
 
-    getBookMeta(): Book {}
+    getBookMeta(): IBook {}
 
     getRaw() {
         return this.rawText;
@@ -71,7 +71,7 @@ export class PDFBookFormat implements BookFormat {
 
     parse() {}
 
-    async saveBook(): Promise<Book> {
+    async saveBook(): Promise<IBook> {
         const cover = await this.getBookCover();
         const newBook = {
             name: 'gita',

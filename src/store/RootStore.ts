@@ -1,6 +1,6 @@
 import { action, makeAutoObservable } from 'mobx'
 import { createContext } from 'react'
-import { Book } from 'src/types'
+import { IBook } from 'src/types'
 import AppStore from './AppStore'
 import { LibraryStore } from './LibraryStore'
 import RemoteLibraryStore from './RemoteLibraryStore'
@@ -22,10 +22,10 @@ export class RootStore {
       this.notifications.push({ message, type: 'error' })
     }),
   }
-  syncMetaAction = action(async (book: Book) => {
+  syncMetaAction = action(async (book: IBook) => {
     return await this.remoteLibraryStore.syncMetaAction(book)
   })
-  syncBookAction = action(async (book: Book, body: string) => {
+  syncBookAction = action(async (book: IBook, body: string) => {
     return await this.libraryStore.syncBookAction(book, body)
   })
   constructor() {

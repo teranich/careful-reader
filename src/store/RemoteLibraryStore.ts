@@ -1,11 +1,11 @@
 import { RootStore } from './RootStore';
 import { action, makeAutoObservable } from 'mobx';
-import { Book } from '../types';
+import { IBook } from '../types';
 import * as cloud from '../utils/cloud';
 import libraryDB from '../utils/clientDB';
 
 export default class RemoteLibraryStore {
-    books: Book[] = [];
+    books: IBook[] = [];
     isClientLoaded = false;
     isLoggedIn = false;
     isBooksLoading = false;
@@ -50,7 +50,7 @@ export default class RemoteLibraryStore {
                         .download(fileMeta.id)
                         .then((content) => {
                             //@ts-ignore
-                            const book: Book = JSON.parse(content);
+                            const book: IBook = JSON.parse(content);
 
                             this.books.push(book);
                         }),
@@ -66,7 +66,7 @@ export default class RemoteLibraryStore {
         }
     });
 
-    uploadBookAction = action(async (book: Book | null) => {
+    uploadBookAction = action(async (book: IBook | null) => {
         if (!book) return;
         try {
             this.isUploading = true;
@@ -99,7 +99,7 @@ export default class RemoteLibraryStore {
         }
     });
 
-    syncMetaAction = action(async (book: Book | null) => {
+    syncMetaAction = action(async (book: IBook | null) => {
         if (!book) return;
 
         try {
@@ -121,7 +121,7 @@ export default class RemoteLibraryStore {
         }
     });
 
-    downloadBookAction = action(async (book: Book | null) => {
+    downloadBookAction = action(async (book: IBook | null) => {
         if (!book) return;
         let result = '';
         try {
@@ -142,7 +142,7 @@ export default class RemoteLibraryStore {
         }
     });
 
-    forceBookRemove = async (book: Book) => {
+    forceBookRemove = async (book: IBook) => {
         const cloudMetaFile = await this.cloudAppFolder.find
             .file(`name = '${book.name}-meta.json'`)
             .then(([file]) => file?.id && this.cloudAppFolder.remove(file.id));
@@ -154,7 +154,7 @@ export default class RemoteLibraryStore {
         return Promise.allSettled([cloudFile, cloudMetaFile]);
     };
 
-    removeBookAction = action(async (book: Book | null) => {
+    removeBookAction = action(async (book: IBook | null) => {
         if (!book) return;
         try {
             this.isBookRemoving = true;

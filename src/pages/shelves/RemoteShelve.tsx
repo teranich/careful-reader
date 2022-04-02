@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { observer } from 'mobx-react'
-import { Book } from '../../types'
+import { IBook } from '../../types'
 import { Loading } from '../../components/loading'
 import Shelve, { TSheveAction } from './Shelve'
 import { RootStoreContext } from '../..//store/RootStore'
@@ -17,7 +17,7 @@ const RemoteBooksList = observer(() => {
 
   const { isBookExist } = libraryStore
 
-  const collectBook = async (book: Book | null) => {
+  const collectBook = async (book: IBook | null) => {
     if (isBookExist(book?.name)) {
       return
     }

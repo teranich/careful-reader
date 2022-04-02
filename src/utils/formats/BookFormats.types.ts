@@ -1,9 +1,9 @@
-import { Book } from '../../types';
+import { IBook } from '../../types';
 
 export interface BookFormat {
     constructor: (rawText: string) => void;
-    getBookMeta: () => Book;
+    getBookMeta: () => IBook;
     getBookText: () => string;
     getBookCover: () => string;
-    saveBook: () => Promise<Book> ;
+    saveBook: () => Promise<IBook> ;
 }

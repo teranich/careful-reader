@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { observer } from 'mobx-react'
-import { Book } from '../../types'
+import { IBook } from '../../types'
 import BookItem from '../../components/common/BookItem'
 import BookShelfImage from './book-shelf.png'
 import { Header } from '../../components/common'
