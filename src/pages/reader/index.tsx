@@ -75,11 +75,11 @@ export default observer(function Reader() {
             </Header>
             <div ref={textContainerRef}>
                 {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
-                {currentReader === 'pdf' && (
+                {currentReader === 'pdf' && book && (
                     <PDFReader
                         book={book}
                         mode="greed"
-                        oldPageNumber={oldPageNumber}
+                        // oldPageNumber={oldPageNumber}
                         onBookLoaded={onBookLoaded}
                         onPageChange={onPageChange}
                     ></PDFReader>

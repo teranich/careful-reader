@@ -1,16 +1,31 @@
-enum formats {
-    fb2 = 'fb2',
-    pdf = 'pdf',
+export enum BookFormats {
+    FB2 = 'fb2',
+    PDF = 'pdf',
 }
+export type TBookId = string;
+export type TBookMeta = {
+    title?: string,    
+    author?: string,
+    language?: string,
+    subject?: string,
+    keywords?: string,
+    rest?: Object    
+}
+
+export type TBookPosition = string;
+export type TBookText = string;
+export type TBooksIndex = {}
 export interface IBook {
     id: number;
-    meta?: any;
+    name: string;
+    pageCount: number;
+    cover: string;
+    format: BookFormats;
+    position: number;
+    meta?: TBookMeta;
     metaFileId?: string;
     textFileId?: string;
-    name: string;
-    format: formats;
     positionElement?: any;
-    cover: string;
     timestamp?: number;
 }
 

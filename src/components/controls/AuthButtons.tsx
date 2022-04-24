@@ -5,13 +5,13 @@ import Button from '@material-ui/core/Button'
 import { RootStoreContext } from '../../store/RootStore'
 
 export default observer(function SignInButton() {
-  const { appStore } = useContext(RootStoreContext)
+  const rootStore = useContext(RootStoreContext)
   const {
     isClientLoaded,
     isLoggedIn,
     signInAction,
     signOutAction,
-  } = appStore
+  } = rootStore
   
   return (
     <>

@@ -4,6 +4,7 @@ import PDFReader from './PDFReader';
 import styled from 'styled-components';
 import { readFileContent } from '../../utils/common';
 
+
 const TextArea = styled.textarea`
     width: 500px;
     height: 250px;
@@ -42,7 +43,7 @@ const BlobFromText = () => {
         </>
     );
 };
-const PageContainer = styled.div`
+const PageContainerIS = styled.div`
     position: relative;
 `;
 const BlobFile = () => {
@@ -71,9 +72,9 @@ const BlobFile = () => {
                 <button type="submit">Submit</button>
             </form>
 
-            <PageContainer>
+            <PageContainerIS>
                 <PDFReader book={book} />
-            </PageContainer>
+            </PageContainerIS>
         </div>
     );
 };

@@ -10,7 +10,7 @@
         "intl:translation": "node ./translationRunner.js",
         "intl:manage": "yarn intl:extract && yarn intl:translation",
         "deploy": "react-app-rewired build && gh-pages -d build",
-        "storybook": "start-storybook -p 6006",
+        "storybook": "start-storybook -p 7007",
         "build-storybook": "build-storybook",
         "fix:adult": "npm_config_yes=true npx yarn-audit-fix"
     },

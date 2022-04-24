@@ -16,6 +16,7 @@ const App = observer(function App() {
     const messages = appStore.getLocaleMessages();
 
     useEffect(async () => {
+        await rootStore.load()
         await Promise.all([appStore.load(), remoteLibraryStore.load()])
         libraryStore.fetchBooksListAction();
     }, []);

@@ -1,21 +1,19 @@
 import { RootStore } from './RootStore';
 import { action, makeAutoObservable, toJS } from 'mobx';
 import libraryDB from '../utils/clientDB';
-import { BookList, IBook } from '../types';
+import { BookFormats, BookList, IBook } from '../types';
 import * as converter from '../utils/converter';
 import { getBookFormat } from '../utils/BookFormats';
 
-export type TCurrentBook =
-    | {
-          info: IBook;
-          text: string;
-      }
-    | undefined;
+export type TCurrentBook = {
+        card: IBook,
+        text: string,
+}
 export class LibraryStore {
     public isAddingBookInProcess = false;
     public isFetchingBooksInProcess = false;
     public books: BookList = [];
-    public lastBook: TCurrentBook;
+    public lastBook: TCurrentBook | undefined;
 
     private rootStore: RootStore;
 
@@ -90,25 +88,25 @@ export class LibraryStore {
     });
 
     openBookAction = action(async (bookId: number): Promise<TCurrentBook> => {
-        if (this.lastBook && this.lastBook.info.id === bookId) {
-            this.lastBook.info =
-                (await libraryDB.getBookMeta(bookId)) || this.lastBook.info;
+        if (this.lastBook && this.lastBook.card.id === bookId) {
+            this.lastBook.card =
+                (await libraryDB.getBookMeta(bookId)) || this.lastBook.card;
             return Promise.resolve(this.lastBook);
         } else {
             return Promise.all([
                 libraryDB.getBookMeta(bookId),
                 libraryDB.getBookText(bookId),
             ]).then((prom) => {
-                const info = prom[0] as IBook;
+                const card = prom[0] as IBook;
                 const rawText = prom[1] || '';
 
                 const text =
-                    info.format === 'fb2'
+                    card.format === BookFormats.FB2
                         ? converter.parseToInnerBook(rawText)
                         : rawText;
 
                 this.lastBook = {
-                    info,
+                    card,
                     text,
                 };
                 return this.lastBook;

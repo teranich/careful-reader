@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { TCurrentBook } from '../../store/LibraryStore';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
@@ -8,15 +8,15 @@ import { usePagesManager, useSingle } from './Readers.utils';
 import { stylize, stylizeJSX } from '../../utils/styler';
 import { Hightlighter } from './Hightlighter';
 import { RootStoreContext } from '../../store/RootStore';
+import BackgroundImage from './page2.jpg';
 
 const opacity = `
 .page canvas, .page svg {
     opacity: 0.1;
-}`
+}`;
 const DocumentIS = styled(Document)`
     overflow: hidden;
     ${(props) => props.wordsHighlight && opacity}
-
 `;
 
 const scrollToPage = (page: number) => {
@@ -24,23 +24,24 @@ const scrollToPage = (page: number) => {
     target?.scrollIntoView();
 };
 
+type TPDFReaderProps = {
+    book: TCurrentBook;
+    oldPageNumber: number;
+    mode: string;
+    onBookLoaded: (numPages: number) => {};
+    onPageChange: (page: number) => {};
+};
 export default observer(function PDFReader({
     book,
     oldPageNumber,
     onPageChange,
     onBookLoaded,
     mode,
-}: {
-    book: TCurrentBook;
-    oldPageNumber: number;
-    mode: string;
-    onBookLoaded: (numPages: number) => {};
-    onPageChange: (page: number) => {};
-}) {
-    const [pageCount, setPageCount] = useState(0);
+}: TPDFReaderProps) {
+    const pageCount = book.card.pageCount;
     const [getCurrentPageNumber, setCurrentPageNumber] =
         useSingle<number>(oldPageNumber);
-    const [bookFileURI, setBookFileURI] = useState<string | undefined>();
+    const bookFileURI = pdfTextToObjectUrl(book.text);
     const { width: clientWidth, height: clientHeight } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
     const [pageHeight, setPageHeight] = useState(clientHeight);
@@ -50,7 +51,7 @@ export default observer(function PDFReader({
     const pageManager = usePagesManager([oldPageNumber], 100);
     const { appStore, libraryStore } = useContext(RootStoreContext);
     const { wordsHighlight } = appStore;
-
+    console.count('PDFReader');
     const handleScroll = () => {
         const triggerScroll =
             document.body.clientHeight - window.innerHeight - window.scrollY;
@@ -95,7 +96,6 @@ export default observer(function PDFReader({
     };
 
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-        setPageCount(numPages);
         onBookLoaded && onBookLoaded(numPages);
     };
 
@@ -128,15 +128,15 @@ export default observer(function PDFReader({
     };
 
     useEffect(() => {
-        if (book?.text) {
-            setBookFileURI(pdfTextToObjectUrl(book.text));
+        if (book.text) {
+            // setBookFileURI(pdfTextToObjectUrl(bookText));
             window.addEventListener('scroll', handleScroll);
 
             return () => {
                 return window.removeEventListener('scroll', handleScroll);
             };
         }
-    }, [book?.text]);
+    }, [book.text]);
 
     useEffect(() => {
         window.addEventListener('resize', fitPageSize);
@@ -144,8 +144,9 @@ export default observer(function PDFReader({
         return () => window.removeEventListener('resize', fitPageSize);
     }, []);
 
-    const customTextRenderer = ({ str }) => wordsHighlight ? stylizeJSX(str) : str;
-
+    const customTextRenderer = ({ str }) =>
+        wordsHighlight ? stylizeJSX(str) : str;
+    console.count();
     return (
         <Hightlighter wordsHighlight={true}>
             {bookFileURI && (
@@ -178,6 +179,7 @@ export default observer(function PDFReader({
                         <InFramePages
                             pages={pageManager.pages}
                             pageSize={pageSize}
+                            pageCount={pageCount}
                             onLoadSuccess={onPageLoadSuccess}
                             customTextRenderer={customTextRenderer}
                         />
@@ -190,6 +192,10 @@ export default observer(function PDFReader({
 
 const PageIS = styled(Page)`
     border: 1px solid black;
+    .react-pdf__Page__svg {
+        background-image: url(${BackgroundImage});
+        background-size: contain;
+    }
 `;
 
 type TPageComponent = {
@@ -252,25 +258,48 @@ type TInFramePagesComponent = TPageComponent & {
     customTextRenderer: () => any;
 };
 
+const DummyPageIS = styled.div`
+    width: ${(props) => props.width}px;
+    height: ${(props) => props.height}px;
+    border: 1px solid black;
+`;
+
 const InFramePages = ({
     pages = [],
     pageNumber,
     pageSize,
+    pageCount,
     customTextRenderer,
     onLoadSuccess,
-}: TInFramePagesComponent) => (
-    <>
-        {pages.map((number) => (
-            <PageIS
-                className="page"
-                key={`pdf-page-${number}`}
-                pageNumber={number}
-                width={pageSize.width}
-                height={pageSize.height}
-                renderMode="svg"
-                onLoadSuccess={onLoadSuccess}
-                customTextRenderer={customTextRenderer}
-            />
-        ))}
-    </>
-);
+}: TInFramePagesComponent) => {
+    // ${(props) => props.wordsHighlight && opacity}
+
+
+    console.log('inframes', pages.length, pages);
+
+    return (
+        <>
+            {Array(pageCount)
+                .fill(0)
+                .map((_, i) => (
+                    <DummyPageIS
+                        key={`pdf-page-${i}`}
+                        data-page-number={i}
+                        width={pageSize.width}
+                        height={pageSize.height}
+                    >{i}</DummyPageIS>
+                ))}
+        </>
+    );
+};
+
+// <PageIS
+//         key={`pdf-page-${i}`}
+//         className="page"
+//         pageNumber={i}
+//         width={pageSize.width}
+//         height={pageSize.height}
+//         renderMode="svg"
+//         onLoadSuccess={onLoadSuccess}
+//         // customTextRenderer={customTextRenderer}
+//     />

@@ -3,9 +3,8 @@ import { createIntl, createIntlCache } from 'react-intl';
 
 import en_messages from '../translations/locales/en.json';
 import ru_messages from '../translations/locales/ru.json';
-import * as cloud from '../utils/cloud';
+// import * as cloud from '../utils/cloud/GoogleCloud.utils';
 import { RootStore } from './RootStore';
-
 const DEFAULT_LOCALE = 'en';
 export default class AppStore {
     rootStore: RootStore;
@@ -18,12 +17,9 @@ export default class AppStore {
     dynamicTextOrientation: boolean = false;
     pageColor: string = 'white';
     pageBackgroundColor: string = '#0000';
-    isLoggedIn: boolean = false;
-    isClientLoaded: boolean = false;
     isUseImageCover: boolean = true;
     imageCover: string = '1';
     isHeaderVisible: boolean = true;
-
     constructor(rootStore: RootStore) {
         makeAutoObservable(this);
         this.rootStore = rootStore;
@@ -42,13 +38,7 @@ export default class AppStore {
     }
 
     async load() {
-        try {
-            await cloud.load();
-            this.isClientLoaded = true;
-            this.isLoggedIn = await cloud.isLoggedIn();
-        } catch (e) {
-            console.error('fail to load: ', e);
-        }
+ 
     }
     setLocale = action((locale: string) => {
         if (Object.keys(this.messages).includes(locale)) {
@@ -80,22 +70,12 @@ export default class AppStore {
     toggleUseImageCover = action((value: boolean) => {
         this.isUseImageCover = value;
     });
-    
+
     toggleHeaderVisible = action((value: boolean | undefined) => {
         this.isHeaderVisible = value || !this.isHeaderVisible;
     });
 
     setPageBackgroundColorAction = action((value: string) => {
         this.pageBackgroundColor = value;
-    });
-
-    signInAction = action(async () => {
-        await cloud.signIn();
-        this.isLoggedIn = await cloud.isLoggedIn();
-    });
-
-    signOutAction = action(async () => {
-        await cloud.signOut();
-        this.isLoggedIn = await cloud.isLoggedIn();
     });
 }

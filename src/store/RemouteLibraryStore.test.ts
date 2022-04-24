@@ -1,9 +1,6 @@
 import { RootStore } from './RootStore';
 import RemoteLibraryStore from './RemoteLibraryStore'
 
-jest.mock('../utils/cloud')
-
-
 function getStoreInstance() {
     const rootStore = new RootStore()
     return new RemoteLibraryStore(rootStore)

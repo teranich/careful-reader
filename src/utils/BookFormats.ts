@@ -9,9 +9,9 @@ export const getBookFormat = (
 ): BookFormat => {
     let format: BookFormat | null = null;
     if (PDFBookFormat.isPDF(type)) {
-        format = new PDFBookFormat(rawBookText);
+        format = new PDFBookFormat(rawBookText, name);
     } else if (FB2BookFormat.isFB2(name)) {
-        format = new FB2BookFormat(rawBookText);
+        format = new FB2BookFormat(rawBookText, name);
     }
     return format;
 };

@@ -39,10 +39,15 @@ export function getStyledElement(text: string) {
     return wrapper;
 }
 
+const SHUFFLED = shuffle([...Array(MAX_WORD_CLASSES).keys()]);
+let prev = 0
+const next = () => {
+    prev ++;
+    if (prev > SHUFFLED.length - 1) prev = 0
+    return SHUFFLED[prev];
+}
 export function stylizeJSX(jsx) {
-    const indexes = shuffle([...Array(MAX_WORD_CLASSES).keys()]);
-
-    return <span className={`w${indexes[0]}`}>{jsx}</span>;
+    return <span className={`w${next()}`}>{jsx}</span>;
 }
 
 function shuffle<T>(array: Array<T>) {

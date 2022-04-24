@@ -1,8 +1,8 @@
-import { importScript } from './common';
+import { importScript } from '../common';
 
-interface Files {
+export type TGoogleDriveFile = {
     id: string;
-}
+};
 const WINDOW_GAPI = 'https://apis.google.com/js/platform.js?onload=init';
 const CLIENT_PLATFORM = 'https://apis.google.com/js/client:platform.js';
 const GOOGLE_DRIVE_API_DOCUMENT =
@@ -51,15 +51,15 @@ export async function load() {
             clientId: REACT_APP_GOOGLE_CLIENT_ID,
             discoveryDocs: [GOOGLE_DRIVE_API_DOCUMENT],
             scope: SCOPE,
-        }
+        };
         return window.gapi.client
             .init(credentials)
             .then(() => {
-                const ga = gapi.auth2.getAuthInstance()
+                const ga = gapi.auth2.getAuthInstance();
                 if (!ga) {
-
                     console.error(
-                        'Fail to load gapi. Check you credentials:\n', JSON.stringify(credentials, null, '\t')
+                        'Fail to load gapi. Check you credentials:\n',
+                        JSON.stringify(credentials, null, '\t'),
                     );
                     return reject();
                 }
@@ -72,25 +72,25 @@ export async function load() {
 
 export async function signIn() {
     try {
-        await load();
+        // await load();
         return window.gapi.auth2.getAuthInstance().signIn();
     } catch (e) {
         console.error('error in signIn', e);
     }
 }
 
-export async function signOut() {
+export function signOut() {
     try {
-        await load();
+        // await load();
         return window.gapi.auth2.getAuthInstance().signOut();
     } catch (e) {
         console.error('error in signOut', e);
     }
 }
 
-export async function isLoggedIn() {
+export function isLoggedIn() {
     try {
-        await load();
+        // await load();
         return (
             window.gapi.auth2.getAuthInstance() &&
             window.gapi.auth2.getAuthInstance().isSignedIn.get()
@@ -149,7 +149,7 @@ const find = (spaces: string) => (type: string) => async (query: string) => {
             token = response.result.nextPageToken;
         } while (token);
 
-        return ret;
+        return ret.filter((file: any) => !file.explicitlyTrashed); //ignore files in bucket
     } catch (e) {
         console.error('can`t list items in drive with query: ', query, e);
     }
@@ -187,28 +187,49 @@ const getOrCreate =
             : [await create(spaces)(type)(name, folderId)];
     };
 
-const upload = (spaces: string) => async (fileId: string, content: string) => {
-    try {
-        const response: any = await promisify(gapi.client.request, {
-            spaces: spaces === 'drive' ? [] : [spaces],
-            path: `/upload/drive/v3/files/${fileId}`,
-            method: 'PATCH',
-            params: { uploadType: 'media' },
-            body:
-                typeof content === 'string'
-                    ? content
-                    : JSON.stringify(content),
-        });
-        return response.result;
-    } catch (e) {
-        console.error('can`t upload file with: ', fileId, content, e);
-    }
+const FormatToMIMEMap: any = {
+    FB2: 'text/xml',
+    PDF: 'application/pdf',
+    TEXT: 'text/plain',
 };
+const upload =
+    (spaces: string) =>
+    async (fileId: string, content: string, format: string = 'text') => {
+        try {
+            console.count()
+            const mime = FormatToMIMEMap[format.toLocaleUpperCase()] || 'text/plain';
+            console.log('format', format, mime);
+            const response: any = await promisify(gapi.client.request, {
+                spaces: spaces === 'drive' ? [] : [spaces],
+                path: `/upload/drive/v3/files/${fileId}`,
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': mime,
+                },
+                params: { uploadType: 'media' },
+                body:
+                    typeof content === 'string'
+                        ? content
+                        : JSON.stringify(content),
+            });
+
+
+            var a = document.getElementById("aaa");
+            var file = new Blob([content], {type: mime});
+            console.log(file);
+            a.href = URL.createObjectURL(file);
+            a.download = name;
+
+            return response.result;
+        } catch (e) {
+            console.error('can`t upload file with: ', fileId, content, e);
+        }
+    };
 
 function promisify(
     gapiFn: any,
     options: any,
-): Promise<gapi.client.Response<Files>> {
+): Promise<gapi.client.Response<TGoogleDriveFile>> {
     return new Promise((resolve, reject) => {
         return gapiFn(options).then(
             (resp: any) => {

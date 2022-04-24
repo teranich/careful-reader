@@ -1,4 +1,4 @@
-import { IBook } from '../../types';
+import { BookFormats, IBook, TBookMeta } from '../../types';
 import { str2ab } from '../common';
 import { BookFormat } from './BookFormats.types';
 import { pdfjs } from 'react-pdf';
@@ -8,15 +8,36 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 // pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
 export class PDFBookFormat implements BookFormat {
     private rawText: string;
+    private name: string;
     static isPDF(type: string) {
         return type === 'application/pdf';
     }
 
-    constructor(rawText: string) {
+    constructor(rawText: string, name: string) {
         this.rawText = rawText;
+        this.name = name;
     }
 
-    getBookMeta(): IBook {}
+    async getRawMeta(): Promise<any> {
+        const text = this.getBookText();
+        const loadingTask = pdfjs.getDocument(text);
+
+        return new Promise<string>((resolve) => {
+            loadingTask.promise
+                .then(function (pdfDocument) {
+                    return pdfDocument.getMetadata().then((res) => {
+                        console.log('info', pdfDocument, res);
+                        resolve({
+                            ...res.info,
+                            numPages: pdfDocument?.numPages,
+                        });
+                    });
+                })
+                .catch(function (reason) {
+                    console.error('Error: ' + reason);
+                });
+        });
+    }
 
     getRaw() {
         return this.rawText;
@@ -73,13 +94,31 @@ export class PDFBookFormat implements BookFormat {
 
     async saveBook(): Promise<IBook> {
         const cover = await this.getBookCover();
+        const rawBookMeta = await this.getRawMeta();
+        const [name] = this.name.split('.pdf') || this.name;
+        console.log('saveBook', this.mapRawMeta(rawBookMeta));
+
         const newBook = {
-            name: 'gita',
-            meta: {},
-            format: 'pdf',
+            name,
+            meta: this.mapRawMeta(rawBookMeta),
+            pageCount: rawBookMeta.numPages,
+            format: BookFormats.PDF,
             cover,
         };
 
-        return await libraryDB.addBook(newBook, this.rawText);
+        return await libraryDB.addBook(newBook, this.getRaw());
+    }
+
+    private mapRawMeta(raw: any): TBookMeta {
+        console.log('raw', raw)
+        const {
+            Title: title,
+            Author: author,
+            Language: language,
+            Subject: subject,
+            Keywords: keywords,
+            ...rest
+        } = raw;
+        return { title, author, language, subject, keywords, rest };
     }
 }

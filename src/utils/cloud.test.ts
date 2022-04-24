@@ -1,4 +1,4 @@
-import * as cloud from './cloud';
+import * as cloud from './cloud/GoogleCloud.utils';
 jest.mock('./common');
 
 beforeEach(() => {
