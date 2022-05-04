@@ -30,7 +30,6 @@ const opacity = `
 }`;
 const DocumentIS = styled(Document)`
     overflow: hidden;
-    ${(props) => props.wordsHighlight && opacity}
 `;
 
 const scrollToPage = (page: number) => {
@@ -132,7 +131,6 @@ export default observer(function PDFReader({
         return () => window.removeEventListener('resize', fitPageSize);
     }, []);
 
-
     return (
         <Hightlighter wordsHighlight={true}>
             {bookFileURI && (
@@ -197,6 +195,7 @@ const DummyPageIS = styled.div`
     height: ${(props) => props.width * 1.5}px;
     border: 1px solid black;
     position: relative;
+    ${(props) => !props.ignore && opacity}
 `;
 const PageContaierIS = styled.div`
     position: absolute;
@@ -220,6 +219,7 @@ const DummyPages = (
         },
     }));
     const [refs, setRefs] = useState([]);
+    const [ignore, setIgnore] = useState(true);
 
     useEffect(() => {
         setRefs((ref) =>
@@ -229,14 +229,20 @@ const DummyPages = (
         );
     }, []);
 
+    useEffect(() => {
+        const listener = () => setIgnore(!ignore);
+        document.addEventListener('click', listener);
+        return () => document.removeEventListener('click', listener);
+    }, [ignore])
+
     useEffect(
         () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
         [refs.length],
     );
 
     const customTextRenderer = useCallback(
-        ({ str }) => (wordsHighlight ? stylizeJSX(str) : str),
-        [],
+        ({ str }) => (wordsHighlight && !ignore ? stylizeJSX(str) : str),
+        [ignore],
     );
 
     const pages = Array(pageCount).fill(0);
@@ -249,6 +255,7 @@ const DummyPages = (
                     key={`pdf-page-${i}`}
                     data-page-number={i + 1}
                     width={pageSize.width}
+                    ignore={ignore}
                 >
                     {pageManager.pages.includes(i + 1) && (
                         <PageIS
