@@ -45,7 +45,7 @@ export const usePagesManager = (
         const newPages = prepare([...pages, ...frame]);
 
         pages.splice(0, pages.length, ...newPages);
-        setPages(newPages);
+        setPages(newPages.filter(p => !!p));
     };
 
     const next = () => {

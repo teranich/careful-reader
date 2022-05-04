@@ -1,5 +1,16 @@
 import { observer } from 'mobx-react';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    useContext,
+    useEffect,
+    useMemo,
+    useCallback,
+    useRef,
+    createRef,
+    useImperativeHandle,
+    forwardRef,
+    useState,
+    memo,
+} from 'react';
 import { TCurrentBook } from '../../store/LibraryStore';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
@@ -9,6 +20,9 @@ import { stylize, stylizeJSX } from '../../utils/styler';
 import { Hightlighter } from './Hightlighter';
 import { RootStoreContext } from '../../store/RootStore';
 import BackgroundImage from './page2.jpg';
+import './PdfTextLayer.css';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import { v4 as uuid } from 'uuid';
 
 const opacity = `
 .page canvas, .page svg {
@@ -31,6 +45,7 @@ type TPDFReaderProps = {
     onBookLoaded: (numPages: number) => {};
     onPageChange: (page: number) => {};
 };
+
 export default observer(function PDFReader({
     book,
     oldPageNumber,
@@ -48,24 +63,12 @@ export default observer(function PDFReader({
     const [actualPageHeight, setActualPageHeight] = useState(clientHeight);
     const textContainerRef = useRef(null);
     const pageSize = { width: pageWidth, height: pageHeight };
-    const pageManager = usePagesManager([oldPageNumber], 100);
     const { appStore, libraryStore } = useContext(RootStoreContext);
     const { wordsHighlight } = appStore;
-    console.count('PDFReader');
-    const handleScroll = () => {
-        const triggerScroll =
-            document.body.clientHeight - window.innerHeight - window.scrollY;
+    const [cpage, setCpage] = useState(oldPageNumber);
+    const iref = useRef();
 
-        if (triggerScroll < actualPageHeight * 2) {
-            pageManager.next();
-        }
-
-        if (window.scrollY === 0) {
-            pageManager.prev();
-        }
-    };
-
-    const handleIntersectionObserver = (pages) => {
+    const handleIntersectionObserver = (elements = []) => {
         const options = {
             root: null,
             threshold: 0.5,
@@ -77,21 +80,21 @@ export default observer(function PDFReader({
             const pageNumberInView = Number(
                 target?.getAttribute('data-page-number'),
             );
-            if (pageNumberInView !== getCurrentPageNumber()) {
+            const currentPage = getCurrentPageNumber();
+            if (pageNumberInView !== currentPage) {
+                iref.current.setPageNumber(pageNumberInView);
                 setCurrentPageNumber(pageNumberInView);
-                onPageChange(getCurrentPageNumber());
+                onPageChange(pageNumberInView);
             }
         };
 
         const observer = new IntersectionObserver(callback, options);
 
-        pages.forEach((page) => {
-            const target = document.querySelector(
-                `[data-page-number="${page}"`,
-            );
-
-            target && observer?.observe(target);
-        });
+        for (let target of elements) {
+            if (target?.current) {
+                observer?.observe(target.current);
+            }
+        }
         return observer;
     };
 
@@ -118,35 +121,18 @@ export default observer(function PDFReader({
     };
 
     const [getOserver, setObserver] = useSingle<any>();
-    const onPageLoadSuccess = (pdfDocument: any) => {
-        const { height } = pdfDocument;
-        setActualPageHeight(height);
-        scrollToPage(getCurrentPageNumber());
-
+    const onPageLoadSuccess = (pageElements) => {
         getOserver()?.disconnect();
-        setObserver(handleIntersectionObserver(pageManager.pages));
+        setObserver(handleIntersectionObserver(pageElements));
+        scrollToPage(getCurrentPageNumber());
     };
 
     useEffect(() => {
-        if (book.text) {
-            // setBookFileURI(pdfTextToObjectUrl(bookText));
-            window.addEventListener('scroll', handleScroll);
-
-            return () => {
-                return window.removeEventListener('scroll', handleScroll);
-            };
-        }
-    }, [book.text]);
-
-    useEffect(() => {
         window.addEventListener('resize', fitPageSize);
-
         return () => window.removeEventListener('resize', fitPageSize);
     }, []);
 
-    const customTextRenderer = ({ str }) =>
-        wordsHighlight ? stylizeJSX(str) : str;
-    console.count();
+
     return (
         <Hightlighter wordsHighlight={true}>
             {bookFileURI && (
@@ -176,12 +162,13 @@ export default observer(function PDFReader({
                         />
                     )}
                     {mode === 'greed' && (
-                        <InFramePages
-                            pages={pageManager.pages}
+                        <MemoFramesPagesWithRef
+                            ref={iref}
                             pageSize={pageSize}
+                            initialPageNumber={getCurrentPageNumber()}
                             pageCount={pageCount}
+                            wordsHighlight={wordsHighlight}
                             onLoadSuccess={onPageLoadSuccess}
-                            customTextRenderer={customTextRenderer}
                         />
                     )}
                 </DocumentIS>
@@ -197,6 +184,89 @@ const PageIS = styled(Page)`
         background-size: contain;
     }
 `;
+
+type TDummyPagesProps = TPageComponent & {
+    pageNumber: number;
+    pageCount: number;
+    pages: number[];
+    customTextRenderer: () => any;
+};
+
+const DummyPageIS = styled.div`
+    width: ${(props) => props.width}px;
+    height: ${(props) => props.width * 1.5}px;
+    border: 1px solid black;
+    position: relative;
+`;
+const PageContaierIS = styled.div`
+    position: absolute;
+`;
+
+const DummyPages = (
+    {
+        wordsHighlight,
+        pageSize,
+        pageCount,
+        onLoadSuccess,
+        initialPageNumber,
+    }: TDummyPagesProps,
+    outputRef,
+) => {
+    const [pageNumber, setPageNumber] = useState(initialPageNumber);
+    const pageManager = usePagesManager([initialPageNumber], pageCount);
+    useImperativeHandle(outputRef, () => ({
+        setPageNumber: (page) => {
+            pageManager.goToPage(page);
+        },
+    }));
+    const [refs, setRefs] = useState([]);
+
+    useEffect(() => {
+        setRefs((ref) =>
+            Array(pageCount)
+                .fill()
+                .map((_, i) => ref[i] || createRef()),
+        );
+    }, []);
+
+    useEffect(
+        () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
+        [refs.length],
+    );
+
+    const customTextRenderer = useCallback(
+        ({ str }) => (wordsHighlight ? stylizeJSX(str) : str),
+        [],
+    );
+
+    const pages = Array(pageCount).fill(0);
+
+    return (
+        <>
+            {pages.map((_, i) => (
+                <DummyPageIS
+                    ref={refs[i]}
+                    key={`pdf-page-${i}`}
+                    data-page-number={i + 1}
+                    width={pageSize.width}
+                >
+                    {pageManager.pages.includes(i + 1) && (
+                        <PageIS
+                            key={`pdf-page-${i}`}
+                            className="page"
+                            pageNumber={i + 1}
+                            width={pageSize.width}
+                            renderMode="svg"
+                            customTextRenderer={customTextRenderer}
+                        />
+                    )}
+                </DummyPageIS>
+            ))}
+        </>
+    );
+};
+
+const MemoFramesPagesWithRef = memo(forwardRef(DummyPages));
 
 type TPageComponent = {
     pageNumber: number;
@@ -234,6 +304,7 @@ const AllPages = ({
     pageSize,
     onLoadSuccess,
 }: TAllPagesComponent) => {
+    const loadSuccessHandler = () => {};
     return (
         <>
             {Array(pageCount)
@@ -244,62 +315,9 @@ const AllPages = ({
                         pageNumber={i + 1}
                         width={pageSize.width}
                         height={pageSize.height}
-                        onLoadSuccess={onLoadSuccess}
+                        onLoadSuccess={loadSuccessHandler}
                     />
                 ))}
         </>
     );
 };
-
-type TInFramePagesComponent = TPageComponent & {
-    pageNumber: number;
-    pageCount: number;
-    pages: number[];
-    customTextRenderer: () => any;
-};
-
-const DummyPageIS = styled.div`
-    width: ${(props) => props.width}px;
-    height: ${(props) => props.height}px;
-    border: 1px solid black;
-`;
-
-const InFramePages = ({
-    pages = [],
-    pageNumber,
-    pageSize,
-    pageCount,
-    customTextRenderer,
-    onLoadSuccess,
-}: TInFramePagesComponent) => {
-    // ${(props) => props.wordsHighlight && opacity}
-
-
-    console.log('inframes', pages.length, pages);
-
-    return (
-        <>
-            {Array(pageCount)
-                .fill(0)
-                .map((_, i) => (
-                    <DummyPageIS
-                        key={`pdf-page-${i}`}
-                        data-page-number={i}
-                        width={pageSize.width}
-                        height={pageSize.height}
-                    >{i}</DummyPageIS>
-                ))}
-        </>
-    );
-};
-
-// <PageIS
-//         key={`pdf-page-${i}`}
-//         className="page"
-//         pageNumber={i}
-//         width={pageSize.width}
-//         height={pageSize.height}
-//         renderMode="svg"
-//         onLoadSuccess={onLoadSuccess}
-//         // customTextRenderer={customTextRenderer}
-//     />

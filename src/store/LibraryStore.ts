@@ -71,6 +71,7 @@ export class LibraryStore {
 
     updateLocalBookPositionAction = action(
         async (book: IBook, pageNumber: number) => {
+            console.log('stored', book.id)
             localStorage.setItem(String(book.id), String(pageNumber));
         },
     );

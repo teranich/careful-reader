@@ -3288,10 +3288,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-pdf@^5.0.9":
-  version "5.0.9"
-  resolved "https://registry.yarnpkg.com/@types/react-pdf/-/react-pdf-5.0.9.tgz#db1db3af62103b29c01b796d9aefc42aabbf98d9"
-  integrity sha512-sDK48DwAnha8nf74cavp1g1a8oCLI3F4hBQZm+DHZmgGYOnBm0UuAKwVu84cL2By0MkiCrGv0KSJDVSv+tN6KA==
+"@types/react-pdf@^5.7.1":
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/@types/react-pdf/-/react-pdf-5.7.1.tgz#cf72bd9170e7e157f03f74a4d28e430c5bf48a86"
+  integrity sha512-c62RYvnwM8GGiikzJBFYecKpOS8aWKNu6BXHTqmBCNu0r5GungGJFLkW+V0kM/W3HgfPylmXvqqUQ/efSw/Ojg==
   dependencies:
     "@types/react" "*"
     pdfjs-dist "^2.10.377"
@@ -3436,6 +3436,11 @@
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.6.tgz#250a7b16c3b91f672a24552ec64678eeb1d3a08d"
   integrity sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==
+
+"@types/uuid@^8.3.4":
+  version "8.3.4"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
+  integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
 "@types/webpack-env@^1.16.0":
   version "1.16.3"
@@ -11177,10 +11182,10 @@ react-is@^16.13.1, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-pdf@^5.7.1:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/react-pdf/-/react-pdf-5.7.1.tgz#d540cee152b2747763b0173ed70ab69be5b64a5b"
-  integrity sha512-0G0Yb5Lx/B52+AJcLoJ3181IOet4ug7hgyE/U3/0QHcj5lK8i0DYZJSnE3KowAi0p8FBfUhp6QngUgJZGmuKIQ==
+react-pdf@^5.7.2:
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/react-pdf/-/react-pdf-5.7.2.tgz#c458dedf7983822668b40dcac1eae052c1f6e056"
+  integrity sha512-hdDwvf007V0i2rPCqQVS1fa70CXut17SN3laJYlRHzuqcu8sLLjEoeXihty6c0Ev5g1mw31b8OT8EwRw1s8C4g==
   dependencies:
     "@babel/runtime" "^7.0.0"
     file-loader "^6.0.0"

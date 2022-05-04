@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useCallback, useState } from 'react';
 import { observer } from 'mobx-react';
 import FB2Reader from './FB2Reader';
 import PDFReader from './PDFReader';
@@ -21,23 +21,23 @@ const PageCount = styled.span`
 export default observer(function Reader() {
     const queryParams = useParams<QueryParams>();
     const bookId = parseInt(queryParams.bookId);
-    const oldPageNumber = parseInt(localStorage.getItem(String(bookId))) || 1;
+    const oldPageNumber = useRef(
+        parseInt(localStorage.getItem(String(bookId))) || 1,
+    );
     const [currentReader, setCurrentReader] = useState<undefined | string>();
     const { libraryStore } = useContext(RootStoreContext);
     const { getBookMeta } = libraryStore;
-    const [numberOfcurrentPage, setNumberOfCurrentPage] =
-        useState(oldPageNumber);
+    const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(
+        oldPageNumber.current,
+    );
     const [showControls, setShowControls] = useState(true);
     const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0');
     const [pagesCount, setPagesCount] = useState(0);
     const bookTitle = () =>
         currentBookRef.current?.info?.meta?.title ||
         currentBookRef.current?.info?.name;
-    const {
-        openBookAction,
-        lastBook,
-        updateLocalBookPositionAction,
-    } = libraryStore;
+    const { openBookAction, lastBook, updateLocalBookPositionAction } =
+        libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const [book, setBook] = useState<TCurrentBook>();
     const textContainerRef = useRef();
@@ -51,11 +51,11 @@ export default observer(function Reader() {
         openBook();
     }, []);
 
-    const onBookLoaded = (count) => setPagesCount(count);
-    const onPageChange = (page) => {
+    const onBookLoaded = useCallback((count) => setPagesCount(count), []);
+    const onPageChange = useCallback((page) => {
         setNumberOfCurrentPage(page);
-        book?.info && updateLocalBookPositionAction(book?.info, page);
-    };
+        localStorage.setItem(String(bookId), page);
+    }, []);
 
     useDoubleClick({
         onSingleClick: () => {},
@@ -79,7 +79,7 @@ export default observer(function Reader() {
                     <PDFReader
                         book={book}
                         mode="greed"
-                        // oldPageNumber={oldPageNumber}
+                        oldPageNumber={oldPageNumber.current}
                         onBookLoaded={onBookLoaded}
                         onPageChange={onPageChange}
                     ></PDFReader>
@@ -88,4 +88,3 @@ export default observer(function Reader() {
         </>
     );
 });
-// export  { FB2Reader as Reader, PDFReader }
