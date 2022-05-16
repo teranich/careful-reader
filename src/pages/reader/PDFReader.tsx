@@ -12,7 +12,7 @@ import {
     memo,
 } from 'react';
 import { TCurrentBook } from '../../store/LibraryStore';
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+import { Document, Page, Outline } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
 import styled from 'styled-components';
 import { usePagesManager, useSingle } from './Readers.utils';
@@ -22,7 +22,6 @@ import { RootStoreContext } from '../../store/RootStore';
 import BackgroundImage from './page2.jpg';
 import './PdfTextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import { v4 as uuid } from 'uuid';
 
 const opacity = `
 .page canvas, .page svg {
@@ -45,13 +44,10 @@ type TPDFReaderProps = {
     onPageChange: (page: number) => {};
 };
 
-export default observer(function PDFReader({
-    book,
-    oldPageNumber,
-    onPageChange,
-    onBookLoaded,
-    mode,
-}: TPDFReaderProps) {
+function PDFReader(
+    { book, oldPageNumber, onPageChange, onBookLoaded, mode }: TPDFReaderProps,
+    ref,
+) {
     const pageCount = book.card.pageCount;
     const [getCurrentPageNumber, setCurrentPageNumber] =
         useSingle<number>(oldPageNumber);
@@ -97,7 +93,8 @@ export default observer(function PDFReader({
         return observer;
     };
 
-    const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    const onDocumentLoadSuccess = (props: { numPages: number }) => {
+        const { numPages } = props;
         onBookLoaded && onBookLoaded(numPages);
     };
 
@@ -120,9 +117,18 @@ export default observer(function PDFReader({
     };
 
     const [getOserver, setObserver] = useSingle<any>();
+
     const onPageLoadSuccess = (pageElements) => {
         getOserver()?.disconnect();
         setObserver(handleIntersectionObserver(pageElements));
+        scrollToPage(getCurrentPageNumber());
+    };
+
+    const onTableOfContentItemClick = ({ pageIndex, pageNumber }) => {
+        console.log('toc click', pageIndex, pageNumber);
+        setCurrentPageNumber(pageNumber);
+        onPageChange(getCurrentPageNumber());
+        iref.current.setPageNumber(pageNumber);
         scrollToPage(getCurrentPageNumber());
     };
 
@@ -131,6 +137,14 @@ export default observer(function PDFReader({
         return () => window.removeEventListener('resize', fitPageSize);
     }, []);
 
+    const tableOfContentsRef = useRef();
+    useImperativeHandle(ref, () => ({
+        toggleTableOfContents: () => {
+            console.log('toggle main');
+            tableOfContentsRef.current.toggleTableOfContents();
+        },
+    }));
+
     return (
         <Hightlighter wordsHighlight={true}>
             {bookFileURI && (
@@ -138,13 +152,17 @@ export default observer(function PDFReader({
                     ref={textContainerRef}
                     file={bookFileURI}
                     onLoadSuccess={onDocumentLoadSuccess}
-                    // renderMode="svg"
+                    onItemClick={onTableOfContentItemClick}
                     wordsHighlight={wordsHighlight}
                     options={{
                         cMapUrl: 'cmaps/',
                         cMapPacked: true,
                     }}
                 >
+                    <OutlineMenu
+                        ref={tableOfContentsRef}
+                        onItemClick={onTableOfContentItemClick}
+                    />
                     {mode === 'one' && (
                         <OnePage
                             pageNumber={getCurrentPageNumber()}
@@ -172,6 +190,55 @@ export default observer(function PDFReader({
                 </DocumentIS>
             )}
         </Hightlighter>
+    );
+}
+export default observer(forwardRef(PDFReader));
+
+const OutlineIS = styled(Outline)`
+    position: fixed;
+    z-index: 10;
+    background-color: white;
+    height: 80vh;
+    width: 50vw;
+    overflow: auto;
+    bottom: 0;
+    right: 0;
+    display: none;
+`;
+const OutlineMenu = forwardRef(({ onItemClick }, ref) => {
+    const tableOfContentsRef = useRef(false);
+
+    const hideTableOfCpntents = () => {
+        tableOfContentsRef.current.setAttribute('style', 'display:none;');
+    };
+    const showTableOfCpntents = () => {
+        tableOfContentsRef.current.setAttribute('style', 'display:block;');
+    };
+    const toggleTableOfContents = () => {
+        const { current } = tableOfContentsRef;
+        const lastState = current.getAttribute('style') || 'display:none;';
+
+        console.log('toc inn', current)
+        const actualState = lastState.includes('display:none')
+            ? 'display:block;'
+            : 'display:none;';
+        current.setAttribute('style', actualState);
+    };
+
+    useImperativeHandle(ref, () => ({
+        hideTableOfCpntents,
+        showTableOfCpntents,
+        toggleTableOfContents,
+    }));
+
+    return (
+        <OutlineIS
+            inputRef={tableOfContentsRef}
+            onItemClick={({pageIndex, pageNumber}) => {
+                hideTableOfCpntents();
+                return onItemClick({pageIndex, pageNumber});
+            }}
+        />
     );
 });
 
@@ -230,10 +297,10 @@ const DummyPages = (
     }, []);
 
     useEffect(() => {
-        const listener = () => setIgnore(!ignore);
+        const listener = (event) => event.ctrlKey && setIgnore(!ignore);
         document.addEventListener('click', listener);
         return () => document.removeEventListener('click', listener);
-    }, [ignore])
+    }, [ignore]);
 
     useEffect(
         () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
@@ -259,6 +326,7 @@ const DummyPages = (
                 >
                     {pageManager.pages.includes(i + 1) && (
                         <PageIS
+                            size="A4"
                             key={`pdf-page-${i}`}
                             className="page"
                             pageNumber={i + 1}

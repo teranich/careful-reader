@@ -39,6 +39,7 @@ export default observer(function Reader() {
     const { openBookAction, lastBook, updateLocalBookPositionAction } =
         libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
+    const pdfRef= useRef()
     const [book, setBook] = useState<TCurrentBook>();
     const textContainerRef = useRef();
     useEffect(() => {
@@ -69,6 +70,7 @@ export default observer(function Reader() {
     return (
         <>
             <Header visible={showControls} title={bookTitle()}>
+                <div onClick={() => {pdfRef.current.toggleTableOfContents()}}>toc</div>
                 <HightlightSwitcher />
                 <div>{currenPositionPercent}%</div>
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
@@ -77,6 +79,7 @@ export default observer(function Reader() {
                 {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
                 {currentReader === 'pdf' && book && (
                     <PDFReader
+                        ref={pdfRef}
                         book={book}
                         mode="greed"
                         oldPageNumber={oldPageNumber.current}
