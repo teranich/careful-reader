@@ -152,4 +152,4 @@ export default observer(function Header({
 });
 
 export const getCurrentHeaderHeight = () =>
-    document.querySelector('#app-bar')?.clientHeight || 64;
+    (document.querySelector('#app-bar')?.clientHeight || 64) - 1;
