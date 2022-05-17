@@ -260,7 +260,7 @@ type TDummyPagesProps = TPageComponent & {
 
 const DummyPageIS = styled.div`
     width: ${(props) => props.width}px;
-    height: ${(props) => props.width * 1.5}px;
+    height: ${(props) => props.height}px;
     border: 1px solid black;
     position: relative;
     ${(props) => !props.ignore && opacity}
@@ -290,14 +290,6 @@ const DummyPages = (
     const [ignore, setIgnore] = useState(true);
 
     useEffect(() => {
-        setRefs((ref) =>
-            Array(pageCount)
-                .fill()
-                .map((_, i) => ref[i] || createRef()),
-        );
-    }, []);
-
-    useEffect(() => {
         const listener = (event) => event.ctrlKey && setIgnore(!ignore);
         document.addEventListener('click', listener);
         return () => document.removeEventListener('click', listener);
@@ -314,6 +306,21 @@ const DummyPages = (
     );
 
     const pages = Array(pageCount).fill(0);
+    const [height, setHeight] = useState();
+    const handleOnLoadSucess = (props) => {
+        if (!height) {
+            setHeight(props.height || pageSize.width * 1.5);
+        }
+    };
+
+    useEffect(() => {
+        height &&
+            setRefs((ref) =>
+                Array(pageCount)
+                    .fill()
+                    .map((_, i) => ref[i] || createRef()),
+            );
+    }, [height]);
 
     return (
         <>
@@ -323,6 +330,7 @@ const DummyPages = (
                     key={`pdf-page-${i}`}
                     data-page-number={i + 1}
                     width={pageSize.width}
+                    height={height}
                     ignore={ignore}
                 >
                     {pageManager.pages.includes(i + 1) && (
@@ -333,6 +341,7 @@ const DummyPages = (
                             pageNumber={i + 1}
                             width={pageSize.width}
                             renderMode="svg"
+                            onLoadSuccess={handleOnLoadSucess}
                             customTextRenderer={customTextRenderer}
                         />
                     )}
