@@ -49,11 +49,16 @@ const AppBarIS = styled(AppBar)`
     }
 `;
 
+const ListIS = styled(List)`
+    padding: 8px 16px;
+`;
+
 export default observer(function Header({
     children,
     className = '',
     title,
     visible = true,
+    content,
 }: any) {
     const classes = useStyles();
     const [isOpen, setIsOpen] = useState(false);
@@ -114,6 +119,7 @@ export default observer(function Header({
                 </Link>
             </List>
             <Divider />
+            <ListIS>{content}</ListIS>
         </div>
     );
     return (

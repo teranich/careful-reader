@@ -2,8 +2,6 @@ import { observer } from 'mobx-react';
 import {
     useContext,
     useEffect,
-    useMemo,
-    useCallback,
     useRef,
     createRef,
     useImperativeHandle,
@@ -16,18 +14,13 @@ import { Document, Page, Outline } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
 import styled from 'styled-components';
 import { usePagesManager, useSingle } from './Readers.utils';
-import { stylize, stylizeJSX } from '../../utils/styler';
-import { Hightlighter } from './Hightlighter';
+import { stylizeJSX } from '../../utils/styler';
 import { RootStoreContext } from '../../store/RootStore';
 import BackgroundImage from './page2.jpg';
 import './PdfTextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { getCurrentHeaderHeight } from '../../components/common/Header';
 
-const opacity = `
-.page canvas, .page svg {
-    opacity: 0.1;
-}`;
 const DocumentIS = styled(Document)`
     overflow: hidden;
 `;
@@ -60,7 +53,6 @@ function PDFReader(
     const textContainerRef = useRef(null);
     const pageSize = { width: pageWidth, height: pageHeight };
     const { appStore, libraryStore } = useContext(RootStoreContext);
-    const { wordsHighlight } = appStore;
     const [cpage, setCpage] = useState(oldPageNumber);
     const iref = useRef();
 
@@ -145,14 +137,13 @@ function PDFReader(
     }));
 
     return (
-        <Hightlighter wordsHighlight={true}>
+        <>
             {bookFileURI && (
                 <DocumentIS
                     ref={textContainerRef}
                     file={bookFileURI}
                     onLoadSuccess={onDocumentLoadSuccess}
                     onItemClick={onTableOfContentItemClick}
-                    wordsHighlight={wordsHighlight}
                     options={{
                         cMapUrl: 'cmaps/',
                         cMapPacked: true,
@@ -182,13 +173,12 @@ function PDFReader(
                             pageSize={pageSize}
                             initialPageNumber={getCurrentPageNumber()}
                             pageCount={pageCount}
-                            wordsHighlight={wordsHighlight}
                             onLoadSuccess={onPageLoadSuccess}
                         />
                     )}
                 </DocumentIS>
             )}
-        </Hightlighter>
+        </>
     );
 }
 export default observer(forwardRef(PDFReader));
@@ -207,6 +197,7 @@ const OutlineIS = styled(Outline)`
         color: red;
     }
 `;
+
 const OutlineMenu = forwardRef(({ onItemClick }, ref) => {
     const tableOfContentsRef = useRef(false);
 
@@ -263,7 +254,6 @@ const DummyPageIS = styled.div`
     height: ${(props) => props.height}px;
     border: 1px solid black;
     position: relative;
-    ${(props) => !props.ignore && opacity}
 `;
 const PageContaierIS = styled.div`
     position: absolute;
@@ -271,7 +261,6 @@ const PageContaierIS = styled.div`
 
 const DummyPages = (
     {
-        wordsHighlight,
         pageSize,
         pageCount,
         onLoadSuccess,
@@ -281,29 +270,26 @@ const DummyPages = (
 ) => {
     const [pageNumber, setPageNumber] = useState(initialPageNumber);
     const pageManager = usePagesManager([initialPageNumber], pageCount);
-    useImperativeHandle(outputRef, () => ({
-        setPageNumber: (page) => {
-            pageManager.goToPage(page);
-        },
-    }));
     const [refs, setRefs] = useState([]);
-    const [ignore, setIgnore] = useState(true);
+    const [ignore, setIgnore] = useState(false);
 
-    useEffect(() => {
-        const listener = (event) => event.ctrlKey && setIgnore(!ignore);
-        document.addEventListener('click', listener);
-        return () => document.removeEventListener('click', listener);
-    }, [ignore]);
+    // useEffect(() => {
+    //     const listener = (event) => event.ctrlKey && setIgnore(!ignore);
+    //     document.addEventListener('click', listener);
+    //     return () => document.removeEventListener('click', listener);
+    // }, [ignore]);
 
     useEffect(
         () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
         [refs.length],
     );
 
-    const customTextRenderer = useCallback(
-        ({ str }) => (wordsHighlight && !ignore ? stylizeJSX(str) : str),
-        [ignore],
-    );
+    // const customTextRenderer = useCallback(
+    //     ({ str }) => (wordsHighlight && !ignore ? stylizeJSX(str) : str),
+    //     [ignore],
+    // );
+
+    const customTextRenderer = ({ str }) => stylizeJSX(str);
 
     const pages = Array(pageCount).fill(0);
     const [height, setHeight] = useState();
@@ -321,6 +307,12 @@ const DummyPages = (
                     .map((_, i) => ref[i] || createRef()),
             );
     }, [height]);
+
+    useImperativeHandle(outputRef, () => ({
+        setPageNumber: (page) => {
+            pageManager.goToPage(page);
+        },
+    }));
 
     return (
         <>

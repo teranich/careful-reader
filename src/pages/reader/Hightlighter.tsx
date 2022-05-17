@@ -12,7 +12,11 @@ for (let i = 0; i < 100; i++) {
 export interface IHightlighter {
     readonly wordsHighlight: boolean;
 }
-export const Hightlighter = styled.div<IHightlighter>`
 
+export const Hightlighter = styled.div<IHightlighter>`
+    .page canvas,
+    .page svg {
+        opacity: ${(props) => (props.wordsHighlight ? '0.1' : '1')};
+    }
     ${(props) => props.wordsHighlight && classes}
 `;

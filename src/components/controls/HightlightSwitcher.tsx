@@ -10,10 +10,5 @@ export default observer(function HightlightSwitcher() {
     const handleChange = (event) => {
         toggleHightligting(event.target.checked);
     };
-    return (
-        <Checkbox
-            checked={wordsHighlight}
-            onChange={handleChange}
-        />
-    );
+    return <Checkbox checked={wordsHighlight} onChange={handleChange} />;
 });

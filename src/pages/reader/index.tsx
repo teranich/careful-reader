@@ -9,16 +9,19 @@ import styled from 'styled-components';
 import { TCurrentBook } from 'src/store/LibraryStore';
 import { HightlightSwitcher } from '../../components/controls';
 import useDoubleClick from '../../hooks/UseDoubleClick';
+import { FormControlLabel, FormGroup } from '@material-ui/core';
+import { Hightlighter } from './Hightlighter';
 interface QueryParams {
     bookId: string;
 }
 
-const PageCount = styled.span`
+const PageCountIS = styled.span`
+    cursor: pointer;
     white-space: nowrap;
     padding: 6px 8px;
 `;
 
-const ToCIS = styled.div`
+const TableOfContentIS = styled.div`
     cursor: pointer;
     padding: 10px;
     text-transform: uppercase;
@@ -31,7 +34,7 @@ export default observer(function Reader() {
         parseInt(localStorage.getItem(String(bookId))) || 1,
     );
     const [currentReader, setCurrentReader] = useState<undefined | string>();
-    const { libraryStore } = useContext(RootStoreContext);
+    const { appStore, libraryStore } = useContext(RootStoreContext);
     const { getBookMeta } = libraryStore;
     const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(
         oldPageNumber.current,
@@ -47,6 +50,7 @@ export default observer(function Reader() {
     const currentBookRef = useRef<TCurrentBook>(lastBook);
     const pdfRef = useRef();
     const [book, setBook] = useState<TCurrentBook>();
+    const { wordsHighlight } = appStore;
     const textContainerRef = useRef();
     useEffect(() => {
         const openBook = async () => {
@@ -72,33 +76,43 @@ export default observer(function Reader() {
         ref: textContainerRef,
         latency: 200,
     });
+    const gotToPageHandler = () => {
+        console.log('gotToPageHandler');
+    };
 
     return (
         <>
             <Header visible={showControls} title={bookTitle()}>
-                <ToCIS
+                <FormControlLabel
+                    label="HL"
+                    control={<HightlightSwitcher />}
+                />
+                <TableOfContentIS
                     onClick={() => {
                         pdfRef.current.toggleTableOfContents();
                     }}
+                    title="Table of Content"
                 >
-                    Table of Content
-                </ToCIS>
-                <HightlightSwitcher />
-                <div>{currenPositionPercent}%</div>
-                <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
+                    ToC
+                </TableOfContentIS>
+                <PageCountIS
+                    onClick={gotToPageHandler}
+                >{`${numberOfcurrentPage}/${pagesCount}`}</PageCountIS>
             </Header>
             <div ref={textContainerRef}>
-                {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
-                {currentReader === 'pdf' && book && (
-                    <PDFReader
-                        ref={pdfRef}
-                        book={book}
-                        mode="greed"
-                        oldPageNumber={oldPageNumber.current}
-                        onBookLoaded={onBookLoaded}
-                        onPageChange={onPageChange}
-                    ></PDFReader>
-                )}
+                <Hightlighter wordsHighlight={wordsHighlight}>
+                    {currentReader === 'fb2' && <FB2Reader></FB2Reader>}
+                    {currentReader === 'pdf' && book && (
+                        <PDFReader
+                            ref={pdfRef}
+                            book={book}
+                            mode="greed"
+                            oldPageNumber={oldPageNumber.current}
+                            onBookLoaded={onBookLoaded}
+                            onPageChange={onPageChange}
+                        ></PDFReader>
+                    )}
+                </Hightlighter>
             </div>
         </>
     );
