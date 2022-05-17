@@ -22,6 +22,7 @@ import { RootStoreContext } from '../../store/RootStore';
 import BackgroundImage from './page2.jpg';
 import './PdfTextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import { getCurrentHeaderHeight } from '../../components/common/Header';
 
 const opacity = `
 .page canvas, .page svg {
@@ -125,7 +126,6 @@ function PDFReader(
     };
 
     const onTableOfContentItemClick = ({ pageIndex, pageNumber }) => {
-        console.log('toc click', pageIndex, pageNumber);
         setCurrentPageNumber(pageNumber);
         onPageChange(getCurrentPageNumber());
         iref.current.setPageNumber(pageNumber);
@@ -140,7 +140,6 @@ function PDFReader(
     const tableOfContentsRef = useRef();
     useImperativeHandle(ref, () => ({
         toggleTableOfContents: () => {
-            console.log('toggle main');
             tableOfContentsRef.current.toggleTableOfContents();
         },
     }));
@@ -196,14 +195,17 @@ export default observer(forwardRef(PDFReader));
 
 const OutlineIS = styled(Outline)`
     position: fixed;
-    z-index: 10;
+    z-index: 2000;
     background-color: white;
-    height: 80vh;
-    width: 50vw;
+    width: 100vw;
     overflow: auto;
     bottom: 0;
-    right: 0;
+    top: ${getCurrentHeaderHeight()}px;
+    padding: 10px;
     display: none;
+    li a:hover {
+        color: red;
+    }
 `;
 const OutlineMenu = forwardRef(({ onItemClick }, ref) => {
     const tableOfContentsRef = useRef(false);
@@ -218,7 +220,6 @@ const OutlineMenu = forwardRef(({ onItemClick }, ref) => {
         const { current } = tableOfContentsRef;
         const lastState = current.getAttribute('style') || 'display:none;';
 
-        console.log('toc inn', current)
         const actualState = lastState.includes('display:none')
             ? 'display:block;'
             : 'display:none;';
@@ -234,9 +235,9 @@ const OutlineMenu = forwardRef(({ onItemClick }, ref) => {
     return (
         <OutlineIS
             inputRef={tableOfContentsRef}
-            onItemClick={({pageIndex, pageNumber}) => {
+            onItemClick={({ pageIndex, pageNumber }) => {
                 hideTableOfCpntents();
-                return onItemClick({pageIndex, pageNumber});
+                return onItemClick({ pageIndex, pageNumber });
             }}
         />
     );

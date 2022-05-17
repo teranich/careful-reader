@@ -18,6 +18,12 @@ const PageCount = styled.span`
     padding: 6px 8px;
 `;
 
+const ToCIS = styled.div`
+    cursor: pointer;
+    padding: 10px;
+    text-transform: uppercase;
+`;
+
 export default observer(function Reader() {
     const queryParams = useParams<QueryParams>();
     const bookId = parseInt(queryParams.bookId);
@@ -39,7 +45,7 @@ export default observer(function Reader() {
     const { openBookAction, lastBook, updateLocalBookPositionAction } =
         libraryStore;
     const currentBookRef = useRef<TCurrentBook>(lastBook);
-    const pdfRef= useRef()
+    const pdfRef = useRef();
     const [book, setBook] = useState<TCurrentBook>();
     const textContainerRef = useRef();
     useEffect(() => {
@@ -70,7 +76,13 @@ export default observer(function Reader() {
     return (
         <>
             <Header visible={showControls} title={bookTitle()}>
-                <div onClick={() => {pdfRef.current.toggleTableOfContents()}}>toc</div>
+                <ToCIS
+                    onClick={() => {
+                        pdfRef.current.toggleTableOfContents();
+                    }}
+                >
+                    Table of Content
+                </ToCIS>
                 <HightlightSwitcher />
                 <div>{currenPositionPercent}%</div>
                 <PageCount>{`${numberOfcurrentPage}/${pagesCount}`}</PageCount>
