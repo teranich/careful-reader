@@ -289,7 +289,9 @@ const DummyPages = (
     }, []);
 
     useEffect(
-        () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
+        () => {
+            refs.length > 0 && onLoadSuccess && onLoadSuccess(refs)
+        },
         [refs.length],
     );
 
