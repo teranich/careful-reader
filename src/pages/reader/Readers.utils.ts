@@ -44,8 +44,8 @@ export const usePagesManager = (
         const frame = getRendersFrame(page, pageCount);
         const newPages = prepare([...pages, ...frame]);
 
-        pages.splice(0, pages.length, ...newPages);
-        setPages(newPages.filter(p => !!p));
+        // pages.splice(0, pages.length, ...newPages);
+        setPages(newPages.filter((p) => !!p));
     };
 
     const next = () => {
@@ -68,7 +68,7 @@ export const usePagesManager = (
 export function useSingle<T>(initialValue: T): [() => T, (value: T) => T] {
     const ref = useRef(initialValue);
     const getValue = () => ref.current;
-    const setValue = (value: T) => ref.current = value
+    const setValue = (value: T) => (ref.current = value);
 
     return [getValue, setValue];
 }

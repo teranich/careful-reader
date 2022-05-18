@@ -27,9 +27,17 @@ export class PDFBookFormat implements BookFormat {
                 .then(function (pdfDocument) {
                     return pdfDocument.getMetadata().then((res) => {
                         console.log('info', pdfDocument, res);
-                        resolve({
-                            ...res.info,
-                            numPages: pdfDocument?.numPages,
+
+                        pdfDocument.getPage(1).then(function (pdfPage) {
+                            const { height, width } = pdfPage.getViewport({
+                                scale: 1,
+                            });
+                            resolve({
+                                ...res.info,
+                                height,
+                                width,
+                                numPages: pdfDocument?.numPages,
+                            });
                         });
                     });
                 })
@@ -68,6 +76,8 @@ export class PDFBookFormat implements BookFormat {
                         const unscaledViewport = pdfPage.getViewport({
                             scale: 1,
                         });
+
+                        console.log('pdf preview', pdfPage, unscaledViewport);
                         const scale = Math.min(
                             canvas.height / unscaledViewport.height,
                             canvas.width / unscaledViewport.width,
@@ -102,6 +112,7 @@ export class PDFBookFormat implements BookFormat {
             name,
             meta: this.mapRawMeta(rawBookMeta),
             pageCount: rawBookMeta.numPages,
+            ratio: parseInt(rawBookMeta.height / rawBookMeta.width),
             format: BookFormats.PDF,
             cover,
         };
@@ -110,7 +121,7 @@ export class PDFBookFormat implements BookFormat {
     }
 
     private mapRawMeta(raw: any): TBookMeta {
-        console.log('raw', raw)
+        console.log('raw', raw);
         const {
             Title: title,
             Author: author,

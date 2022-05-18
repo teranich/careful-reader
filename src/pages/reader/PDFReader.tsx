@@ -42,7 +42,8 @@ function PDFReader(
     { book, oldPageNumber, onPageChange, onBookLoaded, mode }: TPDFReaderProps,
     ref,
 ) {
-    const pageCount = book.card.pageCount;
+    const pageCount = useRef(book.card.pageCount);
+    const ratio = useRef(book.card.ratio || 1.5);
     const [getCurrentPageNumber, setCurrentPageNumber] =
         useSingle<number>(oldPageNumber);
     const bookFileURI = pdfTextToObjectUrl(book.text);
@@ -69,6 +70,7 @@ function PDFReader(
                 target?.getAttribute('data-page-number'),
             );
             const currentPage = getCurrentPageNumber();
+            console.log('itercepter', pageNumberInView, currentPage);
             if (pageNumberInView !== currentPage) {
                 iref.current.setPageNumber(pageNumberInView);
                 setCurrentPageNumber(pageNumberInView);
@@ -157,14 +159,14 @@ function PDFReader(
                         <OnePage
                             pageNumber={getCurrentPageNumber()}
                             pageSize={pageSize}
-                            onLoadSuccess={onPageLoadSuccess}
                         />
                     )}
                     {mode === 'all' && (
                         <AllPages
-                            pageCount={pageCount}
+                            pageCount={pageCount.current}
                             pageSize={pageSize}
                             onLoadSuccess={onPageLoadSuccess}
+                            pageRatio={ratio.current}
                         />
                     )}
                     {mode === 'greed' && (
@@ -172,7 +174,8 @@ function PDFReader(
                             ref={iref}
                             pageSize={pageSize}
                             initialPageNumber={getCurrentPageNumber()}
-                            pageCount={pageCount}
+                            pageCount={pageCount.current}
+                            pageRatio={ratio.current}
                             onLoadSuccess={onPageLoadSuccess}
                         />
                     )}
@@ -265,52 +268,35 @@ const DummyPages = (
         pageCount,
         onLoadSuccess,
         initialPageNumber,
+        pageRatio,
     }: TDummyPagesProps,
     outputRef,
 ) => {
     const [pageNumber, setPageNumber] = useState(initialPageNumber);
     const pageManager = usePagesManager([initialPageNumber], pageCount);
-    const [refs, setRefs] = useState([]);
     const [ignore, setIgnore] = useState(false);
+    const customTextRenderer = ({ str }) => stylizeJSX(str);
+    const pages = Array(pageCount).fill(0);
+    const [height, setHeight] = useState();
 
-    // useEffect(() => {
-    //     const listener = (event) => event.ctrlKey && setIgnore(!ignore);
-    //     document.addEventListener('click', listener);
-    //     return () => document.removeEventListener('click', listener);
-    // }, [ignore]);
+    const [refs, setRefs] = useState([]);
+    useEffect(() => {
+        setRefs((ref) =>
+            Array(pageCount)
+                .fill()
+                .map((_, i) => ref[i] || createRef()),
+        );
+    }, []);
 
     useEffect(
         () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
         [refs.length],
     );
 
-    // const customTextRenderer = useCallback(
-    //     ({ str }) => (wordsHighlight && !ignore ? stylizeJSX(str) : str),
-    //     [ignore],
-    // );
-
-    const customTextRenderer = ({ str }) => stylizeJSX(str);
-
-    const pages = Array(pageCount).fill(0);
-    const [height, setHeight] = useState();
-    const handleOnLoadSucess = (props) => {
-        if (!height) {
-            setHeight(props.height || pageSize.width * 1.5);
-        }
-    };
-
-    useEffect(() => {
-        height &&
-            setRefs((ref) =>
-                Array(pageCount)
-                    .fill()
-                    .map((_, i) => ref[i] || createRef()),
-            );
-    }, [height]);
-
     useImperativeHandle(outputRef, () => ({
         setPageNumber: (page) => {
             pageManager.goToPage(page);
+            console.log('pageManager', pageManager.pages)
         },
     }));
 
@@ -322,18 +308,15 @@ const DummyPages = (
                     key={`pdf-page-${i}`}
                     data-page-number={i + 1}
                     width={pageSize.width}
-                    height={height}
-                    ignore={ignore}
+                    height={pageSize.width * pageRatio}
                 >
                     {pageManager.pages.includes(i + 1) && (
                         <PageIS
-                            size="A4"
-                            key={`pdf-page-${i}`}
+                            key={`pdf-page-real-${i}`}
                             className="page"
                             pageNumber={i + 1}
                             width={pageSize.width}
                             renderMode="svg"
-                            onLoadSuccess={handleOnLoadSucess}
                             customTextRenderer={customTextRenderer}
                         />
                     )}
@@ -373,6 +356,7 @@ const OnePage = ({
 type TAllPagesComponent = TPageComponent & {
     pageNumber: number;
     pageCount: number;
+    onLoadSuccess;
 };
 
 const AllPages = ({
@@ -380,20 +364,43 @@ const AllPages = ({
     pageCount,
     pageSize,
     onLoadSuccess,
+    pageRatio
 }: TAllPagesComponent) => {
     const loadSuccessHandler = () => {};
+    console.count('allPages');
+    const [refs, setRefs] = useState([]);
+    useEffect(() => {
+        setRefs((ref) =>
+            Array(pageCount)
+                .fill()
+                .map((_, i) => ref[i] || createRef()),
+        );
+    }, []);
+
+    useEffect(
+        () => refs.length > 0 && onLoadSuccess && onLoadSuccess(refs),
+        [refs.length],
+    );
     return (
         <>
             {Array(pageCount)
                 .fill(0)
                 .map((_, i) => (
-                    <PageIS
+                    <DummyPageIS
+                        ref={refs[i]}
                         key={`pdf-page-${i}`}
-                        pageNumber={i + 1}
+                        data-page-number={i + 1}
                         width={pageSize.width}
-                        height={pageSize.height}
-                        onLoadSuccess={loadSuccessHandler}
-                    />
+                        height={pageSize.width * pageRatio}
+                    >
+                        <PageIS
+                            key={`pdf-page-${i}`}
+                            ref={refs[i]}
+                            pageNumber={i + 1}
+                            width={pageSize.width}
+                            height={pageSize.height}
+                        />
+                    </DummyPageIS>
                 ))}
         </>
     );

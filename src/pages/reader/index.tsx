@@ -62,8 +62,8 @@ export default observer(function Reader() {
         openBook();
     }, []);
 
-    const onBookLoaded = useCallback((count) => setPagesCount(count), []);
-    const onPageChange = useCallback((page) => {
+    const handleBookLoaded = useCallback((count) => setPagesCount(count), []);
+    const handlePageChange = useCallback((page) => {
         setNumberOfCurrentPage(page);
         localStorage.setItem(String(bookId), page);
     }, []);
@@ -108,8 +108,8 @@ export default observer(function Reader() {
                             book={book}
                             mode="greed"
                             oldPageNumber={oldPageNumber.current}
-                            onBookLoaded={onBookLoaded}
-                            onPageChange={onPageChange}
+                            onBookLoaded={handleBookLoaded}
+                            onPageChange={handlePageChange}
                         ></PDFReader>
                     )}
                 </Hightlighter>
