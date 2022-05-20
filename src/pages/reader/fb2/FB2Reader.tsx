@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 // import './Reader.scss'
 import { useParams } from 'react-router-dom';
-import { debounce } from '../../utils/common';
-import { hightLightElementsOnScreen } from '../../utils/styler';
+import { debounce } from '../../../utils/common';
+import { hightLightElementsOnScreen } from '../../../utils/styler';
 import { observer } from 'mobx-react';
 import useEventListener from '@use-it/event-listener';
-import { Loading } from '../../components/loading';
+import { Loading } from '../../../components/loading';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
-import { RootStoreContext } from '../../store/RootStore';
+import { RootStoreContext } from '../../../store/RootStore';
 import { TCurrentBook } from 'src/store/LibraryStore';
-import { Hightlighter } from './Hightlighter';
-import BackgroundImage from './page2.jpg';
+import { Hightlighter } from '../Hightlighter';
+import BackgroundImage from '../page2.jpg';
 
 const PageCount = styled.span`
     white-space: nowrap;

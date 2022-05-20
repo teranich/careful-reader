@@ -9,17 +9,17 @@ import {
     useState,
     memo,
 } from 'react';
-import { TCurrentBook } from '../../store/LibraryStore';
+import { TCurrentBook } from '../../../store/LibraryStore';
 import { Document, Page, Outline } from 'react-pdf/dist/esm/entry.webpack';
-import { getClientSize, pdfTextToObjectUrl } from '../../utils/common';
+import { getClientSize, pdfTextToObjectUrl } from '../../../utils/common';
 import styled from 'styled-components';
 import { usePagesManager, useSingle } from './Readers.utils';
-import { stylizeJSX } from '../../utils/styler';
-import { RootStoreContext } from '../../store/RootStore';
-import BackgroundImage from './page2.jpg';
+import { stylizeJSX } from '../../../utils/styler';
+import { RootStoreContext } from '../../../store/RootStore';
+import BackgroundImage from '../page2.jpg';
 import './PdfTextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import { getCurrentHeaderHeight } from '../../components/common/Header';
+import { getCurrentHeaderHeight } from '../../../components/common/Header';
 
 const DocumentIS = styled(Document)`
     overflow: hidden;

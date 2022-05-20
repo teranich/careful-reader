@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useCallback, useState } from 'react';
 import { observer } from 'mobx-react';
-import FB2Reader from './FB2Reader';
-import PDFReader from './PDFReader';
+import FB2Reader from './fb2/FB2Reader';
+import PDFReader from './pdf/PDFReader';
 import { RootStoreContext } from '../../store/RootStore';
 import { useParams } from 'react-router-dom';
 import { Header } from '../../components/common';
