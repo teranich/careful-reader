@@ -64,6 +64,7 @@ export default observer(function Reader() {
 
     const handleBookLoaded = useCallback((count) => setPagesCount(count), []);
     const handlePageChange = useCallback((page) => {
+        console.log('new page', page)
         setNumberOfCurrentPage(page);
         localStorage.setItem(String(bookId), page);
     }, []);
