@@ -20,6 +20,7 @@ import { AuthButtons } from '../controls';
 import styled from 'styled-components';
 import { RootStoreContext } from '../../store/RootStore';
 import { LoadingLine } from '../loading/Loading';
+import Version from '../../version.js';
 
 const TopHeightWorkaround = styled.div``;
 const Title = styled(Typography)`
@@ -51,6 +52,13 @@ const AppBarIS = styled(AppBar)`
 
 const ListIS = styled(List)`
     padding: 8px 16px;
+`;
+
+const VersionIS = styled.div`
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 8pt;
 `;
 
 export default observer(function Header({
@@ -120,6 +128,7 @@ export default observer(function Header({
             </List>
             <Divider />
             <ListIS>{content}</ListIS>
+            <VersionIS>{Version}</VersionIS>
         </div>
     );
     return (

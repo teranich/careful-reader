@@ -11,6 +11,7 @@ import { HightlightSwitcher } from '../../components/controls';
 import useDoubleClick from '../../hooks/UseDoubleClick';
 import { FormControlLabel, FormGroup } from '@material-ui/core';
 import { Hightlighter } from './Hightlighter';
+
 interface QueryParams {
     bookId: string;
 }
