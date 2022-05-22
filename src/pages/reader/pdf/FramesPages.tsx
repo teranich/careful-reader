@@ -102,6 +102,7 @@ const PageContaierIS = styled.div`
     position: absolute;
 `;
 
+const customTextRenderer = ({ str }) => stylizeJSX(str);
 const FramesPages = forwardRef(
     (
         {
@@ -117,7 +118,6 @@ const FramesPages = forwardRef(
         const [pageNumber, setPageNumber] = useState(initialPageNumber);
         const pageManager = usePagesManager([initialPageNumber], pageCount);
         const [ignore, setIgnore] = useState(false);
-        const customTextRenderer = ({ str }) => stylizeJSX(str);
         const pages = Array(pageCount).fill(0);
         const [height, setHeight] = useState(pageSize.width * pageRatio);
 
@@ -125,10 +125,14 @@ const FramesPages = forwardRef(
         const [refs, setRefs] = useState([]);
         useEffect(() => {
             const listener = (e) => {
-                const currentPage = Math.ceil(
-                    (window.scrollY) / (height),
+                const currentPage = Math.ceil(window.scrollY / height);
+                console.log(
+                    'current page',
+                    currentPage,
+                    window.scrollY,
+                    height,
+                    pageCount,
                 );
-                console.log('current page', currentPage, window.scrollY,height, pageCount) 
                 pageManager.goToPage(currentPage);
                 onPageChange && onPageChange(currentPage);
             };
@@ -166,7 +170,11 @@ const FramesPages = forwardRef(
                                 className="page"
                                 pageNumber={i + 1}
                                 onLoadSuccess={(p) => {
-                                    console.log('loaded', p)
+                                    console.log('loaded', height, p);
+                                    if (p && p.height !== height) {
+                                        console.warn('SET', p.height, height);
+                                        setHeight(p.height);
+                                    }
                                 }}
                                 width={pageSize.width}
                                 renderMode="svg"
