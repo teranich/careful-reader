@@ -119,16 +119,16 @@ const FramesPages = forwardRef(
         const [ignore, setIgnore] = useState(false);
         const customTextRenderer = ({ str }) => stylizeJSX(str);
         const pages = Array(pageCount).fill(0);
-        const [height, setHeight] = useState();
+        const [height, setHeight] = useState(pageSize.width * pageRatio);
 
-        const pageHeight = pageSize.width * pageRatio;
+        // const pageHeight = pageSize.width * pageRatio;
         const [refs, setRefs] = useState([]);
         useEffect(() => {
             const listener = (e) => {
-                console.log(pageHeight, pageHeight * pageCount);
                 const currentPage = Math.ceil(
-                    (window.scrollY * 400) / (pageHeight * pageCount),
+                    (window.scrollY) / (height),
                 );
+                console.log('current page', currentPage, window.scrollY,height, pageCount) 
                 pageManager.goToPage(currentPage);
                 onPageChange && onPageChange(currentPage);
             };
@@ -158,13 +158,16 @@ const FramesPages = forwardRef(
                         key={`pdf-page-${i}`}
                         data-page-number={i + 1}
                         width={pageSize.width}
-                        height={pageSize.width * pageRatio}
+                        height={height}
                     >
                         {pageManager.pages.includes(i + 1) && (
                             <PageIS
                                 key={`pdf-page-real-${i}`}
                                 className="page"
                                 pageNumber={i + 1}
+                                onLoadSuccess={(p) => {
+                                    console.log('loaded', p)
+                                }}
                                 width={pageSize.width}
                                 renderMode="svg"
                                 customTextRenderer={customTextRenderer}
