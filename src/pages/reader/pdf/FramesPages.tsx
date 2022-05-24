@@ -4,6 +4,8 @@ import {
     memo,
     useEffect,
     useImperativeHandle,
+    useMemo,
+    useRef,
     useState,
 } from 'react';
 import styled from 'styled-components';
@@ -52,22 +54,19 @@ type TAllPagesComponent = TPageComponent & {
 };
 
 const AllPages = ({
-    pageNumber,
-    pageCount,
     pageSize,
-    onLoadSuccess,
+    pageCount,
+    pageNumber,
     pageRatio,
+    onPageChange,
+    onLoadSuccess,
 }: TAllPagesComponent) => {
-    const loadSuccessHandler = () => {};
-    useEffect(() => {}, []);
-
     return (
         <>
             {Array(pageCount)
                 .fill(0)
                 .map((_, i) => (
                     <DummyPageIS
-                        ref={refs[i]}
                         key={`pdf-page-${i}`}
                         data-page-number={i + 1}
                         width={pageSize.width}
@@ -75,10 +74,10 @@ const AllPages = ({
                     >
                         <PageIS
                             key={`pdf-page-${i}`}
-                            ref={refs[i]}
                             pageNumber={i + 1}
                             width={pageSize.width}
                             height={pageSize.height}
+                            customTextRenderer={customTextRenderer}
                         />
                     </DummyPageIS>
                 ))}
@@ -108,21 +107,21 @@ const FramesPages = forwardRef(
         {
             pageSize,
             pageCount,
-            initialPageNumber,
+            pageNumber,
             pageRatio,
             onPageChange,
             onLoadSuccess,
         }: TDummyPagesProps,
         outputRef,
     ) => {
-        const [pageNumber, setPageNumber] = useState(initialPageNumber);
-        const pageManager = usePagesManager([initialPageNumber], pageCount);
-        const [ignore, setIgnore] = useState(false);
-        const pages = Array(pageCount).fill(0);
+        const pageManager = usePagesManager(
+            [pageNumber],
+            pageCount,
+        );
+        const allPages = useRef(Array(pageCount).fill(0));
         const [height, setHeight] = useState(pageSize.width * pageRatio);
 
-        // const pageHeight = pageSize.width * pageRatio;
-        const [refs, setRefs] = useState([]);
+        const [pages, setPages] = useState(pageManager.pages());
         useEffect(() => {
             const listener = (e) => {
                 const currentPage = Math.ceil(window.scrollY / height);
@@ -134,6 +133,8 @@ const FramesPages = forwardRef(
                     pageCount,
                 );
                 pageManager.goToPage(currentPage);
+                setPages(pageManager.pages());
+                console.log('pageManager', pageManager.pages());
                 onPageChange && onPageChange(currentPage);
             };
             document.addEventListener('scroll', listener);
@@ -143,28 +144,22 @@ const FramesPages = forwardRef(
             };
         }, []);
 
-        useEffect(() => {
-            refs.length > 0 && onLoadSuccess && onLoadSuccess(refs);
-        }, [refs.length]);
-
         useImperativeHandle(outputRef, () => ({
             setPageNumber: (page) => {
                 pageManager.goToPage(page);
-                console.log('pageManager', pageManager.pages);
             },
         }));
 
         return (
             <>
-                {pages.map((_, i) => (
+                {allPages.current.map((_, i) => (
                     <DummyPageIS
-                        ref={refs[i]}
                         key={`pdf-page-${i}`}
                         data-page-number={i + 1}
                         width={pageSize.width}
                         height={height}
                     >
-                        {pageManager.pages.includes(i + 1) && (
+                        {pages.includes(i + 1) && (
                             <PageIS
                                 key={`pdf-page-real-${i}`}
                                 className="page"
@@ -187,7 +182,10 @@ const FramesPages = forwardRef(
         );
     },
 );
-
+const FramesPagesMemo = memo(FramesPages, () => {
+    console.log('other memo');
+    return true;
+});
 const FastPages = (props, ref) => {
     const { mode } = props;
 
@@ -200,4 +198,9 @@ const FastPages = (props, ref) => {
     );
 };
 
-export default memo(forwardRef(FastPages));
+export default memo(forwardRef(FastPages), (o, n) => {
+    console.log('o, n', o, n, o.pageNumber, n.pageNumber);
+    console.log('inline-source-map', o.pageNumber !== n.pageNumber);
+    // if (o.pageNumber !== n.pageNumber) return false;
+    return true;
+});

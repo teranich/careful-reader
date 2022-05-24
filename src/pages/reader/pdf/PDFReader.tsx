@@ -29,20 +29,18 @@ const scrollToPage = (page: number) => {
 
 type TPDFReaderProps = {
     book: TCurrentBook;
-    oldPageNumber: number;
+    pageNumber: number;
     mode: string;
     onBookLoaded: (numPages: number) => {};
     onPageChange: (page: number) => {};
 };
 
 function PDFReader(
-    { book, oldPageNumber, onPageChange, onBookLoaded, mode }: TPDFReaderProps,
+    { book, pageNumber, onPageChange, onBookLoaded, mode }: TPDFReaderProps,
     ref,
 ) {
     const pageCount = useRef(book.card.pageCount);
     const ratio = useRef(book.card.ratio || 1.5);
-    const [getCurrentPageNumber, setCurrentPageNumber] =
-        useSingle<number>(oldPageNumber);
     const bookFileURI = pdfTextToObjectUrl(book.text);
     const { width: clientWidth, height: clientHeight } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
@@ -51,57 +49,13 @@ function PDFReader(
     const textContainerRef = useRef(null);
     const pageSize = { width: pageWidth, height: pageHeight };
     const { appStore, libraryStore } = useContext(RootStoreContext);
-    const [cpage, setCpage] = useState(oldPageNumber);
     const iref = useRef();
-
-    const handleIntersectionObserver = (elements = []) => {
-        const options = {
-            root: null,
-            threshold: 0.5,
-        };
-        const callback = (entries, observer) => {
-            const { target, isIntersecting } = entries[0];
-
-            if (!isIntersecting) return null;
-            const pageNumberInView = Number(
-                target?.getAttribute('data-page-number'),
-            );
-            const currentPage = getCurrentPageNumber();
-            console.log('itercepter', pageNumberInView, currentPage);
-            if (pageNumberInView !== currentPage) {
-                iref.current.setPageNumber(pageNumberInView);
-                setCurrentPageNumber(pageNumberInView);
-                onPageChange(pageNumberInView);
-            }
-        };
-
-        const observer = new IntersectionObserver(callback, options);
-
-        for (let target of elements) {
-            if (target?.current) {
-                observer?.observe(target.current);
-            }
-        }
-        return observer;
-    };
 
     const onDocumentLoadSuccess = (props: { numPages: number }) => {
         const { numPages } = props;
         onBookLoaded && onBookLoaded(numPages);
     };
 
-    const changePage = (offset: number) => {
-        setCurrentPageNumber(getCurrentPageNumber() + offset);
-        onPageChange(getCurrentPageNumber());
-    };
-
-    const previousPage = () => {
-        changePage(-1);
-    };
-
-    const nextPage = () => {
-        changePage(1);
-    };
 
     const fitPageSize = () => {
         const { width, height } = getClientSize();
@@ -110,16 +64,15 @@ function PDFReader(
 
     const [getOserver, setObserver] = useSingle<any>();
 
-    const handleLoadSucess = () => {
-        console.log('restore last read position', getCurrentPageNumber());
-        scrollToPage(getCurrentPageNumber());
+    const handleLoadSuccess = () => {
+        scrollToPage(pageNumber);
     };
 
     const onTableOfContentItemClick = ({ pageIndex, pageNumber }) => {
-        setCurrentPageNumber(pageNumber);
-        onPageChange(getCurrentPageNumber());
-        iref.current.setPageNumber(pageNumber);
-        scrollToPage(getCurrentPageNumber());
+        // setCurrentPageNumber(pageNumber);
+        onPageChange(pageNumber);
+        // iref.current.setPageNumber(pageNumber);
+        scrollToPage(pageNumber);
     };
 
     useEffect(() => {
@@ -157,9 +110,9 @@ function PDFReader(
                         pageCount={pageCount.current}
                         pageRatio={ratio.current}
                         pageSize={pageSize}
-                        pageNumber={getCurrentPageNumber()}
+                        pageNumber={pageNumber}
                         onPageChange={onPageChange}
-                        onLoadSuccess={handleLoadSucess}
+                        onLoadSuccess={handleLoadSuccess}
                     />
                 </DocumentIS>
             )}

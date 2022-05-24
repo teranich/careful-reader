@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useCallback, useState } from 'react';
+import { useContext, useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import FB2Reader from './fb2/FB2Reader';
 import PDFReader from './pdf/PDFReader';
@@ -31,17 +31,16 @@ const TableOfContentIS = styled.div`
 export default observer(function Reader() {
     const queryParams = useParams<QueryParams>();
     const bookId = parseInt(queryParams.bookId);
-    const oldPageNumber = useRef(
-        parseInt(localStorage.getItem(String(bookId))) || 1,
+    const initPageNumber = useRef(parseInt(localStorage.getItem(String(bookId))) || 1, [])
+    console.log('initPageNumber', initPageNumber)
+    const [pageNumber, setPageNumber] = useState(
+        initPageNumber.current
+
     );
     const [currentReader, setCurrentReader] = useState<undefined | string>();
     const { appStore, libraryStore } = useContext(RootStoreContext);
     const { getBookMeta } = libraryStore;
-    const [numberOfcurrentPage, setNumberOfCurrentPage] = useState(
-        oldPageNumber.current,
-    );
     const [showControls, setShowControls] = useState(true);
-    const [currenPositionPercent, setCurrenPositionPercent] = useState('0.0');
     const [pagesCount, setPagesCount] = useState(0);
     const bookTitle = () =>
         currentBookRef.current?.info?.meta?.title ||
@@ -65,8 +64,9 @@ export default observer(function Reader() {
 
     const handleBookLoaded = useCallback((count) => setPagesCount(count), []);
     const handlePageChange = useCallback((page) => {
-        console.log('new page', page)
-        setNumberOfCurrentPage(page);
+        console.log('new page', page);
+        // setNumberOfCurrentPage(page);
+        setPageNumber(page);
         localStorage.setItem(String(bookId), page);
     }, []);
 
@@ -99,7 +99,7 @@ export default observer(function Reader() {
                 </TableOfContentIS>
                 <PageCountIS
                     onClick={gotToPageHandler}
-                >{`${numberOfcurrentPage}/${pagesCount}`}</PageCountIS>
+                >{`${pageNumber}/${pagesCount}`}</PageCountIS>
             </Header>
             <div ref={textContainerRef}>
                 <Hightlighter wordsHighlight={wordsHighlight}>
@@ -109,7 +109,7 @@ export default observer(function Reader() {
                             ref={pdfRef}
                             book={book}
                             mode="greed"
-                            oldPageNumber={oldPageNumber.current}
+                            pageNumber={initPageNumber.current}
                             onBookLoaded={handleBookLoaded}
                             onPageChange={handlePageChange}
                         ></PDFReader>

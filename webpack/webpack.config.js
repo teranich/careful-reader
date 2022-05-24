@@ -50,7 +50,8 @@ module.exports = {
         //     entrypoints: false,
         // }),
     }),
-    devtool: 'source-map', // 'eval-cheap-module-source-map',
+    // devtool: 'source-map', // 'eval-cheap-module-source-map',
+    devtool: 'inline-source-map',
     entry: `${paths.src}/index.tsx`,
     output: {
         path: paths.build,

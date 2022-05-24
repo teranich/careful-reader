@@ -33,36 +33,34 @@ export const usePagesManager = (
     initialPages: number[] = [],
     pageCount = 0,
 ) => {
-    const [pages, setPages] = useState(() => {
-        const page = initialPages.length ? initialPages[0] : 1;
-        const withFrame = getRendersFrame(page, pageCount);
+    const page = initialPages.length ? initialPages[0] : 1;
+    const withFrame = getRendersFrame(page, pageCount);
 
-        return prepare([...initialPages, ...withFrame]);
-    });
+    const pages = useRef(prepare([...initialPages, ...withFrame]));
 
     const goToPage = (page: number) => {
         const frame = getRendersFrame(page, pageCount);
-        const newPages = prepare([...pages, ...frame]);
-
-        // pages.splice(0, pages.length, ...newPages);
-        setPages(newPages.filter((p) => !!p));
+        pages.current = prepare([...pages.current, ...frame]).filter(
+            (p) => !!p,
+        );
     };
 
     const next = () => {
-        const nextFramePageNumber = pages[pages.length - 1] + 1;
+        const nextFramePageNumber =
+            pages.current[pages.current.length - 1] + 1;
         if (nextFramePageNumber === pageCount) return;
 
         goToPage(nextFramePageNumber);
     };
 
     const prev = () => {
-        const prevFramePageNumber = pages[0] - 1;
+        const prevFramePageNumber = pages.current[0] - 1;
         if (!prevFramePageNumber) return;
 
         goToPage(prevFramePageNumber);
     };
 
-    return { pages, goToPage, prev, next };
+    return { pages: () => pages.current, goToPage, prev, next };
 };
 
 export function useSingle<T>(initialValue: T): [() => T, (value: T) => T] {
