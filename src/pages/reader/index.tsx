@@ -1,4 +1,11 @@
-import { useContext, useEffect, useRef, useCallback, useState, useMemo } from 'react';
+import {
+    useContext,
+    useEffect,
+    useRef,
+    useCallback,
+    useState,
+    useMemo,
+} from 'react';
 import { observer } from 'mobx-react';
 import FB2Reader from './fb2/FB2Reader';
 import PDFReader from './pdf/PDFReader';
@@ -11,6 +18,7 @@ import { HightlightSwitcher } from '../../components/controls';
 import useDoubleClick from '../../hooks/UseDoubleClick';
 import { FormControlLabel, FormGroup } from '@material-ui/core';
 import { Hightlighter } from './Hightlighter';
+import { getClientSize } from '../../utils/common';
 
 interface QueryParams {
     bookId: string;
@@ -31,12 +39,12 @@ const TableOfContentIS = styled.div`
 export default observer(function Reader() {
     const queryParams = useParams<QueryParams>();
     const bookId = parseInt(queryParams.bookId);
-    const initPageNumber = useRef(parseInt(localStorage.getItem(String(bookId))) || 1, [])
-    console.log('initPageNumber', initPageNumber)
-    const [pageNumber, setPageNumber] = useState(
-        initPageNumber.current
-
+    const initPageNumber = useRef(
+        parseInt(localStorage.getItem(String(bookId))) || 1,
+        [],
     );
+    console.log('initPageNumber', initPageNumber);
+    const [pageNumber, setPageNumber] = useState(initPageNumber.current);
     const [currentReader, setCurrentReader] = useState<undefined | string>();
     const { appStore, libraryStore } = useContext(RootStoreContext);
     const { getBookMeta } = libraryStore;
@@ -67,6 +75,7 @@ export default observer(function Reader() {
         console.log('new page', page);
         // setNumberOfCurrentPage(page);
         setPageNumber(page);
+        initPageNumber.current = page;
         localStorage.setItem(String(bookId), page);
     }, []);
 
@@ -109,7 +118,7 @@ export default observer(function Reader() {
                             ref={pdfRef}
                             book={book}
                             mode="greed"
-                            pageNumber={initPageNumber.current}
+                            pageNumber={initPageNumber}
                             onBookLoaded={handleBookLoaded}
                             onPageChange={handlePageChange}
                         ></PDFReader>

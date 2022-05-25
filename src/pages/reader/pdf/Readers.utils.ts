@@ -11,8 +11,8 @@ const FRAME_DOWN = 3;
  * page = 2, pageCount = 10 => [1, 2, 3, 4]
  **/
 export const getRendersFrame = (
-    page: number = 0,
-    pageCount: number = page,
+    page: number = 0, // 1
+    pageCount: number = page, // 852
 ) => {
     const up = page - FRAME_UP > 0 ? page - FRAME_UP : 1;
     const down = page + FRAME_DOWN < pageCount ? page + FRAME_DOWN : pageCount;

@@ -13,6 +13,7 @@ import BackgroundImage from '../page2.jpg';
 import { stylizeJSX } from '../../../utils/styler';
 import { usePagesManager } from './Readers.utils';
 import { Page } from 'react-pdf/dist/esm/entry.webpack';
+import { debounce } from 'lodash';
 
 const PageIS = styled(Page)`
     border: 1px solid black;
@@ -101,44 +102,66 @@ const PageContaierIS = styled.div`
     position: absolute;
 `;
 
+const scrollToPage = (page: number) => {
+    const target = document.querySelector(`[data-page-number="${page}"`);
+
+    target?.scrollIntoView();
+};
+
+const getCurrentPage = (heights, scrollPosition) => {
+    let acc = 0;
+    for (let page in heights) {
+        const height = heights[page];
+        acc += height;
+        if (acc >= scrollPosition) return parseInt(page, 10);
+    }
+    return 0;
+};
+
 const customTextRenderer = ({ str }) => stylizeJSX(str);
 const FramesPages = forwardRef(
     (
         {
-            pageSize,
+            pageWidth,
             pageCount,
-            pageNumber,
             pageRatio,
             onPageChange,
             onLoadSuccess,
+            pageNumber,
         }: TDummyPagesProps,
         outputRef,
     ) => {
-        const pageManager = usePagesManager(
-            [pageNumber],
-            pageCount,
-        );
+        // const pageNumber = 0;
+        const pageManager = usePagesManager([pageNumber.current], pageCount);
         const allPages = useRef(Array(pageCount).fill(0));
-        const [height, setHeight] = useState(pageSize.width * pageRatio);
+        const descriptionHeight = pageWidth * pageRatio;
+        const heightMap = useRef(Array(pageCount).fill(descriptionHeight));
 
         const [pages, setPages] = useState(pageManager.pages());
+        const lastPage = useRef(pageNumber.current);
         useEffect(() => {
-            const listener = (e) => {
-                const currentPage = Math.ceil(window.scrollY / height);
-                console.log(
-                    'current page',
-                    currentPage,
+            const listener = debounce(() => {
+                const currentPage = getCurrentPage(
+                    heightMap.current,
                     window.scrollY,
-                    height,
-                    pageCount,
                 );
-                pageManager.goToPage(currentPage);
-                setPages(pageManager.pages());
-                console.log('pageManager', pageManager.pages());
-                onPageChange && onPageChange(currentPage);
-            };
+                // console.log(
+                //     'current page',
+                //     currentPage,
+                //     lastPage.current,
+                //     window.scrollY,
+                //     pageCount,
+                //     heightMap,
+                // );
+                if (lastPage.current !== currentPage) {
+                    onPageChange && onPageChange(currentPage);
+                    lastPage.current = currentPage;
+                    pageManager.goToPage(currentPage);
+                    setPages(pageManager.pages());
+                    console.log('pageManager', pageManager.pages());
+                }
+            }, 200);
             document.addEventListener('scroll', listener);
-            onLoadSuccess && onLoadSuccess();
             return () => {
                 document.removeEventListener('scroll', listener);
             };
@@ -148,36 +171,43 @@ const FramesPages = forwardRef(
             setPageNumber: (page) => {
                 pageManager.goToPage(page);
             },
+            gotoLastPage: () => {
+                console.log('last page', lastPage.current);
+                scrollToPage(lastPage.current);
+            },
         }));
-
+        useEffect(() => {
+            console.count('USE EFFECT []', pageNumber.current);
+            // onLoadSuccess && onLoadSuccess();
+            setTimeout(() => {
+                scrollToPage(pageNumber.current + 1);
+            }, 100);
+        }, []);
+        console.count('RENDER');
         return (
             <>
-                {allPages.current.map((_, i) => (
-                    <DummyPageIS
-                        key={`pdf-page-${i}`}
-                        data-page-number={i + 1}
-                        width={pageSize.width}
-                        height={height}
-                    >
-                        {pages.includes(i + 1) && (
-                            <PageIS
-                                key={`pdf-page-real-${i}`}
-                                className="page"
-                                pageNumber={i + 1}
-                                onLoadSuccess={(p) => {
-                                    console.log('loaded', height, p);
-                                    if (p && p.height !== height) {
-                                        console.warn('SET', p.height, height);
-                                        setHeight(p.height);
-                                    }
-                                }}
-                                width={pageSize.width}
-                                renderMode="svg"
-                                customTextRenderer={customTextRenderer}
-                            />
-                        )}
-                    </DummyPageIS>
-                ))}
+                {allPages.current.map((_, i) =>
+                    pages.includes(i + 1) ? (
+                        <PageIS
+                            key={`pdf-page-${i}`}
+                            className="page"
+                            pageNumber={i + 1}
+                            onLoadSuccess={(p) => {
+                                heightMap.current[i] = p.height;
+                            }}
+                            width={pageWidth}
+                            renderMode="svg"
+                            customTextRenderer={customTextRenderer}
+                        />
+                    ) : (
+                        <DummyPageIS
+                            key={`pdf-page-${i}`}
+                            data-page-number={i + 1}
+                            width={pageWidth}
+                            height={heightMap.current[i]}
+                        />
+                    ),
+                )}
             </>
         );
     },
@@ -198,9 +228,4 @@ const FastPages = (props, ref) => {
     );
 };
 
-export default memo(forwardRef(FastPages), (o, n) => {
-    console.log('o, n', o, n, o.pageNumber, n.pageNumber);
-    console.log('inline-source-map', o.pageNumber !== n.pageNumber);
-    // if (o.pageNumber !== n.pageNumber) return false;
-    return true;
-});
+export default memo(forwardRef(FastPages));

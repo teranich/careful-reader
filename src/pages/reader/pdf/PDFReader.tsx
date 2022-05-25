@@ -42,13 +42,7 @@ function PDFReader(
     const pageCount = useRef(book.card.pageCount);
     const ratio = useRef(book.card.ratio || 1.5);
     const bookFileURI = pdfTextToObjectUrl(book.text);
-    const { width: clientWidth, height: clientHeight } = getClientSize();
-    const [pageWidth, setPageWidth] = useState(clientWidth);
-    const [pageHeight, setPageHeight] = useState(clientHeight);
-    const [actualPageHeight, setActualPageHeight] = useState(clientHeight);
     const textContainerRef = useRef(null);
-    const pageSize = { width: pageWidth, height: pageHeight };
-    const { appStore, libraryStore } = useContext(RootStoreContext);
     const iref = useRef();
 
     const onDocumentLoadSuccess = (props: { numPages: number }) => {
@@ -57,15 +51,10 @@ function PDFReader(
     };
 
 
-    const fitPageSize = () => {
-        const { width, height } = getClientSize();
-        setPageWidth(width);
-    };
-
-    const [getOserver, setObserver] = useSingle<any>();
 
     const handleLoadSuccess = () => {
-        scrollToPage(pageNumber);
+        console.log('handleLoad', pageNumber.current)
+        scrollToPage(pageNumber.current);
     };
 
     const onTableOfContentItemClick = ({ pageIndex, pageNumber }) => {
@@ -75,10 +64,6 @@ function PDFReader(
         scrollToPage(pageNumber);
     };
 
-    useEffect(() => {
-        window.addEventListener('resize', fitPageSize);
-        return () => window.removeEventListener('resize', fitPageSize);
-    }, []);
 
     const tableOfContentsRef = useRef();
     useImperativeHandle(ref, () => ({
@@ -87,6 +72,21 @@ function PDFReader(
         },
     }));
 
+    const { width: clientWidth} = getClientSize();
+    const [pageWidth, setPageWidth] = useState(clientWidth);
+    useEffect(() => {
+    const fitPageSize = () => {
+        const { width, height } = getClientSize();
+        setPageWidth(width);
+        // iref.current.setPageNumber(pageNumber);
+        // scrollToPage(pageNumber);
+        // iref.current.gotoLastPage()
+        console.log('FITPAGE', pageNumber)
+    };
+
+        window.addEventListener('resize', fitPageSize);
+        return () => window.removeEventListener('resize', fitPageSize);
+    }, []);
     return (
         <>
             {bookFileURI && (
@@ -109,7 +109,7 @@ function PDFReader(
                         mode={mode}
                         pageCount={pageCount.current}
                         pageRatio={ratio.current}
-                        pageSize={pageSize}
+                        pageWidth={pageWidth}
                         pageNumber={pageNumber}
                         onPageChange={onPageChange}
                         onLoadSuccess={handleLoadSuccess}
