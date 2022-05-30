@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { IBook } from '../../types';
 import BookItem from '../../components/common/BookItem';
@@ -11,18 +11,28 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import styled from 'styled-components';
-
-type TShelveActionHandler = (book: IBook | null) => void;
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import { RootStoreContext } from '../../store/RootStore';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import { withStyles } from '@material-ui/core';
 
 const Spacer = styled.div`
     height: 56px;
     width: 100%;
+    font-size: 0.8rem;
 `;
 
-export type TSheveAction = {
+const PreIS = styled.pre`
+    white-space: break-spaces;
+`;
+
+type TSheveAction = {
     text: string;
     handler: TShelveActionHandler;
 };
+
 interface TShelve {
     books: IBook[];
     dialogBookClickHandler?: TShelveActionHandler;
@@ -31,12 +41,15 @@ interface TShelve {
 
 const Shelve = observer(
     ({ books, actions, dialogBookClickHandler }: TShelve) => {
+        const { libraryStore } = useContext(RootStoreContext);
         const [isBookDialogOpenned, setIsBookDialogOpenned] = useState(false);
         const [selectedBook, setSelectedBook] = useState<IBook | null>(null);
         const bookClickHandler = (book: IBook) => {
             setIsBookDialogOpenned(true);
             setSelectedBook(book);
         };
+        const [moreExpanded, setMoreExpanded] = useState(false);
+        const [shortExpanded, setShortExpanded] = useState(true);
         const handleDialogClose = () => {
             setIsBookDialogOpenned(false);
             setSelectedBook(null);
@@ -47,11 +60,50 @@ const Shelve = observer(
         };
         const handleDefaultAction = (book: IBook) =>
             dialogBookClickHandler && dialogBookClickHandler(book);
-        const getPrettyMeta = (obj) => {
-            const pretty = JSON.stringify(selectedBook?.meta, null, 2);
-            console.log(pretty);
-            return pretty;
-        };
+
+        const bookMeta = useMemo(
+            () => JSON.stringify(selectedBook?.meta, null, 2),
+            [selectedBook],
+        );
+
+        const bookTitle = useMemo(
+            () => selectedBook?.meta?.title || selectedBook?.name || 'noname',
+            [selectedBook],
+        );
+
+        const bookAuthor = useMemo(() => {
+            const author = selectedBook?.meta?.author;
+            return typeof author === 'object'
+                ? //@ts-ignore
+                  `${author.firstName} ${author.lastName}`
+                : author;
+        }, [selectedBook]);
+
+        const bookPagesCount = useMemo(
+            () => selectedBook?.pageCount,
+            [selectedBook],
+        );
+
+        const bookKeywords = useMemo(
+            () => selectedBook?.meta?.keywords,
+            [selectedBook],
+        );
+
+        const bookSubject = useMemo(
+            () => selectedBook?.meta?.subject,
+            [selectedBook],
+        );
+
+        const bookCurrentPage = useMemo(
+            () => libraryStore.getCurrentPage(selectedBook?.id) || 1,
+            [selectedBook],
+        );
+
+        useEffect(() => {
+            setMoreExpanded(false);
+            setShortExpanded(true);
+        }, [isBookDialogOpenned]);
+
         return (
             <>
                 <Box display="flex" justifyContent="center" flexWrap="wrap">
@@ -72,7 +124,7 @@ const Shelve = observer(
                 >
                     <DialogTitle></DialogTitle>
                     <DialogContent>
-                        <Grid container justify="center" spacing={2}>
+                        <Grid container justifyContent="center" spacing={2}>
                             <Grid item>
                                 {selectedBook && (
                                     <BookItem
@@ -84,15 +136,32 @@ const Shelve = observer(
                                 )}
                             </Grid>
                             <Grid item xs={8}>
-                                <Typography display="block" noWrap={true}>
-                                    {selectedBook?.name}
-                                </Typography>
-                                <Typography display="block">
-                                    <pre>
-                                        {getPrettyMeta(selectedBook?.meta)}
-                                    </pre>
-                                </Typography>
-
+                                <BookDetails
+                                    title={bookTitle}
+                                    onChange={() =>
+                                        setShortExpanded(!shortExpanded)
+                                    }
+                                    expanded={shortExpanded}
+                                >
+                                    <p>{bookAuthor}</p>
+                                    <p>{bookSubject}</p>
+                                    <p>
+                                        current page: {bookCurrentPage}
+                                        {bookPagesCount
+                                            ? `/${bookPagesCount}`
+                                            : ''}
+                                    </p>
+                                    <p>{bookKeywords}</p>
+                                </BookDetails>
+                                <BookDetails
+                                    title="..."
+                                    onChange={() =>
+                                        setMoreExpanded(!moreExpanded)
+                                    }
+                                    expanded={moreExpanded}
+                                >
+                                    <PreIS>{bookMeta}</PreIS>
+                                </BookDetails>
                                 <Typography
                                     display="block"
                                     noWrap={true}
@@ -103,7 +172,7 @@ const Shelve = observer(
                     <DialogActions>
                         {actions.map((action, index) => (
                             <Button
-                                key={index}
+                                key={`shelve-actions_${index}`}
                                 onClick={() => handleBookAction(action)}
                                 color="primary"
                             >
@@ -117,4 +186,34 @@ const Shelve = observer(
     },
 );
 
+const AccordionSummary = withStyles({
+    root: {
+        backgroundColor: 'rgba(0, 0, 0, .03)',
+        borderBottom: '1px solid rgba(0, 0, 0, .125)',
+        marginBottom: -1,
+        minHeight: 56,
+        '&$expanded': {
+            minHeight: 56,
+        },
+    },
+    content: {
+        '&$expanded': {
+            margin: '12px 0',
+        },
+    },
+    expanded: {},
+})(MuiAccordionSummary);
+
+const BookDetails = ({ title, children, expanded, onChange }) => {
+    return (
+        <MuiAccordion square expanded={expanded} onChange={onChange}>
+            <AccordionSummary>
+                <Typography variant="h5">{title}</Typography>
+            </AccordionSummary>
+            <MuiAccordionDetails>
+                <Typography>{children}</Typography>
+            </MuiAccordionDetails>
+        </MuiAccordion>
+    );
+};
 export default Shelve;

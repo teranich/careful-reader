@@ -474,10 +474,7 @@ const FB2_META = `<?xml version="1.0"?>
 <xsl:template match="/*">{<xsl:for-each select="fb:description/fb:title-info">	
     "title": "<xsl:value-of select="fb:book-title" />",
     "genre": "<xsl:value-of select="fb:genre" />",
-    "author": {
-        "firstName": "<xsl:value-of select="fb:author/fb:first-name" />",
-        "lastName": "<xsl:value-of select="fb:author/fb:last-name" />"
-    },
+    "author": "<xsl:value-of select="fb:author/fb:first-name" /> <xsl:value-of select="fb:author/fb:last-name" />",
     "date": "<xsl:value-of select="fb:date" />",
     "keywords": "<xsl:value-of select="fb:keywords" />",
     "lang": "<xsl:value-of select="fb:lang" />"

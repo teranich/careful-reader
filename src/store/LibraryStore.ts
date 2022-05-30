@@ -6,9 +6,9 @@ import * as converter from '../utils/converter';
 import { getBookFormat } from '../utils/BookFormats';
 
 export type TCurrentBook = {
-        card: IBook,
-        text: string,
-}
+    card: IBook;
+    text: string;
+};
 export class LibraryStore {
     public isAddingBookInProcess = false;
     public isFetchingBooksInProcess = false;
@@ -65,13 +65,11 @@ export class LibraryStore {
             const bookId = book.id;
             await libraryDB.updateBookMeta(bookId, { positionElement });
             book.positionElement = positionElement;
-            // await this.rootStore.syncMetaAction(book)
         },
     );
 
     updateLocalBookPositionAction = action(
         async (book: IBook, pageNumber: number) => {
-            console.log('stored', book.id)
             localStorage.setItem(String(book.id), String(pageNumber));
         },
     );
@@ -86,6 +84,10 @@ export class LibraryStore {
 
     getBookMeta = action(async (bookId: number) => {
         return await libraryDB.getBookMeta(bookId);
+    });
+
+    getCurrentPage = action((bookId: number | undefined) => {
+        return parseInt(localStorage.getItem(String(bookId))) || 1;
     });
 
     openBookAction = action(async (bookId: number): Promise<TCurrentBook> => {

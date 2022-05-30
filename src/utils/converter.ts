@@ -11,7 +11,7 @@ function convertWithXSL(text: string, xsl: string) {
 
 export function getBookPreviewInfo(fb2Book: string) {
     const rawMeta = convertWithXSL(fb2Book, FB2_META);
-    const meta = rawMeta.textContent ? JSON.parse(rawMeta.textContent) : {};
+    const meta = rawMeta.textContent && JSON.parse(rawMeta.textContent);
     const rawCover = convertWithXSL(fb2Book, FB2_COVER_IMAGE_XSL);
     const cover = rawCover.textContent;
     return { meta, cover };
