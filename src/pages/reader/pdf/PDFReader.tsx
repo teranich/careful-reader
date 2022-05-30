@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react';
 import {
-    useContext,
     useEffect,
     useRef,
     useImperativeHandle,
@@ -11,8 +10,6 @@ import { TCurrentBook } from '../../../store/LibraryStore';
 import { Document } from 'react-pdf/dist/esm/entry.webpack';
 import { getClientSize, pdfTextToObjectUrl } from '../../../utils/common';
 import styled from 'styled-components';
-import { useSingle } from './Readers.utils';
-import { RootStoreContext } from '../../../store/RootStore';
 import './PdfTextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { OutlineMenu } from './OutlineMenu';
@@ -21,11 +18,6 @@ import FastPages from './FramesPages';
 const DocumentIS = styled(Document)`
     overflow: hidden;
 `;
-
-const scrollToPage = (page: number) => {
-    const target = document.querySelector(`[data-page-number="${page}"`);
-    target?.scrollIntoView();
-};
 
 type TPDFReaderProps = {
     book: TCurrentBook;
@@ -50,20 +42,14 @@ function PDFReader(
         onBookLoaded && onBookLoaded(numPages);
     };
 
-
-
     const handleLoadSuccess = () => {
-        console.log('handleLoad', pageNumber.current)
-        scrollToPage(pageNumber.current);
+        iref.current.setPageNumber(pageNumber);
     };
 
     const onTableOfContentItemClick = ({ pageIndex, pageNumber }) => {
-        // setCurrentPageNumber(pageNumber);
         onPageChange(pageNumber);
-        // iref.current.setPageNumber(pageNumber);
-        scrollToPage(pageNumber);
+        iref.current.setPageNumber(pageNumber);
     };
-
 
     const tableOfContentsRef = useRef();
     useImperativeHandle(ref, () => ({
@@ -72,17 +58,13 @@ function PDFReader(
         },
     }));
 
-    const { width: clientWidth} = getClientSize();
+    const { width: clientWidth } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
     useEffect(() => {
-    const fitPageSize = () => {
-        const { width, height } = getClientSize();
-        setPageWidth(width);
-        // iref.current.setPageNumber(pageNumber);
-        // scrollToPage(pageNumber);
-        // iref.current.gotoLastPage()
-        console.log('FITPAGE', pageNumber)
-    };
+        const fitPageSize = () => {
+            const { width, height } = getClientSize();
+            setPageWidth(width);
+        };
 
         window.addEventListener('resize', fitPageSize);
         return () => window.removeEventListener('resize', fitPageSize);

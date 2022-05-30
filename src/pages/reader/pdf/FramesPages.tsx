@@ -1,10 +1,8 @@
 import {
-    createRef,
     forwardRef,
     memo,
     useEffect,
     useImperativeHandle,
-    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -85,6 +83,7 @@ const AllPages = ({
         </>
     );
 };
+
 type TDummyPagesProps = TPageComponent & {
     pageNumber: number;
     pageCount: number;
@@ -145,20 +144,11 @@ const FramesPages = forwardRef(
                     heightMap.current,
                     window.scrollY,
                 );
-                // console.log(
-                //     'current page',
-                //     currentPage,
-                //     lastPage.current,
-                //     window.scrollY,
-                //     pageCount,
-                //     heightMap,
-                // );
                 if (lastPage.current !== currentPage) {
                     onPageChange && onPageChange(currentPage);
                     lastPage.current = currentPage;
                     pageManager.goToPage(currentPage);
                     setPages(pageManager.pages());
-                    console.log('pageManager', pageManager.pages());
                 }
             }, 200);
             document.addEventListener('scroll', listener);
@@ -170,20 +160,18 @@ const FramesPages = forwardRef(
         useImperativeHandle(outputRef, () => ({
             setPageNumber: (page) => {
                 pageManager.goToPage(page);
+                scrollToPage(page);
             },
             gotoLastPage: () => {
-                console.log('last page', lastPage.current);
                 scrollToPage(lastPage.current);
             },
         }));
         useEffect(() => {
-            console.count('USE EFFECT []', pageNumber.current);
-            // onLoadSuccess && onLoadSuccess();
             setTimeout(() => {
                 scrollToPage(pageNumber.current + 1);
             }, 100);
         }, []);
-        console.count('RENDER');
+
         return (
             <>
                 {allPages.current.map((_, i) =>
@@ -212,10 +200,7 @@ const FramesPages = forwardRef(
         );
     },
 );
-const FramesPagesMemo = memo(FramesPages, () => {
-    console.log('other memo');
-    return true;
-});
+
 const FastPages = (props, ref) => {
     const { mode } = props;
 
