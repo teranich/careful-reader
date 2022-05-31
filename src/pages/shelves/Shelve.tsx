@@ -135,7 +135,7 @@ const Shelve = observer(
                                     />
                                 )}
                             </Grid>
-                            <Grid item xs={8}>
+                            <Grid item xs={12} md={8}>
                                 <BookDetails
                                     title={bookTitle}
                                     onChange={() =>
@@ -208,7 +208,7 @@ const BookDetails = ({ title, children, expanded, onChange }) => {
     return (
         <MuiAccordion square expanded={expanded} onChange={onChange}>
             <AccordionSummary>
-                <Typography variant="h5">{title}</Typography>
+                <Typography variant="h6">{title}</Typography>
             </AccordionSummary>
             <MuiAccordionDetails>
                 <Typography>{children}</Typography>
