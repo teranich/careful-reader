@@ -1,10 +1,4 @@
-import {
-    useContext,
-    useEffect,
-    useRef,
-    useCallback,
-    useState,
-} from 'react';
+import { useContext, useEffect, useRef, useCallback, useState } from 'react';
 import { observer } from 'mobx-react';
 import FB2Reader from './fb2/FB2Reader';
 import PDFReader from './pdf/PDFReader';
@@ -52,10 +46,7 @@ export default observer(function Reader() {
     const [book, setBook] = useState<TCurrentBook>();
     const { wordsHighlight } = appStore;
     const textContainerRef = useRef();
-    const initPageNumber = useRef(
-        parseInt(localStorage.getItem(String(bookId))) || 1,
-        [],
-    );
+    const initPageNumber = useRef(libraryStore.getCurrentPage(bookId));
     const [pageNumber, setPageNumber] = useState(initPageNumber.current);
     useEffect(() => {
         const openBook = async () => {

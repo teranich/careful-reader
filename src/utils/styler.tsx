@@ -40,15 +40,26 @@ export function getStyledElement(text: string) {
 }
 
 const SHUFFLED = shuffle([...Array(MAX_WORD_CLASSES).keys()]);
-let prev = 0
+let prev = 0;
 const next = () => {
-    prev ++;
-    if (prev > SHUFFLED.length - 1) prev = 0
+    prev++;
+    if (prev > SHUFFLED.length - 1) prev = 0;
     return SHUFFLED[prev];
-}
-export function stylizeJSX(jsx) {
-    return <span className={`w${next()}`}>{jsx}</span>;
-}
+};
+
+export const stylizeJSX = (sentence: string) => (
+    <>
+        {sentence
+            .split(' ')
+            .map<React.ReactNode>((word, i) => (
+                <span
+                    key={`word_${i}`}
+                    className={`w${next()}`}
+                >{`${word}`}</span>
+            ))
+            .reduce((prev, curr) => [prev, ' ', curr])}
+    </>
+);
 
 function shuffle<T>(array: Array<T>) {
     return array.sort(() => Math.random() - 0.5);
