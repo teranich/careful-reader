@@ -165,7 +165,18 @@ const FramesPages = forwardRef(
             gotoLastPage: () => {
                 scrollToPage(lastPage.current);
             },
+            nextPage: () => {
+                const page = pageNumber.current + 2;
+                pageManager.goToPage(page);
+                scrollToPage(page);
+            },
+            prevPage: () => {
+                const page = pageNumber.current;
+                pageManager.goToPage(page);
+                scrollToPage(page);
+            },
         }));
+
         useEffect(() => {
             setTimeout(() => {
                 scrollToPage(pageNumber.current + 1);

@@ -20,3 +20,5 @@ export const Hightlighter = styled.div<IHightlighter>`
     }
     ${(props) => props.wordsHighlight && classes}
 `;
+
+

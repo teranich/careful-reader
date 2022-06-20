@@ -5,6 +5,7 @@ import {
     useImperativeHandle,
     forwardRef,
     useState,
+    useCallback,
 } from 'react';
 import { TCurrentBook } from '../../../store/LibraryStore';
 import { Document } from 'react-pdf/dist/esm/entry.webpack';
@@ -14,6 +15,24 @@ import './PdfTextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { OutlineMenu } from './OutlineMenu';
 import FastPages from './FramesPages';
+
+const ControlsAreaElement = styled.div`
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    width: 10vw;
+    opacity: 0.1;
+    cursor: pointer;
+`;
+
+const RightArea = styled(ControlsAreaElement)`
+    right: 0;
+`;
+
+const LeftArea = styled(ControlsAreaElement)`
+    left: 0;
+`;
 
 const DocumentIS = styled(Document)`
     overflow: hidden;
@@ -60,6 +79,7 @@ function PDFReader(
 
     const { width: clientWidth } = getClientSize();
     const [pageWidth, setPageWidth] = useState(clientWidth);
+
     useEffect(() => {
         const fitPageSize = () => {
             const { width, height } = getClientSize();
@@ -69,6 +89,15 @@ function PDFReader(
         window.addEventListener('resize', fitPageSize);
         return () => window.removeEventListener('resize', fitPageSize);
     }, []);
+
+    const onControlItemClickHandler = useCallback((area) => {
+        if (area === 'right') {
+            iref.current.nextPage();
+        } else {
+            iref.current.prevPage();
+        }
+    }, []);
+
     return (
         <>
             {bookFileURI && (
@@ -80,11 +109,20 @@ function PDFReader(
                     options={{
                         cMapUrl: 'cmaps/',
                         cMapPacked: true,
+                        useSystemFonts: true,
+                        disableStream: true,
+                        disableAutoFetch: true,
                     }}
                 >
                     <OutlineMenu
                         ref={tableOfContentsRef}
                         onItemClick={onTableOfContentItemClick}
+                    />
+                    <LeftArea
+                        onClick={() => onControlItemClickHandler('left')}
+                    />
+                    <RightArea
+                        onClick={() => onControlItemClickHandler('right')}
                     />
                     <FastPages
                         ref={iref}
